@@ -5,9 +5,14 @@ import 'package:mobile_electronic_record_card/controller/control_type_controller
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
+import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
+
+import '../student/record_card_page.dart';
 
 class GroupPage extends StatefulWidget {
-  const GroupPage({super.key});
+  int? selectedItemNavBar;
+
+  GroupPage({this.selectedItemNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -18,16 +23,19 @@ class GroupPage extends StatefulWidget {
 class GroupPageState extends State<GroupPage> {
   Future<List<GroupEntity>>? groups;
   final searchText = ValueNotifier<String>('');
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedItemNavBar ?? 0;
     groups = GroupController().groups;
   }
 
   @override
   Widget build(BuildContext context) {
     const title = titleGroupPage;
+
     return Scaffold(
         appBar: AppBarWithSearchSwitch(
           onChanged: (text) {
@@ -52,8 +60,53 @@ class GroupPageState extends State<GroupPage> {
             );
           },
         ),
-        body: buildFutureBuilder()
+        body: buildFutureBuilder(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline),
+              label: 'Преподаватель'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.school_outlined),
+              label: 'Студент'
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      switch(index){
+        case 0: {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SubjectPage(
+                    selectedItemNavBar: _selectedIndex
+                ),
+              ),
+              (Route<dynamic> route) => false
+          );
+        }
+        case 1: {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RecordCardPage(
+                    selectedItemNavBar: _selectedIndex
+                ),
+              ),
+              (Route<dynamic> route) => false
+          );
+        }
+      }
+    });
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder() {

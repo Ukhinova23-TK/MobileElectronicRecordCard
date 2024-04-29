@@ -172,7 +172,7 @@ class __FormContentState extends State<_FormContent> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (
-                                        context) => const RecordCardPage(),
+                                        context) => RecordCardPage(),
                                   ),
                                         (Route<dynamic> route) => false
                                 );
@@ -180,7 +180,7 @@ class __FormContentState extends State<_FormContent> {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const SubjectPage(),
+                                      builder: (context) => SubjectPage(),
                                     ),
                                     (Route<dynamic> route) => false
                                 );

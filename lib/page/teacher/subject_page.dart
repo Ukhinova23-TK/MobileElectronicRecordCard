@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
+import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 
 class SubjectPage extends StatefulWidget {
-  const SubjectPage({super.key});
+  int? selectedItemNavBar;
+
+  SubjectPage({this.selectedItemNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,10 +20,12 @@ class SubjectPage extends StatefulWidget {
 class SubjectPageState extends State<SubjectPage> {
   Future<List<SubjectEntity>>? subjects;
   final searchText = ValueNotifier<String>('');
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedItemNavBar ?? 0;
     subjects = SubjectController().subjects;
   }
 
@@ -28,31 +33,66 @@ class SubjectPageState extends State<SubjectPage> {
   Widget build(BuildContext context) {
     const title = titleSubjectPage;
     return Scaffold(
-        appBar: AppBarWithSearchSwitch(
-          onChanged: (text) {
-            searchText.value = text;
-            setState(() {
-              subjects = SubjectController().subjects;
-            });
-          },
-          appBarBuilder: (context) {
-            return AppBar(
-              backgroundColor: appbarColor,
-              title: const Text(title),
-              actions: [
-                const AppBarSearchButton(
-                  buttonHasTwoStates: false,
-                ),
-                IconButton(
-                  onPressed: () => synchronization(),
-                  icon: const Icon(Icons.access_time),
-                )
-              ],
-            );
-          },
-        ),
-        body: buildFutureBuilder()
+      appBar: AppBarWithSearchSwitch(
+        onChanged: (text) {
+          searchText.value = text;
+          setState(() {
+            subjects = SubjectController().subjects;
+          });
+        },
+        appBarBuilder: (context) {
+          return AppBar(
+            backgroundColor: appbarColor,
+            title: const Text(title),
+            actions: [
+              const AppBarSearchButton(
+                buttonHasTwoStates: false,
+              ),
+              IconButton(
+                onPressed: () => synchronization(),
+                icon: const Icon(Icons.access_time),
+              )
+            ],
+          );
+        },
+      ),
+      body: buildFutureBuilder(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline),
+              label: 'Преподаватель'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.school_outlined),
+              label: 'Студент'
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      switch(index){
+        case 0: { }
+        case 1: {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => RecordCardPage(
+                    selectedItemNavBar: _selectedIndex
+                ),
+              ),
+              (Route<dynamic> route) => false
+          );
+        }
+      }
+    });
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {
@@ -71,6 +111,7 @@ class SubjectPageState extends State<SubjectPage> {
       return buildListView(list);
     }
     if(snapshot.hasData){
+      //list = snapshot.data!.where((e) => e.name!.toLowerCase().contains(searchText.value.toLowerCase())).toList();
       snapshot.data?.forEach((e) {
         if(e.name!.toLowerCase().contains(searchText.value.toLowerCase())) {
           list.add(e);
@@ -121,7 +162,7 @@ class SubjectList extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => const GroupPage(),
+            builder: (context) => GroupPage(),
           ),
         );
       },

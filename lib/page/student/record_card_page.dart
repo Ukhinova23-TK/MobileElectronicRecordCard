@@ -9,9 +9,12 @@ import 'package:mobile_electronic_record_card/model/entity/control_type_entity.d
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
+import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 
 class RecordCardPage extends StatefulWidget {
-  const RecordCardPage ({super.key});
+  int? selectedItemNavBar;
+
+  RecordCardPage ({this.selectedItemNavBar, super.key});
 
   @override
   State<RecordCardPage> createState() => _RecordCardPageState();
@@ -22,10 +25,12 @@ class _RecordCardPageState extends State<RecordCardPage> {
   Future<List<SubjectEntity>>? subjects;
   Future<ControlTypeEntity>? controlType;
   Future<List<UserEntity>>? users;
+  late int _selectedIndex;
 
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedItemNavBar ?? 1;
     subjects = SubjectController().subjects;
     controlType = ControlTypeController().getByIdFromServer(1);
   }
@@ -111,14 +116,49 @@ class _RecordCardPageState extends State<RecordCardPage> {
           )
         ],
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline),
+              label: 'Преподаватель'
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.school_outlined),
+              label: 'Студент'
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      switch(index){
+        case 0: {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SubjectPage(
+                    selectedItemNavBar: _selectedIndex
+                ),
+              ),
+              (Route<dynamic> route) => false
+          );
+        }
+        case 1: { }
+      }
+    });
   }
 
   Future<void> openInfoModalWindow() {
     return showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return Column(
+        return const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -130,6 +170,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
   }
 
   Widget _height() => const SizedBox(height: 16);
+
   Widget _width() => const SizedBox(width: 16);
 
 }
