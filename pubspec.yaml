@@ -22,6 +22,10 @@ dependencies:
   sqfentity: ^2.1.0
   sqfentity_gen: ^2.1.0
   http: ^1.2.1
+  flutter_logcat: ^1.0.7
+  provider: ^6.1.2
+  qr_flutter: ^4.1.0
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:

@@ -6,4 +6,5 @@ abstract class ControlTypeHttpClient {
   Future<ControlTypeEntity> getById(int id);
 
   Future<ControlTypeEntity> getByName(String name);
+
 }

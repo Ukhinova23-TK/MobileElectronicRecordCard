@@ -12,7 +12,7 @@ const SqfEntityTable tableRole = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text),
+    SqfEntityField('name', DbType.text, isNotNull: true),
     SqfEntityFieldRelationship(
       parentTable: tableUser,
       relationType: RelationType.MANY_TO_MANY,
@@ -27,7 +27,7 @@ const SqfEntityTable tableGroup = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text, isNotNull: false),
+    SqfEntityField('name', DbType.text, isNotNull: true),
     SqfEntityField('full_name', DbType.text),
     SqfEntityField('admission_date', DbType.date)
   ]
@@ -39,9 +39,9 @@ const SqfEntityTable tableMark = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text),
-    SqfEntityField('title', DbType.text),
-    SqfEntityField('value', DbType.integer)
+    SqfEntityField('name', DbType.text, isNotNull: true),
+    SqfEntityField('title', DbType.text, isNotNull: true),
+    SqfEntityField('value', DbType.integer, isNotNull: true)
   ]
 );
 
@@ -51,8 +51,8 @@ const SqfEntityTable tableControlType = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text, isNotNull: false),
-    SqfEntityField('title', DbType.text, isNotNull: false),
+    SqfEntityField('name', DbType.text, isNotNull: true),
+    SqfEntityField('title', DbType.text, isNotNull: true),
     SqfEntityFieldRelationship(
         parentTable: tableMark,
         relationType: RelationType.MANY_TO_MANY,
@@ -67,7 +67,7 @@ const SqfEntityTable tableSubject = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text)
+    SqfEntityField('name', DbType.text, isNotNull: true)
   ]
 );
 
@@ -77,9 +77,9 @@ const SqfEntityTable tableUser = SqfEntityTable(
     primaryKeyType: PrimaryKeyType.integer_unique,
     modelName: null,
     fields: [
-      SqfEntityField('login', DbType.text),
-      SqfEntityField('last_name', DbType.text),
-      SqfEntityField('first_name', DbType.text),
+      SqfEntityField('login', DbType.text, isNotNull: true),
+      SqfEntityField('last_name', DbType.text, isNotNull: true),
+      SqfEntityField('first_name', DbType.text, isNotNull: true),
       SqfEntityField('middle_name', DbType.text),
       SqfEntityFieldRelationship(
         parentTable: tableGroup,
@@ -95,7 +95,7 @@ const SqfEntityTable tableUserSubjectControlType = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('semester', DbType.integer),
+    SqfEntityField('semester', DbType.integer, isNotNull: true),
     SqfEntityField('hours_number', DbType.integer),
     SqfEntityFieldRelationship(
       parentTable: tableUser,

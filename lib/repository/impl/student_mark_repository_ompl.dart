@@ -27,8 +27,15 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
 
   @override
   Future<int?> save(Student_mark studentMark) async {
-    return await Student_mark()
+    return await studentMark
         .save();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await Student_mark()
+        .select()
+        .delete();
   }
 
 }

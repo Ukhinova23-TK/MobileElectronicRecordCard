@@ -27,8 +27,15 @@ class SubjectRepositoryImpl implements SubjectRepository {
 
   @override
   Future<int?> save(Subject subject) async {
-    return await Subject()
+    return await subject
         .save();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+     await Subject()
+         .select()
+         .delete();
   }
 
 }

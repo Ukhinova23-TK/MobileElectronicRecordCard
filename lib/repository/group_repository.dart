@@ -8,4 +8,6 @@ abstract class GroupRepository {
   Future<Student_group?> get(int id);
 
   Future<void> delete(int id);
+
+  Future<void> deleteAll();
 }

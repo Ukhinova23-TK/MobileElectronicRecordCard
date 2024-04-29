@@ -33,7 +33,7 @@ class TableRole extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('name', DbType.text),
+      SqfEntityFieldBase('name', DbType.text, isNotNull: true),
     ];
     super.init();
   }
@@ -55,7 +55,7 @@ class TableStudent_group extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('name', DbType.text),
+      SqfEntityFieldBase('name', DbType.text, isNotNull: true),
       SqfEntityFieldBase('full_name', DbType.text),
       SqfEntityFieldBase('admission_date', DbType.date,
           minValue: DateTime.parse('1900-01-01')),
@@ -80,7 +80,7 @@ class TableSubject extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('name', DbType.text),
+      SqfEntityFieldBase('name', DbType.text, isNotNull: true),
     ];
     super.init();
   }
@@ -102,9 +102,9 @@ class TableMark extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('name', DbType.text),
-      SqfEntityFieldBase('title', DbType.text),
-      SqfEntityFieldBase('value', DbType.integer),
+      SqfEntityFieldBase('name', DbType.text, isNotNull: true),
+      SqfEntityFieldBase('title', DbType.text, isNotNull: true),
+      SqfEntityFieldBase('value', DbType.integer, isNotNull: true),
     ];
     super.init();
   }
@@ -126,8 +126,8 @@ class TableControl_type extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('name', DbType.text),
-      SqfEntityFieldBase('title', DbType.text),
+      SqfEntityFieldBase('name', DbType.text, isNotNull: true),
+      SqfEntityFieldBase('title', DbType.text, isNotNull: true),
     ];
     super.init();
   }
@@ -149,9 +149,9 @@ class TableUser extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('login', DbType.text),
-      SqfEntityFieldBase('last_name', DbType.text),
-      SqfEntityFieldBase('first_name', DbType.text),
+      SqfEntityFieldBase('login', DbType.text, isNotNull: true),
+      SqfEntityFieldBase('last_name', DbType.text, isNotNull: true),
+      SqfEntityFieldBase('first_name', DbType.text, isNotNull: true),
       SqfEntityFieldBase('middle_name', DbType.text),
       SqfEntityFieldRelationshipBase(
           TableStudent_group.getInstance, DeleteRule.NO_ACTION,
@@ -177,7 +177,7 @@ class TableUser_subject_control_type extends SqfEntityTableBase {
 
     // declare fields
     fields = [
-      SqfEntityFieldBase('semester', DbType.integer),
+      SqfEntityFieldBase('semester', DbType.integer, isNotNull: true),
       SqfEntityFieldBase('hours_number', DbType.integer),
       SqfEntityFieldRelationshipBase(
           TableUser.getInstance, DeleteRule.NO_ACTION,

@@ -27,10 +27,9 @@ class ControlTypeRepositoryImpl implements ControlTypeRepository {
   
   @override
   Future<List<Mark>?> getMarks(int id) async {
-    return await Control_type()
+    return await Control_type(id: id)
         .getMarks()
-        ?.where('id=$id')
-        .toList();
+        ?.toList();
   }
 
   @override
@@ -38,5 +37,12 @@ class ControlTypeRepositoryImpl implements ControlTypeRepository {
     return await Control_type()
         .select()
         .toList();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+      await Control_type()
+          .select()
+          .delete();
   }
 }

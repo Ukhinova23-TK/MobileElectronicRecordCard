@@ -10,4 +10,6 @@ abstract class ControlTypeRepository {
   Future<List<Mark>?> getMarks(int id);
 
   Future<void> delete(int id);
+
+  Future<void> deleteAll();
 }

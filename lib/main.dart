@@ -1,15 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_electronic_record_card/client/impl/control_type_http_client_impl.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/page/group_page.dart';
+import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
+import 'package:mobile_electronic_record_card/controller/role_controller.dart';
+import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
+import 'package:mobile_electronic_record_card/page/authorization_page.dart';
+import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
+import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
+import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
 
-import 'client/control_type_http_client.dart';
+import 'controller/control_type_controller.dart';
+import 'controller/user_controller.dart';
 import 'page/subject_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  ControlTypeController controller = ControlTypeController();
+  /*ControlTypeRepositoryImpl().deleteAll().then((value) =>
+  {
+    MarkRepositoryImpl().deleteAll().then((value) =>
+    {
+      MarkControlTypeRepositoryImpl().deleteAll().then((value) =>
+      {
+        runApp(const MyApp())
+      })
+    })
+  });*/
+
+  /*ControlTypeController controller = ControlTypeController();
+  controller.synchronization().then((_) => runApp(const MyApp()));*/
+
+  /*UserController controller = UserController();
+  controller.synchronization().then((_) => runApp(const MyApp()));*/
+
+  RoleController controller = RoleController();
   controller.synchronization().then((_) => runApp(const MyApp()));
+
+  //runApp(const MyApp());
+
+  /*SubjectController controller = SubjectController();
+  controller.synchronization().then((_) => runApp(const MyApp()));*/
+
+  //SubjectRepositoryImpl().deleteAll().then((_) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -18,14 +50,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    const title = 'Record card';
     return MaterialApp(
-      title: title,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreen),
         useMaterial3: true,
       ),
-      home: GroupPage(),
+      home: const AuthorizationPage(),
     );
   }
 }

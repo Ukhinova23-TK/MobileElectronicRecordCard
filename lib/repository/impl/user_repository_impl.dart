@@ -26,8 +26,23 @@ class UserRepositoryImpl implements UserRepository{
 
   @override
   Future<int?> save(User user) async {
-    return await User()
+    return await user
         .save();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await User()
+        .select()
+        .delete();
+  }
+
+  @override
+  Future<List<Role>?> getRoles(int id) async {
+    return await User()
+        .getRoles()
+        ?.where('id=$id')
+        .toList();
   }
 
 }

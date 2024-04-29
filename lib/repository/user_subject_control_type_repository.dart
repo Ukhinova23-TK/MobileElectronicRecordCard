@@ -8,4 +8,6 @@ abstract class UserSubjectControlTypeRepository {
   Future<User_subject_control_type?> get(int id);
 
   Future<void> delete(int id);
+
+  Future<void> deleteAll();
 }

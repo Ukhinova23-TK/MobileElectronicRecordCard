@@ -1,5 +1,4 @@
 import 'package:mobile_electronic_record_card/client/impl/control_type_http_client_impl.dart';
-import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/service/mapper/impl/control_type_mapper.dart';
 

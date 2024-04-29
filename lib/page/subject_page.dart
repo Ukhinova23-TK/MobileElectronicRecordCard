@@ -1,66 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 
-import '../controller/control_type_controller.dart';
-import '../model/entity/control_type_entity.dart';
-import 'group_page.dart';
+import '../controller/subject_controller.dart';
+import '../model/entity/subject_entity.dart';
+import 'teacher/group_page.dart';
 
-/*class SubjectPage extends StatelessWidget {
+class SubjectPage extends StatefulWidget {
   const SubjectPage({super.key});
 
   @override
+  State<StatefulWidget> createState() {
+    return SubjectPageState();
+  }
+}
+
+class SubjectPageState extends State<SubjectPage> {
+  Future<List<SubjectEntity>>? subjects;
+
+  @override
+  void initState() {
+    super.initState();
+    subjects = SubjectController().subjects;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<ControlTypeEntity> controlTypes = ControlTypeController().groups;
-    const title = 'Subjects';
-    return MaterialApp(
-      title: title,
-      home: Scaffold(
-          appBar: buildAppBar(title),
-          body: Builder(
-              builder: (BuildContext context) {
-                return ListView.builder(
-                  itemCount: controlTypes.length,
-                  itemBuilder: (context, index) {
-                    return GroupList(
-                        controlTypes[index].name ?? "",
-                        controlTypes[index].title ?? ""
-                    );
-                  },
-                );
-              }),
-      ),
-    );
-  }*/
+    const title = 'Предметы';
+    return Scaffold(
+        appBar: buildAppBar(title),
+        body: buildFutureBuilder());
+  }
 
-  /*FutureBuilder<List<Control_type>> buildFutureBuilder() {
+  FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {
     return FutureBuilder(
-          future: ControlTypeSynchronizationService.getControlTypes(),
-          builder: (context, snapshot) {
-            return ListView.builder(
-                itemCount: snapshot.data?.length,
-                itemBuilder: (context, index) {
-                  return SubjectList(snapshot.data?[index].name ?? "");
-                }
-            );
-          },
-        );
-  }*/
+        future: subjects,
+        builder: (context, snapshot) {
+          return buildListView(snapshot);
+        },
+      );
+  }
 
-  /*AppBar buildAppBar(String title) {
+  ListView buildListView(AsyncSnapshot<List<SubjectEntity>> snapshot) {
+    if (snapshot.data == null || snapshot.data?.length == 0) {
+      return ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return const ListTile(
+              title: Text("Нет данных"),
+            );
+          }
+      );
+    } else {
+      return ListView.builder(
+          itemCount: snapshot.data?.length,
+          itemBuilder: (context, index) {
+            return SubjectList(snapshot.data?[index].name ?? "");
+          });
+    }
+  }
+
+  AppBar buildAppBar(String title) {
     return AppBar(
-          title: Text(title),
-          backgroundColor: Colors.green,
-        );
+      backgroundColor: appbarColor,
+      title: Text(title),
+      actions: [
+        IconButton(
+          onPressed: () => synchronization(),
+          icon: const Icon(Icons.access_time),
+        )
+      ],
+    );
+  }
+
+  synchronization() {
+    SubjectController().synchronization().then((_) => {
+          setState(() {
+            subjects = SubjectController().subjects;
+          })
+        });
   }
 }
 
 class SubjectList extends StatelessWidget {
-  const SubjectList(this.title, {super.key});
-  final String title;
+  const SubjectList(this.name, {super.key});
+  final String name;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(title),
+      title: Text(name),
       onTap: () async {
         await Navigator.push(
           context,
@@ -71,4 +99,4 @@ class SubjectList extends StatelessWidget {
       },
     );
   }
-}*/
+}

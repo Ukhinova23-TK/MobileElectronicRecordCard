@@ -27,7 +27,14 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<int?> save(Student_group studentGroup) async {
-    return await Student_group()
+    return await studentGroup
         .save();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await Student_group()
+        .select()
+        .delete();
   }
 }

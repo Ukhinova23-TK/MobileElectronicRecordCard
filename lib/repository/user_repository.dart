@@ -7,5 +7,9 @@ abstract class UserRepository {
 
   Future<User?> get(int id);
 
+  Future<List<Role>?> getRoles(int id);
+
   Future<void> delete(int id);
+
+  Future<void> deleteAll();
 }

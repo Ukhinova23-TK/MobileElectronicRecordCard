@@ -8,4 +8,6 @@ abstract class StudentMarkRepository {
   Future<Student_mark?> get(int id);
 
   Future<void> delete(int id);
+
+  Future<void> deleteAll();
 }

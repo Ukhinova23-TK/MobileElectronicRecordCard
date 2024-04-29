@@ -23,4 +23,34 @@ class RoleRepositoryImpl implements RoleRepository {
         .where('name=$name')
         .toSingle();
   }
+
+  @override
+  Future<List<User>?> getUsers(int id) async {
+    return await Role()
+        .getUsers()
+        ?.where('user_id=$id')
+        .toList();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await Role()
+        .select()
+        .delete();
+  }
+
+  @override
+  Future<int?> save(Role role) async {
+    return await role
+        .save();
+  }
+
+  @override
+  Future<Role?> getNameById(int id) async {
+    return await Role()
+        .select(columnsToSelect: ["name"])
+        .where('id=$id')
+        .toSingle();
+
+  }
 }

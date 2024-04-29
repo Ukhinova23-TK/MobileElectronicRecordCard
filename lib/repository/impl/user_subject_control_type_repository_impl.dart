@@ -27,8 +27,15 @@ class UserSubjectControlTypeRepositoryImpl implements UserSubjectControlTypeRepo
 
   @override
   Future<int?> save(User_subject_control_type userSubjectControlType) async {
-    return await User_subject_control_type()
+    return await userSubjectControlType
         .save();
+  }
+
+  @override
+  Future<void> deleteAll() async {
+    await User_subject_control_type()
+        .select()
+        .delete();
   }
 
 }

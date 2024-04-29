@@ -16,4 +16,13 @@ class MarkHttpClientImpl implements MarkHttpClient {
         MarkEntity.fromJson(e)).toList();
   }
 
+  @override
+  Future<List<MarkEntity>> getAll() async {
+    final response = await http.get(
+      Uri.parse(resourceUrl + markUrl));
+    return (json.decode(utf8.decode(response.bodyBytes)) as List)
+        .map((e) =>
+        MarkEntity.fromJson(e)).toList();
+  }
+
 }
