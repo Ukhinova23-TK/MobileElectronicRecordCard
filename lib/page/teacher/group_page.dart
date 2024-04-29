@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
-import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
   const GroupPage({super.key});

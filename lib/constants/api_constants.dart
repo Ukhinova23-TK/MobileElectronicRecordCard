@@ -41,6 +41,7 @@ const String buttonAuthPage = 'Вход';
 
 //  Строковые переменные для страницы предметов
 const String titleSubjectPage = 'Предметы';
+const String hintSearch = 'Введите значение для поиска';
 
 //  Строковые переменные для страницы групп
 const String titleGroupPage = 'Группы';

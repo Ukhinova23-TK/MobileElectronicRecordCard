@@ -4,7 +4,7 @@ import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
-import 'package:mobile_electronic_record_card/page/subject_page.dart';
+import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 import 'package:mobile_electronic_record_card/repository/impl/storage_repository_impl.dart';
 
 import '../constants/api_constants.dart';
