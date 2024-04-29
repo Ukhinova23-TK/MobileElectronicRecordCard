@@ -19,12 +19,12 @@ class UserSubjectControlTypeEntity {
 
   static UserSubjectControlTypeEntity fromJson(Map<String, dynamic> json){
     var id = json['id'];
-    var teacherId = json['teacher_id'];
-    var studentId = json['student_id'];
-    var subjectId = json['subject_id'];
-    var controlTypeId = json['control_type_id'];
+    var teacherId = json['teacherId'];
+    var studentId = json['studentId'];
+    var subjectId = json['subjectId'];
+    var controlTypeId = json['controlTypeId'];
     var semester = json['semester'];
-    var hoursNumber = json['hours_number'];
+    var hoursNumber = json['hoursNumber'];
     return UserSubjectControlTypeEntity(
         id: id,
         teacherId: teacherId,
@@ -39,12 +39,12 @@ class UserSubjectControlTypeEntity {
   static Map<String, dynamic> toJson(UserSubjectControlTypeEntity userSubjectControlType) {
     return {
       'id': userSubjectControlType.id,
-      'teacher_id': userSubjectControlType.teacherId,
-      'student_id': userSubjectControlType.studentId,
-      'subject_id': userSubjectControlType.subjectId,
-      'control_type_id': userSubjectControlType.controlTypeId,
+      'teacherId': userSubjectControlType.teacherId,
+      'studentId': userSubjectControlType.studentId,
+      'subjectId': userSubjectControlType.subjectId,
+      'controlTypeId': userSubjectControlType.controlTypeId,
       'semester': userSubjectControlType.semester,
-      'hours_number': userSubjectControlType.hoursNumber,
+      'hoursNumber': userSubjectControlType.hoursNumber,
     };
   }
 }

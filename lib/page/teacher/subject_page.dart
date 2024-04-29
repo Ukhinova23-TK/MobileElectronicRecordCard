@@ -32,7 +32,6 @@ class SubjectPageState extends State<SubjectPage> {
           onChanged: (text) {
             searchText.value = text;
             setState(() {
-
               subjects = SubjectController().subjects;
             });
           },
@@ -51,9 +50,9 @@ class SubjectPageState extends State<SubjectPage> {
               ],
             );
           },
-
         ),
-        body: buildFutureBuilder());
+        body: buildFutureBuilder()
+    );
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {
@@ -95,16 +94,18 @@ class SubjectPageState extends State<SubjectPage> {
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
             return SubjectList(snapshot[index].name ?? "");
-          });
+          }
+      );
     }
   }
 
   synchronization() {
-    SubjectController().synchronization().then((_) => {
-          setState(() {
-            subjects = SubjectController().subjects;
-          })
-        });
+    SubjectController().synchronization().then((_) =>
+    {
+      setState(() {
+        subjects = SubjectController().subjects;
+      })
+    });
   }
 }
 

@@ -14,8 +14,8 @@ class GroupEntity {
   static GroupEntity fromJson(Map<String, dynamic> json){
     var id = json['id'];
     var name = json['name'];
-    var fullName = json['full_name'];
-    var admissionDate = json['admission_date'];
+    var fullName = json['fullName'];
+    var admissionDate = json['admissionDate'];
     return GroupEntity(id: id, name: name, fullName: fullName, admissionDate: admissionDate);
   }
 
@@ -23,8 +23,8 @@ class GroupEntity {
     return {
       'id': group.id,
       'name': group.name,
-      'full_name': group.fullName,
-      'admission_date': group.admissionDate,
+      'fullName': group.fullName,
+      'admissionDate': group.admissionDate,
     };
   }
 }

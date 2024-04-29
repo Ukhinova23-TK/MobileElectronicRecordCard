@@ -29,10 +29,10 @@ class UserEntity {
   static UserEntity fromJson(Map<String, dynamic> json){
     var id = json['id'];
     var login = json['login'];
-    var lastName = json['last_name'];
-    var firstName = json['first_name'];
-    var middleName = json['middle_name'];
-    var groupId = json['group_id'];
+    var lastName = json['lastName'];
+    var firstName = json['firstName'];
+    var middleName = json['middleName'];
+    var groupId = json['groupId'];
     var roles = json['roles'];
     return UserEntity.withRoles(
         id: id,
@@ -49,10 +49,10 @@ class UserEntity {
     return {
       'id': user.id,
       'login': user.login,
-      'last_name': user.lastName,
-      'first_name': user.firstName,
-      'middle_name': user.middleName,
-      'group_id': user.groupId,
+      'lastName': user.lastName,
+      'firstName': user.firstName,
+      'middleName': user.middleName,
+      'groupId': user.groupId,
       'roles': user.roles
     };
   }

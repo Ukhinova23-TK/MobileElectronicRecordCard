@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
@@ -6,6 +7,7 @@ import 'package:mobile_electronic_record_card/page/authorization_page.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
 import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
@@ -37,6 +39,14 @@ Future<void> main() async {
   controller.synchronization().then((_) => runApp(const MyApp()));*/
 
   runApp(const MyApp());
+
+  /*GroupRepositoryImpl().deleteAll().then((value) =>
+  {
+    GroupController().synchronization().then((value) =>
+    {
+      runApp(const MyApp())
+    })
+  });*/
 
   /*SubjectController controller = SubjectController();
   controller.synchronization().then((_) => runApp(const MyApp()));*/

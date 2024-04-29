@@ -31,11 +31,6 @@ class GroupController {
     return GroupHttpClientImpl().getAll() ;
   }
 
-  // need?
-  Future<GroupEntity> getByIdFromServer (int id) {
-    return GroupHttpClientImpl().getById(id);
-  }
-
   Future<void> setAllToDb(List<GroupEntity> groups) async {
     GroupRepository groupRepository = GroupRepositoryImpl();
     for (var element in groups) {
