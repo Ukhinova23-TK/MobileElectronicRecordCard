@@ -8,6 +8,7 @@ import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
+import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 
@@ -137,21 +138,8 @@ class _RecordCardPageState extends State<RecordCardPage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch(index){
-        case 0: {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SubjectPage(
-                    selectedItemNavBar: _selectedIndex
-                ),
-              ),
-              (Route<dynamic> route) => false
-          );
-        }
-        case 1: { }
-      }
     });
+    BottomNavBarChoose(index: index, context: context).changeItem();
   }
 
   Future<void> openInfoModalWindow() {

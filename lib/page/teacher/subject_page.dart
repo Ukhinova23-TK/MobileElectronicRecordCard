@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
+import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 
@@ -78,21 +79,8 @@ class SubjectPageState extends State<SubjectPage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch(index){
-        case 0: { }
-        case 1: {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RecordCardPage(
-                    selectedItemNavBar: _selectedIndex
-                ),
-              ),
-              (Route<dynamic> route) => false
-          );
-        }
-      }
     });
+    BottomNavBarChoose(index: index, context: context).changeItem();
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {

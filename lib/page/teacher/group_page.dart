@@ -5,6 +5,7 @@ import 'package:mobile_electronic_record_card/controller/control_type_controller
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
+import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 
 import '../student/record_card_page.dart';
@@ -82,31 +83,8 @@ class GroupPageState extends State<GroupPage> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      switch(index){
-        case 0: {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SubjectPage(
-                    selectedItemNavBar: _selectedIndex
-                ),
-              ),
-              (Route<dynamic> route) => false
-          );
-        }
-        case 1: {
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => RecordCardPage(
-                    selectedItemNavBar: _selectedIndex
-                ),
-              ),
-              (Route<dynamic> route) => false
-          );
-        }
-      }
     });
+    BottomNavBarChoose(index: index, context: context).changeItem();
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder() {
