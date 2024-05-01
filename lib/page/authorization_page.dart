@@ -60,7 +60,7 @@ class _Title extends StatelessWidget {
                 : Theme.of(context)
                     .textTheme
                     .headlineMedium
-                    ?.copyWith(color: Colors.black),
+                    ?.copyWith(color: blackColor),
           ),
         )
       ],
@@ -142,13 +142,17 @@ class __FormContentState extends State<_FormContent> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)),
+                      borderRadius: BorderRadius.circular(4)
+                  ),
+                  backgroundColor: greatMarkColor
                 ),
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
                     buttonAuthPage,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: blackColor),
                   ),
                 ),
                 onPressed: () async {

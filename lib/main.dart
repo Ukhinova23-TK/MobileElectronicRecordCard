@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/page/authorization_page.dart';
 
 Future<void> main() async {
@@ -47,7 +48,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
+        colorScheme: ColorScheme.fromSeed(seedColor: greatMarkColor),
         useMaterial3: true,
       ),
       home: const AuthorizationPage(),

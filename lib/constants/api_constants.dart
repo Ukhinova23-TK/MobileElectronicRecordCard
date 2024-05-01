@@ -1,5 +1,8 @@
-// Строковые переменные для отправки запроса
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
+
+// Строковые переменные для отправки запроса
 
 const String resourceUrl = 'http://192.168.3.67:8080/';
 
@@ -53,3 +56,5 @@ const Color failMarkColor = Color.fromARGB(255, 243, 185, 180);
 const Color satisfactoryMarkColor = Color.fromARGB(255, 218, 237, 184);
 const Color wellMarkColor = Color.fromARGB(255, 199, 229, 150);
 const Color greatMarkColor = Color.fromARGB(255, 175, 218, 105);
+const Color blackColor = Colors.black;
+const Color greyColor = Colors.white30;
