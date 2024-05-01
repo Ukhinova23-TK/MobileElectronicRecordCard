@@ -9,8 +9,9 @@ import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 
 class SubjectPage extends StatefulWidget {
   int? selectedItemNavBar;
+  bool? bottomNavBar;
 
-  SubjectPage({this.selectedItemNavBar, super.key});
+  SubjectPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -22,11 +23,13 @@ class SubjectPageState extends State<SubjectPage> {
   Future<List<SubjectEntity>>? subjects;
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
+  late bool bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
+    bottomNavBar = widget.bottomNavBar ?? false;
     subjects = SubjectController().subjects;
   }
 
@@ -58,7 +61,13 @@ class SubjectPageState extends State<SubjectPage> {
         },
       ),
       body: buildFutureBuilder(),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  BottomNavigationBar? buildBottomNavigationBar() {
+    if(bottomNavBar){
+      return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.work_outline),
@@ -72,15 +81,21 @@ class SubjectPageState extends State<SubjectPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
-      ),
-    );
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(index: index, context: context).changeItem();
+    BottomNavBarChoose(
+        index: index,
+        context: context,
+        bottomNavBar: bottomNavBar
+    ).changeItem();
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {

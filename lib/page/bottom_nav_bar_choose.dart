@@ -5,10 +5,12 @@ import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 class BottomNavBarChoose {
   int index;
   BuildContext context;
+  bool bottomNavBar;
 
   BottomNavBarChoose({
     required this.index,
-    required this.context
+    required this.context,
+    required this.bottomNavBar
   });
 
   void changeItem() {
@@ -21,7 +23,8 @@ class BottomNavBarChoose {
                 MaterialPageRoute(
                   builder: (context) =>
                       SubjectPage(
-                          selectedItemNavBar: index
+                        selectedItemNavBar: index,
+                        bottomNavBar: bottomNavBar,
                       ),
                 ),
                     (Route<dynamic> route) => false
@@ -36,7 +39,8 @@ class BottomNavBarChoose {
                 MaterialPageRoute(
                   builder: (context) =>
                       RecordCardPage(
-                          selectedItemNavBar: index
+                        selectedItemNavBar: index,
+                        bottomNavBar: bottomNavBar,
                       ),
                 ),
                     (Route<dynamic> route) => false

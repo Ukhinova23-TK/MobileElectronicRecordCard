@@ -14,8 +14,9 @@ import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 
 class RecordCardPage extends StatefulWidget {
   int? selectedItemNavBar;
+  bool? bottomNavBar;
 
-  RecordCardPage ({this.selectedItemNavBar, super.key});
+  RecordCardPage ({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<RecordCardPage> createState() => _RecordCardPageState();
@@ -27,11 +28,13 @@ class _RecordCardPageState extends State<RecordCardPage> {
   Future<ControlTypeEntity>? controlType;
   Future<List<UserEntity>>? users;
   late int _selectedIndex;
+  late bool bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 1;
+    bottomNavBar = widget.bottomNavBar ?? false;
     subjects = SubjectController().subjects;
     controlType = ControlTypeController().getByIdFromServer(1);
   }
@@ -117,7 +120,13 @@ class _RecordCardPageState extends State<RecordCardPage> {
           )
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  BottomNavigationBar? buildBottomNavigationBar() {
+    if(bottomNavBar){
+      return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.work_outline),
@@ -131,15 +140,21 @@ class _RecordCardPageState extends State<RecordCardPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
-      ),
-    );
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(index: index, context: context).changeItem();
+    BottomNavBarChoose(
+        index: index,
+        context: context,
+        bottomNavBar: bottomNavBar
+    ).changeItem();
   }
 
   Future<void> openInfoModalWindow() {

@@ -1,8 +1,10 @@
 import 'package:flutter_logcat/log/log.dart';
 import 'package:mobile_electronic_record_card/client/impl/user_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/authenticate_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/repository/impl/storage_repository_impl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/entity/role_entity.dart';
 import '../model/model.dart';
@@ -49,8 +51,25 @@ class UserController {
   }
 
   Future<UserEntity> getByLoginFromServer(String login) async {
-    return await UserHttpClientImpl().getByLogin(login);
+    UserEntity user = await UserHttpClientImpl().getByLogin(login);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('id', user.id!);
+    if (user.groupId != null) {
+      prefs.setInt('groupId', user.groupId!);
+    }
+    if (user.roles != null) {
+      await RoleController().getStudentTeacherRoleFromDb(user.roles!).then((roles){
+        if(roles.isNotEmpty) {
+          List<String> r = [];
+          roles.forEach((element)  => r.add(element!));
+          prefs.setInt('rolesCount', roles.length);
+          prefs.setStringList('rolesName', r);
+        }
+      });
+    }
+    return user;
   }
+
 
   Future<void> authenticate(String login, String password) async {
     UserHttpClientImpl().authenticate(

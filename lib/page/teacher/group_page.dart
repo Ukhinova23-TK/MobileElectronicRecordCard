@@ -12,8 +12,9 @@ import '../student/record_card_page.dart';
 
 class GroupPage extends StatefulWidget {
   int? selectedItemNavBar;
+  bool? bottomNavBar;
 
-  GroupPage({this.selectedItemNavBar, super.key});
+  GroupPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -25,11 +26,13 @@ class GroupPageState extends State<GroupPage> {
   Future<List<GroupEntity>>? groups;
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
+  late bool bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
+    bottomNavBar = widget.bottomNavBar ?? false;
     groups = GroupController().groups;
   }
 
@@ -62,7 +65,13 @@ class GroupPageState extends State<GroupPage> {
           },
         ),
         body: buildFutureBuilder(),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  BottomNavigationBar? buildBottomNavigationBar() {
+    if(bottomNavBar){
+      return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
               icon: Icon(Icons.work_outline),
@@ -76,15 +85,21 @@ class GroupPageState extends State<GroupPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
-      ),
-    );
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(index: index, context: context).changeItem();
+    BottomNavBarChoose(
+        index: index,
+        context: context,
+        bottomNavBar: bottomNavBar
+    ).changeItem();
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder() {

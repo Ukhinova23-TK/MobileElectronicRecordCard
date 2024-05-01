@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.transparent),
         useMaterial3: true,
       ),
-      home: SubjectPage(),
+      home: const AuthorizationPage(),
     );
   }
 }
