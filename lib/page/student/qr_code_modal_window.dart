@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 //  TODO подвязать данные
 class QrCodeModalWindow extends StatefulWidget {
@@ -102,7 +100,7 @@ class _QrCodeModalWindowState extends State<QrCodeModalWindow> {
     );*/
 
 
-    return Column(
+    return const Column(
 
       );
   }

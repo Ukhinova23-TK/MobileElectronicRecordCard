@@ -2,20 +2,15 @@ import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
-import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
-import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
-
-import '../student/record_card_page.dart';
 
 class GroupPage extends StatefulWidget {
-  int? selectedItemNavBar;
-  bool? bottomNavBar;
+  final int? selectedItemNavBar;
+  final bool? bottomNavBar;
 
-  GroupPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const GroupPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {

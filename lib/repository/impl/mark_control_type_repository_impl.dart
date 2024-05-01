@@ -35,7 +35,7 @@ class MarkControlTypeRepositoryImpl implements MarkControlTypeRepository {
   Future<List<Mark_control_type?>> getMarks(int controlTypeId) async {
     return await Mark_control_type()
         .select()
-        .where('control_typeId = ${controlTypeId}')
+        .where('control_typeId = $controlTypeId')
         .toList();
   }
 

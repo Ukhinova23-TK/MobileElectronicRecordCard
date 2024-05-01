@@ -5,14 +5,13 @@ import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
-import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 
 class SubjectPage extends StatefulWidget {
-  int? selectedItemNavBar;
-  bool? bottomNavBar;
+  final int? selectedItemNavBar;
+  final bool? bottomNavBar;
 
-  SubjectPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const SubjectPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -163,7 +162,7 @@ class SubjectList extends StatelessWidget {
         await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => GroupPage(),
+            builder: (context) => const GroupPage(),
           ),
         );
       },

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/client/impl/role_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/model/entity/role_entity.dart';

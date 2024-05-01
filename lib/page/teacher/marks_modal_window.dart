@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
 
 import '../../model/entity/mark_entity.dart';
 

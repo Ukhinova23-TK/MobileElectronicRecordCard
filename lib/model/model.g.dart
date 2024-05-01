@@ -1,5 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
+// ignore_for_file: camel_case_types, prefer_const_declarations
+
 part of 'model.dart';
 
 // **************************************************************************
@@ -9402,7 +9404,6 @@ class Mark_control_type extends TableBase {
 
   @override
   Future<BoolResult> recover([bool recoverChilds = true]) {
-    // not implemented because:
     final msg =
         'set useSoftDeleting:true in the table definition of [Mark_control_type] to use this feature';
     throw UnimplementedError(msg);
@@ -9816,6 +9817,7 @@ class Mark_control_typeFilterBuilder extends ConjunctionBase {
   /// <returns>List<String>
   @override
   Map<String, dynamic> toListPrimaryKeySQL([bool buildParams = true]) {
+    // ignore: no_leading_underscores_for_local_identifiers
     final Map<String, dynamic> _retVal = <String, dynamic>{};
     if (buildParams) {
       buildParameters();

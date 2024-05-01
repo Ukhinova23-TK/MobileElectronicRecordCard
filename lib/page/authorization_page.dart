@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
-import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
-import 'package:mobile_electronic_record_card/repository/impl/storage_repository_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants/api_constants.dart';
@@ -44,7 +41,7 @@ class AuthorizationPage extends StatelessWidget {
 }
 
 class _Title extends StatelessWidget {
-  const _Title({super.key});
+  const _Title();
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +69,7 @@ class _Title extends StatelessWidget {
 }
 
 class _FormContent extends StatefulWidget {
-  const _FormContent({super.key});
+  const _FormContent();
 
   @override
   State<_FormContent> createState() => __FormContentState();
@@ -191,7 +188,7 @@ class __FormContentState extends State<_FormContent> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => RecordCardPage(bottomNavBar: false),
+            builder: (context) => const RecordCardPage(bottomNavBar: false),
           ),
           (Route<dynamic> route) => false);
     }

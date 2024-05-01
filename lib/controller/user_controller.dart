@@ -61,7 +61,9 @@ class UserController {
       await RoleController().getStudentTeacherRoleFromDb(user.roles!).then((roles){
         if(roles.isNotEmpty) {
           List<String> r = [];
-          roles.forEach((element)  => r.add(element!));
+          for (var element in roles) {
+            r.add(element!);
+          }
           prefs.setInt('rolesCount', roles.length);
           prefs.setStringList('rolesName', r);
         }
