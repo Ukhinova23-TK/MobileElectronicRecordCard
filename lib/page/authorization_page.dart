@@ -16,33 +16,30 @@ class AuthorizationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isSmallScreen = MediaQuery
-        .of(context)
-        .size
-        .width < 600;
+    final bool isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
         body: Center(
             child: isSmallScreen
                 ? const Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _Title(),
-                _FormContent(),
-              ],
-            )
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _Title(),
+                      _FormContent(),
+                    ],
+                  )
                 : Container(
-              padding: const EdgeInsets.all(32.0),
-              constraints: const BoxConstraints(maxWidth: 800),
-              child: const Row(
-                children: [
-                  Expanded(child: _Title()),
-                  Expanded(
-                    child: Center(child: _FormContent()),
-                  ),
-                ],
-              ),
-            )));
+                    padding: const EdgeInsets.all(32.0),
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: const Row(
+                      children: [
+                        Expanded(child: _Title()),
+                        Expanded(
+                          child: Center(child: _FormContent()),
+                        ),
+                      ],
+                    ),
+                  )));
   }
 }
 
@@ -64,9 +61,9 @@ class _Title extends StatelessWidget {
             style: isSmallScreen
                 ? Theme.of(context).textTheme.headlineSmall
                 : Theme.of(context)
-                .textTheme
-                .headlineMedium
-                ?.copyWith(color: Colors.black),
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(color: Colors.black),
           ),
         )
       ],
@@ -119,7 +116,6 @@ class __FormContentState extends State<_FormContent> {
                 if (value == null || value.isEmpty) {
                   return emptyPasswordAuthPage;
                 }
-
                 if (value.length < 12) {
                   return tinyPasswordAuthPage;
                 }
@@ -140,8 +136,7 @@ class __FormContentState extends State<_FormContent> {
                         _isPasswordVisible = !_isPasswordVisible;
                       });
                     },
-                  )
-              ),
+                  )),
               onChanged: (value) => password = value,
             ),
             _gap(),
@@ -174,39 +169,40 @@ class __FormContentState extends State<_FormContent> {
 
   Future<void> authenticate() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
-    UserController().authenticate(login!, password!).then((_) {
-      UserController().getByLoginFromServer(login!)
-          .then((value) {
+    UserController().authenticate(login!, password!).then((user) {
+      UserController().getByLoginFromServer(login!).then((value) {
         int? rolesCount = pref.getInt('rolesCount');
         List<String>? rolesName = pref.getStringList('rolesName');
-        if(rolesCount != null && rolesName != null){
+        if (rolesCount != null && rolesName != null) {
           routeToPage(rolesCount, rolesName);
         }
       });
+    }).catchError((onError) {
+      Log.e('Ошибка авторизации под учетными данными: $login/$password');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+            const SnackBar(content: Text('Неверная пара логин/пароль')));
     });
   }
 
   void routeToPage(int rolesCount, List<String> rolesName) {
-    if(rolesCount == 1 && rolesName.first == RoleName.student){
+    if (rolesCount == 1 && rolesName.first == RoleName.student) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (
-                context) => RecordCardPage(bottomNavBar: false),
+            builder: (context) => RecordCardPage(bottomNavBar: false),
           ),
-              (Route<dynamic> route) => false
-      );
+          (Route<dynamic> route) => false);
     }
-    if((rolesCount == 1 && rolesName.first == RoleName.teacher)
-    || rolesCount == 2) {
+    if ((rolesCount == 1 && rolesName.first == RoleName.teacher) ||
+        rolesCount == 2) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => SubjectPage(
-                bottomNavBar: rolesCount != 1),
+            builder: (context) => SubjectPage(bottomNavBar: rolesCount != 1),
           ),
-              (Route<dynamic> route) => false
-      );
+          (Route<dynamic> route) => false);
     }
   }
 

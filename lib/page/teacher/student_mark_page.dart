@@ -14,7 +14,6 @@ class StudentMarkPage extends StatefulWidget {
   State<StatefulWidget> createState() {
     return StudentMarkPageState();
   }
-  
 }
 
 class StudentMarkPageState extends State<StudentMarkPage> {
@@ -28,8 +27,18 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   @override
   void initState() {
     super.initState();
-    students = ControlTypeController().controlTypes;
-    marks = MarkController().getByControlTypeFromDb(2);
+    students = ControlTypeController().controlTypes.catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'student_mark_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
+    marks = MarkController().getByControlTypeFromDb(2).catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'student_mark_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
   }
 
   @override
@@ -64,19 +73,16 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   }
 
   synchronization() {
-    ControlTypeController().synchronization().then((_) =>
-    {
-      MarkController().synchronization().then((value) =>
-      {
-        MarkControlTypeController().synchronization().then((value) =>
-        {
-          setState(() {
-            students = ControlTypeController().controlTypes;
-            marks = MarkController().getByControlTypeFromDb(1);
-          })
-        })
-      })
-    });
+    ControlTypeController().synchronization().then((_) => {
+          MarkController().synchronization().then((value) => {
+                MarkControlTypeController().synchronization().then((value) => {
+                      setState(() {
+                        students = ControlTypeController().controlTypes;
+                        marks = MarkController().getByControlTypeFromDb(1);
+                      })
+                    })
+              })
+        });
   }
 
   ListView buildListView(AsyncSnapshot<List<ControlTypeEntity>> snapshot) {
@@ -97,8 +103,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
             title: Text(data.title ?? ""),
             leading: _buildSelectIcon(isSelectedData!, data),
           );
-        }
-    );
+        });
   }
 
   Future<void> buildMarks(List<MarkEntity>? marks) {
@@ -108,10 +113,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [
-              MarksModalWindow(marks)
-            ]
-        );
+            children: [MarksModalWindow(marks)]);
       },
     );
   }
@@ -158,10 +160,8 @@ class StudentMarkPageState extends State<StudentMarkPage> {
             ),
           ),
           FloatingActionButton(
-              onPressed: () => _openMarksModalWindow(),
-              child: const Icon(
-                Icons.assignment_turned_in_outlined
-              ),
+            onPressed: () => _openMarksModalWindow(),
+            child: const Icon(Icons.assignment_turned_in_outlined),
           )
         ],
       );
@@ -170,7 +170,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
     }
   }
 
-  void _openMarksModalWindow () {
+  void _openMarksModalWindow() {
     marks?.then((value) => buildMarks(value));
   }
 
@@ -183,9 +183,4 @@ class StudentMarkPageState extends State<StudentMarkPage> {
       isSelectItem = selectedItem.containsValue(true);
     });
   }
-
 }
-
-
-
-

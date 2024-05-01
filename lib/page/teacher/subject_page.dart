@@ -1,5 +1,6 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
@@ -30,7 +31,12 @@ class SubjectPageState extends State<SubjectPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     bottomNavBar = widget.bottomNavBar ?? false;
-    subjects = SubjectController().subjects;
+    subjects = SubjectController().subjects.catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'subject_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
   }
 
   @override
@@ -66,17 +72,13 @@ class SubjectPageState extends State<SubjectPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if(bottomNavBar){
+    if (bottomNavBar) {
       return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline),
-              label: 'Преподаватель'
-          ),
+              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Студент'
-          ),
+              icon: Icon(Icons.school_outlined), label: 'Студент'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
@@ -92,10 +94,8 @@ class SubjectPageState extends State<SubjectPage> {
       _selectedIndex = index;
     });
     BottomNavBarChoose(
-        index: index,
-        context: context,
-        bottomNavBar: bottomNavBar
-    ).changeItem();
+            index: index, context: context, bottomNavBar: bottomNavBar)
+        .changeItem();
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {
@@ -107,16 +107,16 @@ class SubjectPageState extends State<SubjectPage> {
     );
   }
 
-  ListView search (AsyncSnapshot<List<SubjectEntity>> snapshot) {
+  ListView search(AsyncSnapshot<List<SubjectEntity>> snapshot) {
     List<SubjectEntity> list = [];
-    if(searchText.value == ''){
+    if (searchText.value == '') {
       snapshot.data?.forEach((e) => list.add(e));
       return buildListView(list);
     }
-    if(snapshot.hasData){
+    if (snapshot.hasData) {
       //list = snapshot.data!.where((e) => e.name!.toLowerCase().contains(searchText.value.toLowerCase())).toList();
       snapshot.data?.forEach((e) {
-        if(e.name!.toLowerCase().contains(searchText.value.toLowerCase())) {
+        if (e.name!.toLowerCase().contains(searchText.value.toLowerCase())) {
           list.add(e);
         }
       });
@@ -138,18 +138,16 @@ class SubjectPageState extends State<SubjectPage> {
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
             return SubjectList(snapshot[index].name ?? "");
-          }
-      );
+          });
     }
   }
 
   synchronization() {
-    SubjectController().synchronization().then((_) =>
-    {
-      setState(() {
-        subjects = SubjectController().subjects;
-      })
-    });
+    SubjectController().synchronization().then((_) => {
+          setState(() {
+            subjects = SubjectController().subjects;
+          })
+        });
   }
 }
 

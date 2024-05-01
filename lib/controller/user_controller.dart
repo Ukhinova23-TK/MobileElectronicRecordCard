@@ -70,9 +70,8 @@ class UserController {
     return user;
   }
 
-
   Future<void> authenticate(String login, String password) async {
-    UserHttpClientImpl().authenticate(
+    await UserHttpClientImpl().authenticate(
         AuthenticateEntity(login, password).toJson())
         .then((value) {
       StorageRepositoryImpl().saveSecureData(AuthenticateEntity

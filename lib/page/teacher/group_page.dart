@@ -1,5 +1,6 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
@@ -33,7 +34,12 @@ class GroupPageState extends State<GroupPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     bottomNavBar = widget.bottomNavBar ?? false;
-    groups = GroupController().groups;
+    groups = GroupController().groups.catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'group_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
   }
 
   @override
@@ -41,46 +47,42 @@ class GroupPageState extends State<GroupPage> {
     const title = titleGroupPage;
 
     return Scaffold(
-        appBar: AppBarWithSearchSwitch(
-          onChanged: (text) {
-            searchText.value = text;
-            setState(() {
-              groups = GroupController().groups;
-            });
-          },
-          appBarBuilder: (context) {
-            return AppBar(
-              backgroundColor: appbarColor,
-              title: const Text(title),
-              actions: [
-                const AppBarSearchButton(
-                  buttonHasTwoStates: false,
-                ),
-                IconButton(
-                  onPressed: () => synchronization(),
-                  icon: const Icon(Icons.access_time),
-                )
-              ],
-            );
-          },
-        ),
-        body: buildFutureBuilder(),
+      appBar: AppBarWithSearchSwitch(
+        onChanged: (text) {
+          searchText.value = text;
+          setState(() {
+            groups = GroupController().groups;
+          });
+        },
+        appBarBuilder: (context) {
+          return AppBar(
+            backgroundColor: appbarColor,
+            title: const Text(title),
+            actions: [
+              const AppBarSearchButton(
+                buttonHasTwoStates: false,
+              ),
+              IconButton(
+                onPressed: () => synchronization(),
+                icon: const Icon(Icons.access_time),
+              )
+            ],
+          );
+        },
+      ),
+      body: buildFutureBuilder(),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if(bottomNavBar){
+    if (bottomNavBar) {
       return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline),
-              label: 'Преподаватель'
-          ),
+              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Студент'
-          ),
+              icon: Icon(Icons.school_outlined), label: 'Студент'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
@@ -96,10 +98,8 @@ class GroupPageState extends State<GroupPage> {
       _selectedIndex = index;
     });
     BottomNavBarChoose(
-        index: index,
-        context: context,
-        bottomNavBar: bottomNavBar
-    ).changeItem();
+            index: index, context: context, bottomNavBar: bottomNavBar)
+        .changeItem();
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder() {
@@ -111,17 +111,18 @@ class GroupPageState extends State<GroupPage> {
     );
   }
 
-  ListView search (AsyncSnapshot<List<GroupEntity>> snapshot) {
+  ListView search(AsyncSnapshot<List<GroupEntity>> snapshot) {
     List<GroupEntity> list = [];
-    if(searchText.value == ''){
+    if (searchText.value == '') {
       snapshot.data?.forEach((e) => list.add(e));
       return buildListView(list);
     }
-    if(snapshot.hasData) {
+    if (snapshot.hasData) {
       snapshot.data?.forEach((e) {
-        if (e.name!.toLowerCase().contains(searchText.value.toLowerCase())
-            || ((e.fullName != null)
-                && (e.fullName!.toLowerCase()
+        if (e.name!.toLowerCase().contains(searchText.value.toLowerCase()) ||
+            ((e.fullName != null) &&
+                (e.fullName!
+                    .toLowerCase()
                     .contains(searchText.value.toLowerCase())))) {
           list.add(e);
         }
@@ -144,23 +145,18 @@ class GroupPageState extends State<GroupPage> {
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
             return GroupList(
-                snapshot[index].name ?? "",
-                snapshot[index].fullName ?? ""
-            );
-          }
-      );
+                snapshot[index].name ?? "", snapshot[index].fullName ?? "");
+          });
     }
   }
 
   synchronization() {
-    GroupController().synchronization().then((_) =>
-    {
-      setState(() {
-        groups = GroupController().groups;
-      })
-    });
+    GroupController().synchronization().then((_) => {
+          setState(() {
+            groups = GroupController().groups;
+          })
+        });
   }
-
 }
 
 class GroupList extends StatelessWidget {

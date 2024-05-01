@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
@@ -35,8 +36,18 @@ class _RecordCardPageState extends State<RecordCardPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 1;
     bottomNavBar = widget.bottomNavBar ?? false;
-    subjects = SubjectController().subjects;
-    controlType = ControlTypeController().getByIdFromServer(1);
+    subjects = SubjectController().subjects.catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'record_card_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
+    controlType = ControlTypeController().getByIdFromServer(1).catchError((onError) {
+      Log.e('Ошибка загрузки данных', tag: 'record_card_page');
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
+    });
   }
 
   @override
