@@ -1,10 +1,10 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/provider/group_provider.dart';
+import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
   final int? selectedItemNavBar;
@@ -19,7 +19,6 @@ class GroupPage extends StatefulWidget {
 }
 
 class GroupPageState extends State<GroupPage> {
-  Future<List<GroupEntity>>? groups;
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
   late bool bottomNavBar;
@@ -29,45 +28,41 @@ class GroupPageState extends State<GroupPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     bottomNavBar = widget.bottomNavBar ?? false;
-    groups = GroupController().groups.catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'group_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
+    Provider.of<GroupProvider>(context, listen: false).initGroups();
   }
 
   @override
   Widget build(BuildContext context) {
     const title = titleGroupPage;
 
-    return Scaffold(
-      appBar: AppBarWithSearchSwitch(
-        onChanged: (text) {
-          searchText.value = text;
-          setState(() {
-            groups = GroupController().groups;
-          });
-        },
-        appBarBuilder: (context) {
-          return AppBar(
-            backgroundColor: appbarColor,
-            title: const Text(title),
-            actions: [
-              const AppBarSearchButton(
-                buttonHasTwoStates: false,
-              ),
-              IconButton(
-                onPressed: () => synchronization(),
-                icon: const Icon(Icons.access_time),
-              )
-            ],
-          );
-        },
-      ),
-      body: buildFutureBuilder(),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
+    return ChangeNotifierProvider(
+        create: (_) => null,
+        child: Scaffold(
+          appBar: AppBarWithSearchSwitch(
+            onChanged: (text) {
+              searchText.value = text;
+              setState(() {
+                Provider.of<GroupProvider>(context, listen: false)
+                    .fetchGroups();
+              });
+            },
+            appBarBuilder: (context) {
+              return AppBar(
+                backgroundColor: appbarColor,
+                title: const Text(title),
+                actions: const [
+                  AppBarSearchButton(
+                    buttonHasTwoStates: false,
+                  )
+                ],
+              );
+            },
+          ),
+          body: Consumer<GroupProvider>(
+              builder: (context, groupProvider, _) =>
+                  buildFutureBuilder(groupProvider)),
+          bottomNavigationBar: buildBottomNavigationBar(),
+        ));
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
@@ -97,9 +92,10 @@ class GroupPageState extends State<GroupPage> {
         .changeItem();
   }
 
-  FutureBuilder<List<GroupEntity>> buildFutureBuilder() {
+  FutureBuilder<List<GroupEntity>> buildFutureBuilder(
+      GroupProvider groupProvider) {
     return FutureBuilder(
-      future: groups,
+      future: groupProvider.groups,
       builder: (context, snapshot) {
         return search(snapshot);
       },
@@ -143,14 +139,6 @@ class GroupPageState extends State<GroupPage> {
                 snapshot[index].name ?? "", snapshot[index].fullName ?? "");
           });
     }
-  }
-
-  synchronization() {
-    GroupController().synchronization().then((_) => {
-          setState(() {
-            groups = GroupController().groups;
-          })
-        });
   }
 }
 

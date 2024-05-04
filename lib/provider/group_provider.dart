@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/controller/group_controller.dart';
+import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 
-import '../model/entity/group_entity.dart';
+class GroupProvider extends ChangeNotifier {
+  Future<List<GroupEntity>>? _groups;
 
-class GroupProvider extends InheritedWidget {
-  final _groups = <GroupEntity>[];
+  Future<List<GroupEntity>>? get groups => _groups;
 
-  GroupProvider({super.key, required super.child});
+  void initGroups() => _groups = GroupController().groups;
 
-  @override
-  bool updateShouldNotify(InheritedWidget oldWidget) {
-    return false;
-  }
-
-  static List<GroupEntity>? of(BuildContext context){
-    final provider = context.dependOnInheritedWidgetOfExactType<GroupProvider>();
-    return provider?._groups;
-  }
+  void fetchGroups() async => notifyListeners();
 }
