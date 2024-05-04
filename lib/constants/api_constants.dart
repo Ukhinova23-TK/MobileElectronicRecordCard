@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 // Строковые переменные для отправки запроса
@@ -19,9 +17,14 @@ const String subjectUrl = 'api/subjects';
 
 const String userUrl = 'api/users';
 const String userRoleUrl = '/roles';
+const String userByLoginUrl = '/login';
 const String userAuthenticateUrl = '/authenticate';
 
 const String roleUrl = 'api/roles';
+
+const String usctUrl = 'api/user-subject-control-types';
+const String usctFilterUrl = '/filter';
+const String usctFilterV2Url = '/filter/v2';
 
 const Map<String, String> headers = {
   "Accept": "application/json",

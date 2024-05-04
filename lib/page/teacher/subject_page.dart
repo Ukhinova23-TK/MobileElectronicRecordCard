@@ -1,11 +1,11 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
+import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
+import 'package:provider/provider.dart';
 
 class SubjectPage extends StatefulWidget {
   final int? selectedItemNavBar;
@@ -20,7 +20,6 @@ class SubjectPage extends StatefulWidget {
 }
 
 class SubjectPageState extends State<SubjectPage> {
-  Future<List<SubjectEntity>>? subjects;
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
   late bool bottomNavBar;
@@ -30,44 +29,40 @@ class SubjectPageState extends State<SubjectPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     bottomNavBar = widget.bottomNavBar ?? false;
-    subjects = SubjectController().subjects.catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'subject_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
+    Provider.of<SubjectProvider>(context, listen: false).initSubjects();
   }
 
   @override
   Widget build(BuildContext context) {
     const title = titleSubjectPage;
-    return Scaffold(
-      appBar: AppBarWithSearchSwitch(
-        onChanged: (text) {
-          searchText.value = text;
-          setState(() {
-            subjects = SubjectController().subjects;
-          });
-        },
-        appBarBuilder: (context) {
-          return AppBar(
-            backgroundColor: appbarColor,
-            title: const Text(title),
-            actions: [
-              const AppBarSearchButton(
-                buttonHasTwoStates: false,
-              ),
-              IconButton(
-                onPressed: () => synchronization(),
-                icon: const Icon(Icons.access_time),
-              )
-            ],
-          );
-        },
-      ),
-      body: buildFutureBuilder(),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
+    return ChangeNotifierProvider(
+        create: (_) => null,
+        child: Scaffold(
+          appBar: AppBarWithSearchSwitch(
+            onChanged: (text) {
+              searchText.value = text;
+              setState(() {
+                Provider.of<SubjectProvider>(context, listen: false)
+                    .fetchSubjects();
+              });
+            },
+            appBarBuilder: (context) {
+              return AppBar(
+                backgroundColor: appbarColor,
+                title: const Text(title),
+                actions: const [
+                  AppBarSearchButton(
+                    buttonHasTwoStates: false,
+                  )
+                ],
+              );
+            },
+          ),
+          body: Consumer<SubjectProvider>(
+              builder: (context, subjectProvider, _) =>
+                  buildFutureBuilder(subjectProvider)),
+          bottomNavigationBar: buildBottomNavigationBar(),
+        ));
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
@@ -97,9 +92,10 @@ class SubjectPageState extends State<SubjectPage> {
         .changeItem();
   }
 
-  FutureBuilder<List<SubjectEntity>> buildFutureBuilder() {
+  FutureBuilder<List<SubjectEntity>> buildFutureBuilder(
+      SubjectProvider subjectProvider) {
     return FutureBuilder(
-      future: subjects,
+      future: subjectProvider.subjects,
       builder: (context, snapshot) {
         return search(snapshot);
       },
@@ -113,12 +109,10 @@ class SubjectPageState extends State<SubjectPage> {
       return buildListView(list);
     }
     if (snapshot.hasData) {
-      //list = snapshot.data!.where((e) => e.name!.toLowerCase().contains(searchText.value.toLowerCase())).toList();
-      snapshot.data?.forEach((e) {
-        if (e.name!.toLowerCase().contains(searchText.value.toLowerCase())) {
-          list.add(e);
-        }
-      });
+      list = snapshot.data!
+          .where((e) =>
+              e.name!.toLowerCase().contains(searchText.value.toLowerCase()))
+          .toList();
     }
     return buildListView(list);
   }
@@ -139,14 +133,6 @@ class SubjectPageState extends State<SubjectPage> {
             return SubjectList(snapshot[index].name ?? "");
           });
     }
-  }
-
-  synchronization() {
-    SubjectController().synchronization().then((_) => {
-          setState(() {
-            subjects = SubjectController().subjects;
-          })
-        });
   }
 }
 
