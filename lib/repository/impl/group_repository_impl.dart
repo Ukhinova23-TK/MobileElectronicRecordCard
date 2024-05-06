@@ -32,11 +32,15 @@ class GroupRepositoryImpl implements GroupRepository {
   Future<int>? getMaxVersion() async {
     List<Student_group> studentGroups =
         await Student_group().select().orderByDesc('version').toList();
-    List<int> versions = [];
-    for (var element in studentGroups) {
-      versions.add(element.version ?? 0);
+    if (studentGroups.isEmpty) {
+      return 0;
+    } else {
+      List<int> versions = [];
+      for (var element in studentGroups) {
+        versions.add(element.version ?? 0);
+      }
+      versions.sort();
+      return versions.last;
     }
-    versions.sort();
-    return versions.last;
   }
 }

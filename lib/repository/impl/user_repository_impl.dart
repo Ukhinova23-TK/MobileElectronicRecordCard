@@ -35,11 +35,15 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<int>? getMaxVersion() async {
     List<User> users = await User().select().orderByDesc('version').toList();
-    List<int> versions = [];
-    for (var element in users) {
-      versions.add(element.version ?? 0);
+    if (users.isEmpty) {
+      return 0;
+    } else {
+      List<int> versions = [];
+      for (var element in users) {
+        versions.add(element.version ?? 0);
+      }
+      versions.sort();
+      return versions.last;
     }
-    versions.sort();
-    return versions.last;
   }
 }

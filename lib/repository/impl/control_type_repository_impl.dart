@@ -37,11 +37,15 @@ class ControlTypeRepositoryImpl implements ControlTypeRepository {
   Future<int>? getMaxVersion() async {
     List<Control_type> controlTypes =
         await Control_type().select().orderByDesc('version').toList();
-    List<int> versions = [];
-    for (var element in controlTypes) {
-      versions.add(element.version ?? 0);
+    if (controlTypes.isEmpty) {
+      return 0;
+    } else {
+      List<int> versions = [];
+      for (var element in controlTypes) {
+        versions.add(element.version ?? 0);
+      }
+      versions.sort();
+      return versions.last;
     }
-    versions.sort();
-    return versions.last;
   }
 }

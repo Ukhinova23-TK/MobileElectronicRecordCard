@@ -32,11 +32,15 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
   Future<int>? getMaxVersion() async {
     List<Student_mark> studentMarks =
         await Student_mark().select().orderByDesc('version').toList();
-    List<int> versions = [];
-    for (var element in studentMarks) {
-      versions.add(element.version ?? 0);
+    if (studentMarks.isEmpty) {
+      return 0;
+    } else {
+      List<int> versions = [];
+      for (var element in studentMarks) {
+        versions.add(element.version ?? 0);
+      }
+      versions.sort();
+      return versions.last;
     }
-    versions.sort();
-    return versions.last;
   }
 }

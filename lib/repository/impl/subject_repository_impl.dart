@@ -32,11 +32,15 @@ class SubjectRepositoryImpl implements SubjectRepository {
   Future<int>? getMaxVersion() async {
     List<Subject> subjects =
         await Subject().select().orderByDesc('version').toList();
-    List<int> versions = [];
-    for (var element in subjects) {
-      versions.add(element.version ?? 0);
+    if (subjects.isEmpty) {
+      return 0;
+    } else {
+      List<int> versions = [];
+      for (var element in subjects) {
+        versions.add(element.version ?? 0);
+      }
+      versions.sort();
+      return versions.last;
     }
-    versions.sort();
-    return versions.last;
   }
 }
