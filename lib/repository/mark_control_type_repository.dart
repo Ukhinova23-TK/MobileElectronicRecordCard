@@ -1,7 +1,7 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:sqfentity_gen/sqfentity_gen.dart';
 
-abstract class MarkControlTypeRepository{
+abstract class MarkControlTypeRepository {
   Future<BoolResult?> save(Mark_control_type mark);
 
   Future<List<Mark_control_type>> getAll();

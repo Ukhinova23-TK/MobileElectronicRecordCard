@@ -6,11 +6,11 @@ class GroupMapper implements Mapper<GroupEntity, Student_group> {
   @override
   GroupEntity toEntity(Student_group model) {
     return GroupEntity(
-      id: model.id,
-      name: model.name,
-      fullName: model.full_name,
-      admissionDate: model.admission_date
-    );
+        id: model.id,
+        name: model.name,
+        fullName: model.full_name,
+        admissionDate: model.admission_date,
+        version: model.version);
   }
 
   @override
@@ -19,8 +19,7 @@ class GroupMapper implements Mapper<GroupEntity, Student_group> {
         id: entity.id,
         name: entity.name,
         full_name: entity.fullName,
-        admission_date: entity.admissionDate
-    );
+        admission_date: entity.admissionDate,
+        version: entity.version);
   }
-
 }

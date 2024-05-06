@@ -29,9 +29,7 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
     return Column(
       children: [
         const Row(
-          children: [
-            Text('')
-          ],
+          children: [Text('')],
         ),
         ListView.builder(
           scrollDirection: Axis.vertical,

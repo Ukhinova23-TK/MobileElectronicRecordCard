@@ -8,21 +8,10 @@ import '../mark_http_client.dart';
 
 class MarkHttpClientImpl implements MarkHttpClient {
   @override
-  Future<List<MarkEntity>> getByControlTypeId(int id) async {
-    final response = await http.get(
-        Uri.parse('$resourceUrl$markUrl$markByControlTypeIdUrl/$id'));
-    return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) =>
-        MarkEntity.fromJson(e)).toList();
-  }
-
-  @override
   Future<List<MarkEntity>> getAll() async {
-    final response = await http.get(
-      Uri.parse(resourceUrl + markUrl));
+    final response = await http.get(Uri.parse(resourceUrl + markUrl));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) =>
-        MarkEntity.fromJson(e)).toList();
+        .map((e) => MarkEntity.fromJson(e))
+        .toList();
   }
-
 }

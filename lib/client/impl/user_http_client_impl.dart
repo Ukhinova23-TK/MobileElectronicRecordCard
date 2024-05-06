@@ -9,15 +9,6 @@ import '../user_http_client.dart';
 
 class UserHttpClientImpl implements UserHttpClient {
   @override
-  Future<List<RoleEntity>> getUserRoles(int id) async {
-    final response =
-        await http.get(Uri.parse('$resourceUrl$userUrl/$id$userRoleUrl'));
-    return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) => RoleEntity.fromJson(e))
-        .toList();
-  }
-
-  @override
   Future<List<UserEntity>> getAll() async {
     final response = await http.get(Uri.parse('$resourceUrl$userUrl'));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)

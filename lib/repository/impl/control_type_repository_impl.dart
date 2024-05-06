@@ -3,46 +3,45 @@ import 'package:mobile_electronic_record_card/model/model.dart';
 import '../control_type_repository.dart';
 
 class ControlTypeRepositoryImpl implements ControlTypeRepository {
-
   @override
   Future<int?> save(Control_type controlType) async {
-    return await controlType
-        .save();
+    return await controlType.save();
   }
 
   @override
   Future<void> delete(int id) async {
-    await Control_type()
-        .select()
-        .id
-        .equals(id)
-        .delete();
+    await Control_type().select().id.equals(id).delete();
   }
 
   @override
   Future<Control_type?> getControlType(int id) async {
-    return await Control_type()
-        .getById(id);
+    return await Control_type().getById(id);
   }
-  
+
   @override
   Future<List<Mark>?> getMarks(int id) async {
-    return await Control_type(id: id)
-        .getMarks()
-        ?.toList();
+    return await Control_type(id: id).getMarks()?.toList();
   }
 
   @override
   Future<List<Control_type>> getAll() async {
-    return await Control_type()
-        .select()
-        .toList();
+    return await Control_type().select().toList();
   }
 
   @override
   Future<void> deleteAll() async {
-      await Control_type()
-          .select()
-          .delete();
+    await Control_type().select().delete();
+  }
+
+  @override
+  Future<int>? getMaxVersion() async {
+    List<Control_type> controlTypes =
+        await Control_type().select().orderByDesc('version').toList();
+    List<int> versions = [];
+    for (var element in controlTypes) {
+      versions.add(element.version ?? 0);
+    }
+    versions.sort();
+    return versions.last;
   }
 }

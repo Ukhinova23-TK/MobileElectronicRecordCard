@@ -8,27 +8,7 @@ import 'package:mobile_electronic_record_card/model/entity/user_subject_control_
 class UserSubjectControlTypeHttpClientImpl
     implements UserSubjectControlTypeHttpClient {
   @override
-  Future<List<UserSubjectControlTypeEntity>> getAll() async {
-    final response = await http.get(Uri.parse('$resourceUrl$usctUrl'));
-    return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) => UserSubjectControlTypeEntity.fromJson(e))
-        .toList();
-  }
-
-  @override
-  Future<List<UserSubjectControlTypeEntity>> getByCriteria(
-      UserSubjectControlTypeEntity userSubjectControlTypeEntity) async {
-    final response = await http.post(
-        Uri.parse('$resourceUrl$usctUrl$usctFilterUrl'),
-        headers: headers,
-        body: jsonEncode(userSubjectControlTypeEntity));
-    return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) => UserSubjectControlTypeEntity.fromJson(e))
-        .toList();
-  }
-
-  @override
-  Future<List<UserSubjectControlTypeEntity>> getByCriteriaV2(
+  Future<List<UserSubjectControlTypeEntity>> getAll(
       Map<String, dynamic> criteria) async {
     final response = await http.post(
         Uri.parse('$resourceUrl$usctUrl$usctFilterV2Url'),

@@ -10,4 +10,6 @@ abstract class UserSubjectControlTypeRepository {
   Future<void> delete(int id);
 
   Future<void> deleteAll();
+
+  Future<int>? getMaxVersion();
 }

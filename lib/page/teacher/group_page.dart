@@ -109,15 +109,14 @@ class GroupPageState extends State<GroupPage> {
       return buildListView(list);
     }
     if (snapshot.hasData) {
-      snapshot.data?.forEach((e) {
-        if (e.name!.toLowerCase().contains(searchText.value.toLowerCase()) ||
-            ((e.fullName != null) &&
-                (e.fullName!
-                    .toLowerCase()
-                    .contains(searchText.value.toLowerCase())))) {
-          list.add(e);
-        }
-      });
+      snapshot.data!
+          .where((e) =>
+              e.name!.toLowerCase().contains(searchText.value.toLowerCase()) ||
+              ((e.fullName != null) &&
+                  (e.fullName!
+                      .toLowerCase()
+                      .contains(searchText.value.toLowerCase()))))
+          .toList();
     }
     return buildListView(list);
   }

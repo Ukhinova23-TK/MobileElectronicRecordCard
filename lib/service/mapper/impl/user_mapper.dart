@@ -7,25 +7,24 @@ class UserMapper implements Mapper<UserEntity, User> {
   @override
   UserEntity toEntity(User model) {
     return UserEntity(
-      id: model.id,
-      login: model.login,
-      lastName: model.last_name,
-      firstName: model.first_name,
-      middleName: model.middle_name,
-      groupId: model.groupId
-    );
+        id: model.id,
+        login: model.login,
+        lastName: model.last_name,
+        firstName: model.first_name,
+        middleName: model.middle_name,
+        groupId: model.groupId,
+        version: model.version);
   }
 
   @override
   User toModel(UserEntity entity) {
     return User(
-      id: entity.id,
-      login: entity.login,
-      last_name: entity.lastName,
-      first_name: entity.firstName,
-      middle_name: entity.middleName,
-      groupId: entity.groupId
-    );
+        id: entity.id,
+        login: entity.login,
+        last_name: entity.lastName,
+        first_name: entity.firstName,
+        middle_name: entity.middleName,
+        groupId: entity.groupId,
+        version: entity.version);
   }
-
 }

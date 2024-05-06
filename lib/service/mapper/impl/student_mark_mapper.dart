@@ -7,21 +7,20 @@ class StudentMarkMapper implements Mapper<StudentMarkEntity, Student_mark> {
   @override
   StudentMarkEntity toEntity(Student_mark model) {
     return StudentMarkEntity(
-      id: model.id,
-      markId: model.mark_id,
-      userSubjectControlTypeId: model.user_subject_control_type_id,
-      completionDate: model.completion_date
-    );
+        id: model.id,
+        markId: model.mark_id,
+        userSubjectControlTypeId: model.user_subject_control_type_id,
+        completionDate: model.completion_date,
+        version: model.version);
   }
 
   @override
   Student_mark toModel(StudentMarkEntity entity) {
     return Student_mark(
-      id: entity.id,
-      completion_date: entity.completionDate,
-      mark_id: entity.markId,
-      user_subject_control_type_id: entity.userSubjectControlTypeId
-    );
+        id: entity.id,
+        completion_date: entity.completionDate,
+        mark_id: entity.markId,
+        user_subject_control_type_id: entity.userSubjectControlTypeId,
+        version: entity.version);
   }
-
 }

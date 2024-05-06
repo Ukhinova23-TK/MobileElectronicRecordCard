@@ -2,23 +2,22 @@ class MarkControlTypeEntity {
   int? markId;
   int? controlTypeId;
 
-  MarkControlTypeEntity({
-    this.markId,
-    this.controlTypeId
-  });
+  MarkControlTypeEntity({this.markId, this.controlTypeId});
 
-  static MarkControlTypeEntity fromJson(Map<String, dynamic> json){
+  static MarkControlTypeEntity fromJson(Map<String, dynamic> json) {
     var markId = json['mark_id'];
     var controlTypeId = json['control_type_id'];
     return MarkControlTypeEntity(markId: markId, controlTypeId: controlTypeId);
   }
 
-  static List<MarkControlTypeEntity> fromJsonWithMarks(Map<String, dynamic> json) {
+  static List<MarkControlTypeEntity> fromJsonWithMarks(
+      Map<String, dynamic> json) {
     List<MarkControlTypeEntity> list = [];
     var markId = json['markIds'];
     var controlTypeId = json['controlTypeId'];
     markId.forEach((element) {
-      list.add(MarkControlTypeEntity(markId: element, controlTypeId: controlTypeId));
+      list.add(
+          MarkControlTypeEntity(markId: element, controlTypeId: controlTypeId));
     });
     return list;
   }

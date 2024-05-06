@@ -6,18 +6,11 @@ import '../mapper.dart';
 class RoleMapper implements Mapper<RoleEntity, Role> {
   @override
   RoleEntity toEntity(Role model) {
-    return RoleEntity(
-      id: model.id,
-      name: model.name
-    );
+    return RoleEntity(id: model.id, name: model.name);
   }
 
   @override
   Role toModel(RoleEntity entity) {
-    return Role(
-      id: entity.id,
-      name: entity.name
-    );
+    return Role(id: entity.id, name: entity.name);
   }
-
 }

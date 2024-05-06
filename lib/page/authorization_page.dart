@@ -141,16 +141,16 @@ class __FormContentState extends State<_FormContent> {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4)
-                  ),
-                  backgroundColor: greatMarkColor
-                ),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4)
+                    ),
+                    backgroundColor: greatMarkColor),
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
                   child: Text(
                     buttonAuthPage,
-                    style: TextStyle(fontSize: 16,
+                    style: TextStyle(
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: blackColor),
                   ),

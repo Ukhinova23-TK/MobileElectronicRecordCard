@@ -11,23 +11,7 @@ class ControlTypeHttpClientImpl implements ControlTypeHttpClient {
   Future<List<ControlTypeEntity>> getAll() async {
     final response = await http.get(Uri.parse(resourceUrl + controlTypeUrl));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) =>
-        ControlTypeEntity.fromJson(e)).toList();
+        .map((e) => ControlTypeEntity.fromJson(e))
+        .toList();
   }
-
-  @override
-  Future<ControlTypeEntity> getById(int id) async {
-    final response = await http.get(Uri.parse('$resourceUrl$controlTypeUrl/$id'));
-    return ControlTypeEntity
-        .fromJson(json.decode(utf8.decode(response.bodyBytes)));
-  }
-
-  @override
-  Future<ControlTypeEntity> getByName(String name) async {
-    final response = await http.get(
-        Uri.parse('$resourceUrl$controlTypeUrl$controlTypeGetByNameUrl/$name'));
-    return ControlTypeEntity
-        .fromJson(json.decode(utf8.decode(response.bodyBytes)));
-  }
-
 }

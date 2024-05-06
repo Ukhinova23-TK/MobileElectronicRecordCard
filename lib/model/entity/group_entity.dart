@@ -3,20 +3,23 @@ class GroupEntity {
   String? name;
   String? fullName;
   DateTime? admissionDate;
+  int? version;
 
-  GroupEntity({
-    this.id,
-    this.name,
-    this.fullName,
-    this.admissionDate,
-  });
+  GroupEntity(
+      {this.id, this.name, this.fullName, this.admissionDate, this.version});
 
-  static GroupEntity fromJson(Map<String, dynamic> json){
+  static GroupEntity fromJson(Map<String, dynamic> json) {
     var id = json['id'];
     var name = json['name'];
     var fullName = json['fullName'];
     var admissionDate = json['admissionDate'];
-    return GroupEntity(id: id, name: name, fullName: fullName, admissionDate: admissionDate);
+    var version = json['version'];
+    return GroupEntity(
+        id: id,
+        name: name,
+        fullName: fullName,
+        admissionDate: admissionDate,
+        version: version);
   }
 
   static Map<String, dynamic> toJson(GroupEntity group) {
@@ -25,6 +28,7 @@ class GroupEntity {
       'name': group.name,
       'fullName': group.fullName,
       'admissionDate': group.admissionDate,
+      'version': group.version
     };
   }
 }

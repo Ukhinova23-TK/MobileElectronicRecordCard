@@ -9,11 +9,9 @@ import '../../constants/api_constants.dart';
 class RoleHttpClientImpl implements RoleHttpClient {
   @override
   Future<List<RoleEntity>> getAll() async {
-    final response = await http.get(
-        Uri.parse('$resourceUrl$roleUrl'));
+    final response = await http.get(Uri.parse('$resourceUrl$roleUrl'));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) =>
-        RoleEntity.fromJson(e)).toList();
+        .map((e) => RoleEntity.fromJson(e))
+        .toList();
   }
-
 }

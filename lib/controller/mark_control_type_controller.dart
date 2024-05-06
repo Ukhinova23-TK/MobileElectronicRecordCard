@@ -11,31 +11,33 @@ import '../service/mapper/mapper.dart';
 class MarkControlTypeController {
   Future<List<MarkControlTypeEntity>> get markControlTypes => getAllFromDb();
 
-  Future<void> synchronization () async {
-    await getAllFromServer().then((value) =>
-        setAllToDb(value)
+  Future<void> synchronization() async {
+    await getAllFromServer()
+        .then((value) => setAllToDb(value)
             .then((value) =>
-            Log.i('Data received into db', tag: 'mark_controller'))
+                Log.i('Data received into db', tag: 'mark_controller'))
             .catchError((e) => Log.e(e, tag: 'mark_controller')))
         .catchError((e) => Log.e(e, tag: 'mark_controller'));
   }
 
-  Future<List<MarkControlTypeEntity>> getAllFromServer () {
+  Future<List<MarkControlTypeEntity>> getAllFromServer() {
     return MarkControlTypeHttpClientImpl().getAll();
   }
 
   Future<List<MarkControlTypeEntity>> getAllFromDb() async {
-    Mapper<MarkControlTypeEntity, Mark_control_type> markControlTypeMapper = MarkControlTypeMapper();
+    Mapper<MarkControlTypeEntity, Mark_control_type> markControlTypeMapper =
+        MarkControlTypeMapper();
     return (await MarkControlTypeRepositoryImpl().getAll())
-        .map((markControlType) => markControlTypeMapper.toEntity(markControlType)).toList();
+        .map((markControlType) =>
+            markControlTypeMapper.toEntity(markControlType))
+        .toList();
   }
 
-  Future<void> setAllToDb (List<MarkControlTypeEntity> markControlTypes) async {
-    MarkControlTypeRepository controlTypeRepository = MarkControlTypeRepositoryImpl();
+  Future<void> setAllToDb(List<MarkControlTypeEntity> markControlTypes) async {
+    MarkControlTypeRepository controlTypeRepository =
+        MarkControlTypeRepositoryImpl();
     for (var element in markControlTypes) {
-      controlTypeRepository
-          .save(MarkControlTypeMapper().toModel(element));
+      controlTypeRepository.save(MarkControlTypeMapper().toModel(element));
     }
   }
-
 }

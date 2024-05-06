@@ -46,7 +46,7 @@ class RoleRepositoryImpl implements RoleRepository {
   }
 
   @override
-  Future<Role?> getNameById(int id) async {
+  Future<Role?> getByUserId(int id) async {
     return await Role()
         .select(columnsToSelect: ["name"])
         .where('id=$id')

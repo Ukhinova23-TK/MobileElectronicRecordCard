@@ -9,17 +9,16 @@ class ControlTypeMapper implements Mapper<ControlTypeEntity, Control_type> {
     return ControlTypeEntity(
         id: model.id,
         name: model.name,
-        title: model.title
-    );
+        title: model.title,
+        version: model.version);
   }
 
   @override
   Control_type toModel(ControlTypeEntity entity) {
     return Control_type(
-      id: entity.id,
-      name: entity.name,
-      title: entity.title
-    );
+        id: entity.id,
+        name: entity.name,
+        title: entity.title,
+        version: entity.version);
   }
-
 }

@@ -12,10 +12,10 @@ class RoleController {
   Future<List<RoleEntity>> get marks => getAllFromDb();
 
   Future<void> synchronization() async {
-    await getAllFromServer().then((value) =>
-        setAllToDb(value)
+    await getAllFromServer()
+        .then((value) => setAllToDb(value)
             .then((value) =>
-            Log.i('Data received into db', tag: 'role_controller'))
+                Log.i('Data received into db', tag: 'role_controller'))
             .catchError((e) => Log.e(e, tag: 'role_controller')))
         .catchError((e) => Log.e(e, tag: 'role_controller'));
   }
@@ -23,7 +23,8 @@ class RoleController {
   Future<List<RoleEntity>> getAllFromDb() async {
     Mapper<RoleEntity, Role> roleMapper = RoleMapper();
     return (await RoleRepositoryImpl().getAll())
-        .map((mark) => roleMapper.toEntity(mark)).toList();
+        .map((mark) => roleMapper.toEntity(mark))
+        .toList();
   }
 
   Future<List<RoleEntity>> getAllFromServer() {
@@ -33,21 +34,24 @@ class RoleController {
   Future<void> setAllToDb(List<RoleEntity> roles) async {
     RoleRepository roleRepository = RoleRepositoryImpl();
     for (var e in roles) {
-      roleRepository
-          .save(RoleMapper().toModel(e));
+      roleRepository.save(RoleMapper().toModel(e));
     }
   }
 
-  Future<List<String?>> getStudentTeacherRoleFromDb(List<dynamic> rolesId) async {
+  Future<List<String?>> getStudentTeacherRoleFromDb(
+      List<dynamic> rolesId) async {
     RoleRepository roleRepository = RoleRepositoryImpl();
-    List<Future<Role?>> futureRoles = rolesId.map((id) => roleRepository.getNameById(id)).toList();
+    List<Future<Role?>> futureRoles =
+        rolesId.map((id) => roleRepository.getByUserId(id)).toList();
     List<String?> roles = [];
-    for(var i = 0; i < futureRoles.length; i++) {
+    for (var i = 0; i < futureRoles.length; i++) {
       roles.add((await futureRoles[i])?.name);
     }
 
-    return roles.where((element) => element != null
-        && (element == RoleName.student || element == RoleName.teacher))
+    return roles
+        .where((element) =>
+            element != null &&
+            (element == RoleName.student || element == RoleName.teacher))
         .toList();
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 //  TODO подвязать данные
 class InfoModalWindow extends StatefulWidget {
-
   const InfoModalWindow({super.key});
 
   @override
@@ -10,7 +9,6 @@ class InfoModalWindow extends StatefulWidget {
 }
 
 class _InfoModalWindowState extends State<InfoModalWindow> {
-
   _InfoModalWindowState();
 
   @override
@@ -33,17 +31,12 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                   children: [
                     Text('Процент пятерок, %'),
                   ],
-                )
-            ),
-
+                )),
             const Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('100')
-                  ],
-                )
-            ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text('100')],
+            )),
             _width()
           ],
         ),
@@ -57,16 +50,12 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                   children: [
                     Text('Средний балл'),
                   ],
-                )
-            ),
+                )),
             const Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('5.0')
-                  ],
-                )
-            ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text('5.0')],
+            )),
             _width()
           ],
         ),
@@ -80,16 +69,12 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                   children: [
                     Text('Красный диплом'),
                   ],
-                )
-            ),
+                )),
             const Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Возможен')
-                  ],
-                )
-            ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [Text('Возможен')],
+            )),
             _width()
           ],
         ),

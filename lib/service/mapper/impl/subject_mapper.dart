@@ -7,17 +7,11 @@ class SubjectMapper implements Mapper<SubjectEntity, Subject> {
   @override
   SubjectEntity toEntity(Subject model) {
     return SubjectEntity(
-      id: model.id,
-      name: model.name
-    );
+        id: model.id, name: model.name, version: model.version);
   }
 
   @override
   Subject toModel(SubjectEntity entity) {
-    return Subject(
-        id: entity.id,
-        name: entity.name
-    );
+    return Subject(id: entity.id, name: entity.name, version: entity.version);
   }
-
 }

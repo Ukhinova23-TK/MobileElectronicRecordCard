@@ -11,15 +11,7 @@ class GroupHttpClientImpl implements GroupHttpClient {
   Future<List<GroupEntity>> getAll() async {
     final response = await http.get(Uri.parse(resourceUrl + groupUrl));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
-        .map((e) =>
-        GroupEntity.fromJson(e)).toList();
+        .map((e) => GroupEntity.fromJson(e))
+        .toList();
   }
-
-  @override
-  Future<GroupEntity> getById(int id) async {
-    final response = await http.get(Uri.parse('$resourceUrl$groupUrl/$id'));
-    return GroupEntity
-        .fromJson(json.decode(utf8.decode(response.bodyBytes)));
-  }
-
 }

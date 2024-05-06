@@ -6,11 +6,11 @@ class MarkMapper implements Mapper<MarkEntity, Mark> {
   @override
   MarkEntity toEntity(Mark model) {
     return MarkEntity(
-      id: model.id,
-      name: model.name,
-      title: model.title,
-      value: model.value
-    );
+        id: model.id,
+        name: model.name,
+        title: model.title,
+        value: model.value,
+        version: model.version);
   }
 
   @override
@@ -19,8 +19,7 @@ class MarkMapper implements Mapper<MarkEntity, Mark> {
         id: entity.id,
         name: entity.name,
         title: entity.title,
-        value: entity.value
-    );
+        value: entity.value,
+        version: entity.version);
   }
-
 }

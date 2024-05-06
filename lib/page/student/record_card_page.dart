@@ -13,7 +13,7 @@ class RecordCardPage extends StatefulWidget {
   final int? selectedItemNavBar;
   final bool? bottomNavBar;
 
-  const RecordCardPage ({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const RecordCardPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
 
   @override
   State<RecordCardPage> createState() => _RecordCardPageState();
@@ -38,12 +38,6 @@ class _RecordCardPageState extends State<RecordCardPage> {
         ..removeCurrentSnackBar()
         ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
     });
-    controlType = ControlTypeController().getByIdFromServer(1).catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'record_card_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
   }
 
   @override
@@ -54,23 +48,11 @@ class _RecordCardPageState extends State<RecordCardPage> {
         title: const Text('Зачетка'),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                  Icons.qr_code_2_outlined
-              )
-          ),
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                  Icons.filter_alt
-              )
-          ),
+              onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.filter_alt)),
           IconButton(
               onPressed: () => openInfoModalWindow(),
-              icon: const Icon(
-                  Icons.percent_outlined
-              )
-          )
+              icon: const Icon(Icons.percent_outlined))
         ],
       ),
       body: Column(
@@ -105,8 +87,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
                         return const ListTile(
                           title: Text("Нет данных"),
                         );
-                      }
-                  );
+                      });
                 } else {
                   return ListView.builder(
                       scrollDirection: Axis.vertical,
@@ -120,11 +101,9 @@ class _RecordCardPageState extends State<RecordCardPage> {
                           trailing: const Text('Оценка'),
                           tileColor: greatMarkColor,
                         );
-                      }
-                  );
+                      });
                 }
-              }
-          )
+              })
         ],
       ),
       bottomNavigationBar: buildBottomNavigationBar(),
@@ -132,17 +111,13 @@ class _RecordCardPageState extends State<RecordCardPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if(bottomNavBar){
+    if (bottomNavBar) {
       return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline),
-              label: 'Преподаватель'
-          ),
+              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined),
-              label: 'Студент'
-          ),
+              icon: Icon(Icons.school_outlined), label: 'Студент'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
@@ -158,10 +133,8 @@ class _RecordCardPageState extends State<RecordCardPage> {
       _selectedIndex = index;
     });
     BottomNavBarChoose(
-        index: index,
-        context: context,
-        bottomNavBar: bottomNavBar
-    ).changeItem();
+            index: index, context: context, bottomNavBar: bottomNavBar)
+        .changeItem();
   }
 
   Future<void> openInfoModalWindow() {
@@ -171,10 +144,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
         return const Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [
-              InfoModalWindow()
-            ]
-        );
+            children: [InfoModalWindow()]);
       },
     );
   }
@@ -182,7 +152,6 @@ class _RecordCardPageState extends State<RecordCardPage> {
   Widget _height() => const SizedBox(height: 16);
 
   Widget _width() => const SizedBox(width: 16);
-
 }
 
 class DropdownMenuExample extends StatefulWidget {
@@ -215,7 +184,8 @@ class _DropdownMenuExampleState extends State<DropdownMenuExample> {
           dropdownValue = value!;
         });
       },
-      dropdownMenuEntries: semesters!.map<DropdownMenuEntry<String>>((String value) {
+      dropdownMenuEntries:
+          semesters!.map<DropdownMenuEntry<String>>((String value) {
         return DropdownMenuEntry<String>(value: value, label: value);
       }).toList(),
     );

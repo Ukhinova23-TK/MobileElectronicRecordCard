@@ -1,15 +1,12 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mobile_electronic_record_card/repository/storage_repository.dart';
 
-class StorageRepositoryImpl implements StorageRepository{
+class StorageRepositoryImpl implements StorageRepository {
   final _secureStorage = const FlutterSecureStorage();
 
   @override
   Future<void> saveSecureData(String token) async {
-    _secureStorage.write(
-        key: 'token',
-        value: token
-    );
+    _secureStorage.write(key: 'token', value: token);
   }
 
   @override

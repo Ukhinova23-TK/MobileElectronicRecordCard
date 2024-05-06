@@ -7,11 +7,8 @@ class BottomNavBarChoose {
   BuildContext context;
   bool bottomNavBar;
 
-  BottomNavBarChoose({
-    required this.index,
-    required this.context,
-    required this.bottomNavBar
-  });
+  BottomNavBarChoose(
+      {required this.index, required this.context, required this.bottomNavBar});
 
   void changeItem() {
     switch (index) {
@@ -21,14 +18,12 @@ class BottomNavBarChoose {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      SubjectPage(
-                        selectedItemNavBar: index,
-                        bottomNavBar: bottomNavBar,
-                      ),
+                  builder: (context) => SubjectPage(
+                    selectedItemNavBar: index,
+                    bottomNavBar: bottomNavBar,
+                  ),
                 ),
-                    (Route<dynamic> route) => false
-            );
+                (Route<dynamic> route) => false);
           }
         }
       case 1:
@@ -37,14 +32,12 @@ class BottomNavBarChoose {
             Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      RecordCardPage(
-                        selectedItemNavBar: index,
-                        bottomNavBar: bottomNavBar,
-                      ),
+                  builder: (context) => RecordCardPage(
+                    selectedItemNavBar: index,
+                    bottomNavBar: bottomNavBar,
+                  ),
                 ),
-                    (Route<dynamic> route) => false
-            );
+                (Route<dynamic> route) => false);
           }
         }
     }

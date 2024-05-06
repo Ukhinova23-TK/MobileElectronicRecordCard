@@ -29,7 +29,8 @@ const SqfEntityTable tableGroup = SqfEntityTable(
   fields: [
     SqfEntityField('name', DbType.text, isNotNull: true),
     SqfEntityField('full_name', DbType.text),
-    SqfEntityField('admission_date', DbType.date)
+    SqfEntityField('admission_date', DbType.date),
+    SqfEntityField('version', DbType.integer, isNotNull: true)
   ]
 );
 
@@ -41,7 +42,8 @@ const SqfEntityTable tableMark = SqfEntityTable(
   fields: [
     SqfEntityField('name', DbType.text, isNotNull: true),
     SqfEntityField('title', DbType.text, isNotNull: true),
-    SqfEntityField('value', DbType.integer, isNotNull: true)
+    SqfEntityField('value', DbType.integer, isNotNull: true),
+    SqfEntityField('version', DbType.integer, isNotNull: true)
   ]
 );
 
@@ -53,6 +55,7 @@ const SqfEntityTable tableControlType = SqfEntityTable(
   fields: [
     SqfEntityField('name', DbType.text, isNotNull: true),
     SqfEntityField('title', DbType.text, isNotNull: true),
+    SqfEntityField('version', DbType.integer, isNotNull: true),
     SqfEntityFieldRelationship(
         parentTable: tableMark,
         relationType: RelationType.MANY_TO_MANY,
@@ -67,7 +70,8 @@ const SqfEntityTable tableSubject = SqfEntityTable(
   primaryKeyType: PrimaryKeyType.integer_unique,
   modelName: null,
   fields: [
-    SqfEntityField('name', DbType.text, isNotNull: true)
+    SqfEntityField('name', DbType.text, isNotNull: true),
+    SqfEntityField('version', DbType.integer, isNotNull: true)
   ]
 );
 
@@ -81,6 +85,7 @@ const SqfEntityTable tableUser = SqfEntityTable(
       SqfEntityField('last_name', DbType.text, isNotNull: true),
       SqfEntityField('first_name', DbType.text, isNotNull: true),
       SqfEntityField('middle_name', DbType.text),
+      SqfEntityField('version', DbType.integer, isNotNull: true),
       SqfEntityFieldRelationship(
         parentTable: tableGroup,
         fieldName: 'groupId',
@@ -97,6 +102,7 @@ const SqfEntityTable tableUserSubjectControlType = SqfEntityTable(
   fields: [
     SqfEntityField('semester', DbType.integer, isNotNull: true),
     SqfEntityField('hours_number', DbType.integer),
+    SqfEntityField('version', DbType.integer, isNotNull: true),
     SqfEntityFieldRelationship(
       parentTable: tableUser,
       fieldName: 'teacher_id',
@@ -127,6 +133,7 @@ const SqfEntityTable tableStudentMark = SqfEntityTable(
   modelName: null,
   fields: [
     SqfEntityField('completion_date', DbType.date),
+    SqfEntityField('version', DbType.integer, isNotNull: true),
     SqfEntityFieldRelationship(
       parentTable: tableMark,
       fieldName: 'mark_id',

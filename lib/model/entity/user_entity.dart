@@ -6,6 +6,7 @@ class UserEntity {
   String? middleName;
   int? groupId;
   List<dynamic>? roles;
+  int? version;
 
   UserEntity({
     this.id,
@@ -13,7 +14,8 @@ class UserEntity {
     this.lastName,
     this.firstName,
     this.middleName,
-    this.groupId
+    this.groupId,
+    this.version
   });
 
   UserEntity.withRoles({
@@ -23,10 +25,11 @@ class UserEntity {
     this.firstName,
     this.middleName,
     this.groupId,
-    this.roles
+    this.roles,
+    this.version
   });
 
-  static UserEntity fromJson(Map<String, dynamic> json){
+  static UserEntity fromJson(Map<String, dynamic> json) {
     var id = json['id'];
     var login = json['login'];
     var lastName = json['lastName'];
@@ -34,6 +37,7 @@ class UserEntity {
     var middleName = json['middleName'];
     var groupId = json['groupId'];
     var roles = json['roles'];
+    var version = json['version'];
     return UserEntity.withRoles(
         id: id,
         login: login,
@@ -41,7 +45,8 @@ class UserEntity {
         firstName: firstName,
         middleName: middleName,
         groupId: groupId,
-        roles: roles
+        roles: roles,
+        version: version
     );
   }
 
@@ -53,7 +58,8 @@ class UserEntity {
       'firstName': user.firstName,
       'middleName': user.middleName,
       'groupId': user.groupId,
-      'roles': user.roles
+      'roles': user.roles,
+      'version': user.version
     };
   }
 

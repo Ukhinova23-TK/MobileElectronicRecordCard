@@ -9,34 +9,32 @@ import '../service/mapper/impl/subject_mapper.dart';
 import '../service/mapper/mapper.dart';
 
 class SubjectController {
+  Future<List<SubjectEntity>> get subjects => getAllFromDb();
 
-  Future<List<SubjectEntity>> get subjects => fromDb();
-
-  Future<void> synchronization () async {
-    await fromServer().then((value) =>
-        toDb(value)
+  Future<void> synchronization() async {
+    await getAllFromServer()
+        .then((value) => setAllToDb(value)
             .then((_) =>
-            Log.i('Data received into db', tag: 'subject_controller'))
+                Log.i('Data received into db', tag: 'subject_controller'))
             .catchError((e) => Log.e(e, tag: 'subject_controller')))
         .catchError((e) => Log.e(e, tag: 'subject_controller'));
   }
 
-  Future<List<SubjectEntity>> fromDb() async {
+  Future<List<SubjectEntity>> getAllFromDb() async {
     Mapper<SubjectEntity, Subject> subjectMapper = SubjectMapper();
     return (await SubjectRepositoryImpl().getAll())
-        .map((subject) => subjectMapper.toEntity(subject)).toList();
+        .map((subject) => subjectMapper.toEntity(subject))
+        .toList();
   }
 
-  Future<List<SubjectEntity>> fromServer () {
-    return SubjectHttpClientImpl().getAll() ;
+  Future<List<SubjectEntity>> getAllFromServer() {
+    return SubjectHttpClientImpl().getAll();
   }
 
-  Future<void> toDb(List<SubjectEntity> subjects) async {
+  Future<void> setAllToDb(List<SubjectEntity> subjects) async {
     SubjectRepository subjectRepository = SubjectRepositoryImpl();
     for (var e in subjects) {
-      subjectRepository
-            .save(SubjectMapper().toModel(e));
+      subjectRepository.save(SubjectMapper().toModel(e));
     }
   }
-
 }

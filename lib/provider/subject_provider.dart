@@ -7,9 +7,7 @@ class SubjectProvider extends ChangeNotifier {
 
   Future<List<SubjectEntity>>? get subjects => _subjects;
 
-  void initSubjects() => _subjects =
-      SubjectController().subjects;
+  void initSubjects() => _subjects = SubjectController().subjects;
 
-  void fetchSubjects() async =>
-      notifyListeners();
+  void fetchSubjects() async => notifyListeners();
 }

@@ -10,4 +10,6 @@ abstract class SubjectRepository {
   Future<void> delete(int id);
 
   Future<void> deleteAll();
+
+  Future<int>? getMaxVersion();
 }

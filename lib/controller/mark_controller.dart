@@ -10,40 +10,39 @@ import '../service/mapper/impl/mark_mapper.dart';
 import '../service/mapper/mapper.dart';
 
 class MarkController {
-
   Future<List<MarkEntity>> get marks => getAllFromDb();
 
-  Future<void> synchronization () async {
-    await getAllFromServer().then((value) =>
-        setAllToDb(value)
+  Future<void> synchronization() async {
+    await getAllFromServer()
+        .then((value) => setAllToDb(value)
             .then((value) =>
-            Log.i('Data received into db', tag: 'mark_controller'))
+                Log.i('Data received into db', tag: 'mark_controller'))
             .catchError((e) => Log.e(e, tag: 'mark_controller')))
         .catchError((e) => Log.e(e, tag: 'mark_controller'));
   }
 
-  Future<List<MarkEntity>> getAllFromDb () async {
+  Future<List<MarkEntity>> getAllFromDb() async {
     Mapper<MarkEntity, Mark> markMapper = MarkMapper();
     return (await MarkRepositoryImpl().getAll())
-        .map((mark) => markMapper.toEntity(mark)).toList();
+        .map((mark) => markMapper.toEntity(mark))
+        .toList();
   }
 
-  Future<List<MarkEntity>?> getByControlTypeFromDb (int id) async {
+  Future<List<MarkEntity>?> getByControlTypeFromDb(int id) async {
     Mapper<MarkEntity, Mark> markMapper = MarkMapper();
     return (await ControlTypeRepositoryImpl().getMarks(id))
-        ?.map((mark) =>
-        markMapper.toEntity(mark)).toList();
+        ?.map((mark) => markMapper.toEntity(mark))
+        .toList();
   }
 
-  Future<List<MarkEntity>> getAllFromServer () {
+  Future<List<MarkEntity>> getAllFromServer() {
     return MarkHttpClientImpl().getAll();
   }
 
-  Future<void> setAllToDb (List<MarkEntity> marks) async {
+  Future<void> setAllToDb(List<MarkEntity> marks) async {
     MarkRepository markRepository = MarkRepositoryImpl();
     for (var e in marks) {
-      markRepository
-            .save(MarkMapper().toModel(e));
+      markRepository.save(MarkMapper().toModel(e));
     }
   }
 }

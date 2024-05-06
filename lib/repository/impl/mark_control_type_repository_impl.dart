@@ -14,22 +14,17 @@ class MarkControlTypeRepositoryImpl implements MarkControlTypeRepository {
 
   @override
   Future<void> deleteAll() async {
-    await Mark_control_type()
-        .select()
-        .delete();
+    await Mark_control_type().select().delete();
   }
 
   @override
   Future<Mark_control_type?> get(int markId, int controlTypeId) async {
-    return await Mark_control_type()
-        .getById(controlTypeId, markId);
+    return await Mark_control_type().getById(controlTypeId, markId);
   }
 
   @override
   Future<List<Mark_control_type>> getAll() async {
-    return await Mark_control_type()
-        .select()
-        .toList();
+    return await Mark_control_type().select().toList();
   }
 
   Future<List<Mark_control_type?>> getMarks(int controlTypeId) async {
@@ -41,8 +36,6 @@ class MarkControlTypeRepositoryImpl implements MarkControlTypeRepository {
 
   @override
   Future<BoolResult?> save(Mark_control_type markControlType) async {
-    return await markControlType
-        .save();
+    return await markControlType.save();
   }
-
 }

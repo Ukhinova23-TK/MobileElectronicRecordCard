@@ -32,16 +32,6 @@ class ControlTypeController {
     return ControlTypeHttpClientImpl().getAll();
   }
 
-  //  need?
-  Future<ControlTypeEntity> getByIdFromServer (int id) {
-    return ControlTypeHttpClientImpl().getById(id);
-  }
-
-  //  need?
-  Future<ControlTypeEntity> getByNameFromServer (String name) {
-    return ControlTypeHttpClientImpl().getByName(name);
-  }
-
   Future<void> setAllToDb (List<ControlTypeEntity> controlTypes) async {
     ControlTypeRepository controlTypeRepository = ControlTypeRepositoryImpl();
     for (var element in controlTypes) {
