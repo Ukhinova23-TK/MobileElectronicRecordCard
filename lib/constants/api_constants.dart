@@ -5,26 +5,30 @@ import 'package:flutter/material.dart';
 const String resourceUrl = 'http://192.168.3.67:8080/';
 
 const String controlTypeUrl = 'api/control-types';
-const String controlTypeGetByNameUrl = '/name';
+const String controlTypeGetByVersionUrl = '/version/';
 const String controlTypeWithMarksUrl = '/with-marks';
 
 const String groupUrl = 'api/groups';
+const String groupGetByVersionUrl = '/version/';
+const String groupAndCriteriaUrl = '/filter';
 
 const String markUrl = 'api/marks';
-const String markByControlTypeIdUrl = '/control-type';
-
-const String subjectUrl = 'api/subjects';
-
-const String userUrl = 'api/users';
-const String userRoleUrl = '/roles';
-const String userByLoginUrl = '/login';
-const String userAuthenticateUrl = '/authenticate';
+const String markGetByVersionUrl = '/version/';
 
 const String roleUrl = 'api/roles';
 
+const String subjectUrl = 'api/subjects';
+const String subjectGetByVersionUrl = '/version/';
+
+const String userUrl = 'api/users';
+const String userGetByVersionUrl = '/version/';
+const String userAndCriteriaUrl = '/filter';
+const String userByLoginUrl = '/login';
+const String userAuthenticateUrl = '/authenticate';
+
 const String usctUrl = 'api/user-subject-control-types';
-const String usctFilterUrl = '/filter';
-const String usctFilterV2Url = '/filter/v2';
+const String usctGetByVersionUrl = '/version/';
+const String usctAndCriteriaUrl = '/filter';
 
 const Map<String, String> headers = {
   "Accept": "application/json",

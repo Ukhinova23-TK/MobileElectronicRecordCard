@@ -11,7 +11,7 @@ class UserSubjectControlTypeHttpClientImpl
   Future<List<UserSubjectControlTypeEntity>> getAll(
       Map<String, dynamic> criteria) async {
     final response = await http.post(
-        Uri.parse('$resourceUrl$usctUrl$usctFilterV2Url'),
+        Uri.parse('$resourceUrl$usctUrl$usctAndCriteriaUrl'),
         headers: headers,
         body: jsonEncode(criteria));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
