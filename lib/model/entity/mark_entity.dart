@@ -7,12 +7,12 @@ class MarkEntity {
 
   MarkEntity({this.id, this.name, this.title, this.value, this.version});
 
-  static MarkEntity fromJson(Map<String, dynamic> json) {
-    var id = json['id'];
-    var name = json['name'];
-    var title = json['title'];
-    var value = json['value'];
-    var version = json['version'];
+  static MarkEntity fromJson(Map<String, dynamic> json, {String prefix = ""}) {
+    var id = json['${prefix}id'];
+    var name = json['${prefix}name'];
+    var title = json['${prefix}title'];
+    var value = json['${prefix}value'];
+    var version = json['${prefix}version'];
     return MarkEntity(
         id: id, name: name, title: title, value: value, version: version);
   }

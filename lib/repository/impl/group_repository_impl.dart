@@ -30,17 +30,20 @@ class GroupRepositoryImpl implements GroupRepository {
 
   @override
   Future<int>? getMaxVersion() async {
-    List<Student_group> studentGroups =
-        await Student_group().select().orderByDesc('version').toList();
-    if (studentGroups.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in studentGroups) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+    Student_group? studentGroup = await Student_group()
+        .select(columnsToSelect: [Student_groupFields.version.max()])
+        .groupBy('version')
+        .toSingle();
+    return studentGroup?.version ?? 0;
+  }
+
+  @override
+  Future<List<Student_group>> getBySubject(int subjectId) async {
+    return Student_group.fromMapList((await ElectronicRecordCardDbModel()
+        .execDataTable("""select distinct sg.*
+        from student_group sg join "user" u on u.groupId = sg.id
+        join user_subject_control_type usct on usct.student_id = u.id
+        join subject s on s.id = usct.subject_id
+        where s.id = $subjectId""")));
   }
 }

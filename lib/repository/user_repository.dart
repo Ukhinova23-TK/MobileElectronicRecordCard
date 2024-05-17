@@ -14,4 +14,6 @@ abstract class UserRepository {
   Future<void> deleteAll();
 
   Future<int>? getMaxVersion();
+
+  Future<List<User>> getStudentsByGroupAndSubject(int groupId, int subjectId);
 }

@@ -11,15 +11,6 @@ import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 class RoleController {
   Future<List<RoleEntity>> get marks => getAllFromDb();
 
-  Future<void> synchronization() async {
-    await getAllFromServer()
-        .then((value) => setAllToDb(value)
-            .then((value) =>
-                Log.i('Data received into db', tag: 'role_controller'))
-            .catchError((e) => Log.e(e, tag: 'role_controller')))
-        .catchError((e) => Log.e(e, tag: 'role_controller'));
-  }
-
   Future<List<RoleEntity>> getAllFromDb() async {
     Mapper<RoleEntity, Role> roleMapper = RoleMapper();
     return (await RoleRepositoryImpl().getAll())
@@ -27,8 +18,14 @@ class RoleController {
         .toList();
   }
 
-  Future<List<RoleEntity>> getAllFromServer() {
-    return RoleHttpClientImpl().getAll();
+  Future<void> getAllFromServer() {
+    return RoleHttpClientImpl()
+        .getAll()
+        .then((value) => setAllToDb(value)
+            .then((value) =>
+                Log.i('Data received into db', tag: 'role_controller'))
+            .catchError((e) => Log.e(e, tag: 'role_controller')))
+        .catchError((e) => Log.e(e, tag: 'role_controller'));
   }
 
   Future<void> setAllToDb(List<RoleEntity> roles) async {

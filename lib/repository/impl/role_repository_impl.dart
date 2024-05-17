@@ -5,44 +5,32 @@ import '../role_repository.dart';
 class RoleRepositoryImpl implements RoleRepository {
   @override
   Future<Role?> get(int id) async {
-    return await Role()
-        .getById(id);
+    return await Role().getById(id);
   }
 
   @override
   Future<List<Role>> getAll() async {
-    return await Role()
-        .select()
-        .toList();
+    return await Role().select().toList();
   }
 
   @override
   Future<Role?> getByName(String name) async {
-    return await Role()
-        .select()
-        .where('name=$name')
-        .toSingle();
+    return await Role().select().where('name=$name').toSingle();
   }
 
   @override
   Future<List<User>?> getUsers(int id) async {
-    return await Role()
-        .getUsers()
-        ?.where('user_id=$id')
-        .toList();
+    return await Role().getUsers()?.where('user_id=$id').toList();
   }
 
   @override
   Future<void> deleteAll() async {
-    await Role()
-        .select()
-        .delete();
+    await Role().select().delete();
   }
 
   @override
   Future<int?> save(Role role) async {
-    return await role
-        .save();
+    return await role.save();
   }
 
   @override
@@ -51,6 +39,5 @@ class RoleRepositoryImpl implements RoleRepository {
         .select(columnsToSelect: ["name"])
         .where('id=$id')
         .toSingle();
-
   }
 }

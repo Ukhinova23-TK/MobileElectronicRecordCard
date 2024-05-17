@@ -30,16 +30,10 @@ class MarkRepositoryImpl implements MarkRepository {
 
   @override
   Future<int>? getMaxVersion() async {
-    List<Mark> marks = await Mark().select().orderByDesc('version').toList();
-    if (marks.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in marks) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+    Mark? mark = await Mark()
+        .select(columnsToSelect: [MarkFields.version.max()])
+        .groupBy('version')
+        .toSingle();
+    return mark?.version ?? 0;
   }
 }

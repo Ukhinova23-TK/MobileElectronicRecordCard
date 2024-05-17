@@ -7,8 +7,8 @@ class MarkProvider extends ChangeNotifier {
 
   Future<List<MarkEntity>?> get marks => _marks;
 
-  void initMarks(int controlTypeId) =>
-      _marks = MarkController().getByControlTypeFromDb(controlTypeId);
+  void initMarks(int groupId, int subjectId) =>
+      _marks = MarkController().getByGroupAndSubjectFromDb(groupId, subjectId);
 
   void fetchMarks() async => notifyListeners();
 }

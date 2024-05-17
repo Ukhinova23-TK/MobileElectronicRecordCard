@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
-import '../../model/entity/mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 
 class MarksModalWindow extends StatefulWidget {
   final List<MarkEntity>? marks;
+  final StudentAndMarkEntity? currentItem;
 
-  const MarksModalWindow(this.marks, {super.key});
+  const MarksModalWindow(this.marks, this.currentItem, {super.key});
 
   @override
   State<MarksModalWindow> createState() => _MarksModalWindowState();
@@ -13,6 +14,7 @@ class MarksModalWindow extends StatefulWidget {
 
 class _MarksModalWindowState extends State<MarksModalWindow> {
   late List<MarkEntity>? marks;
+  StudentAndMarkEntity? currentItem;
   int? selectedOption;
 
   _MarksModalWindowState();
@@ -21,7 +23,8 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
   void initState() {
     super.initState();
     marks = widget.marks;
-    selectedOption = marks?.first.id;
+    currentItem = widget.currentItem;
+    selectedOption = currentItem?.mark?.id ?? marks?.first.id;
   }
 
   @override
@@ -55,7 +58,7 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context, selectedOption);
+                Navigator.of(context).pop(selectedOption);
               },
               child: const Text("Сохранить"),
             )

@@ -11,15 +11,6 @@ import '../service/mapper/mapper.dart';
 class SubjectController {
   Future<List<SubjectEntity>> get subjects => getAllFromDb();
 
-  Future<void> synchronization() async {
-    await getAllFromServer()
-        .then((value) => setAllToDb(value)
-            .then((_) =>
-                Log.i('Data received into db', tag: 'subject_controller'))
-            .catchError((e) => Log.e(e, tag: 'subject_controller')))
-        .catchError((e) => Log.e(e, tag: 'subject_controller'));
-  }
-
   Future<List<SubjectEntity>> getAllFromDb() async {
     Mapper<SubjectEntity, Subject> subjectMapper = SubjectMapper();
     return (await SubjectRepositoryImpl().getAll())
@@ -27,8 +18,12 @@ class SubjectController {
         .toList();
   }
 
-  Future<List<SubjectEntity>> getAllFromServer() {
-    return SubjectHttpClientImpl().getAll();
+  Future<void> getAllFromServer() async {
+    return SubjectHttpClientImpl().getAll().then((value) => setAllToDb(value)
+        .then((value) =>
+        Log.i('Data received into db', tag: 'subject_controller'))
+        .catchError((e) => Log.e(e, tag: 'subject_controller'))
+        .catchError((e) => Log.e(e, tag: 'subject_controller')));
   }
 
   Future<void> setAllToDb(List<SubjectEntity> subjects) async {

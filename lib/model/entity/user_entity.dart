@@ -8,36 +8,34 @@ class UserEntity {
   List<dynamic>? roles;
   int? version;
 
-  UserEntity({
-    this.id,
-    this.login,
-    this.lastName,
-    this.firstName,
-    this.middleName,
-    this.groupId,
-    this.version
-  });
+  UserEntity(
+      {this.id,
+      this.login,
+      this.lastName,
+      this.firstName,
+      this.middleName,
+      this.groupId,
+      this.version});
 
-  UserEntity.withRoles({
-    this.id,
-    this.login,
-    this.lastName,
-    this.firstName,
-    this.middleName,
-    this.groupId,
-    this.roles,
-    this.version
-  });
+  UserEntity.withRoles(
+      {this.id,
+      this.login,
+      this.lastName,
+      this.firstName,
+      this.middleName,
+      this.groupId,
+      this.roles,
+      this.version});
 
-  static UserEntity fromJson(Map<String, dynamic> json) {
-    var id = json['id'];
-    var login = json['login'];
-    var lastName = json['lastName'];
-    var firstName = json['firstName'];
-    var middleName = json['middleName'];
-    var groupId = json['groupId'];
-    var roles = json['roles'];
-    var version = json['version'];
+  static UserEntity fromJson(Map<String, dynamic> json, {String prefix = ""}) {
+    var id = json['${prefix}id'];
+    var login = json['${prefix}login'];
+    var lastName = json['${prefix}lastName'];
+    var firstName = json['${prefix}firstName'];
+    var middleName = json['${prefix}middleName'];
+    var groupId = json['${prefix}groupId'];
+    var roles = json['${prefix}roles'];
+    var version = json['${prefix}version'];
     return UserEntity.withRoles(
         id: id,
         login: login,
@@ -46,8 +44,7 @@ class UserEntity {
         middleName: middleName,
         groupId: groupId,
         roles: roles,
-        version: version
-    );
+        version: version);
   }
 
   static Map<String, dynamic> toJson(UserEntity user) {
@@ -63,5 +60,11 @@ class UserEntity {
     };
   }
 
+  static Map<String, dynamic> toStudentCriteriaJson(int id) {
+    return {'teacherUserSubjectControlTypes.student.id': id};
+  }
 
+  static Map<String, dynamic> toTeacherCriteriaJson(int id) {
+    return {'studentUserSubjectControlTypes.teacher.id': id};
+  }
 }

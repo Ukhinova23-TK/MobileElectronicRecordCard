@@ -1,12 +1,13 @@
 import 'package:flutter_logcat/log/log.dart';
 import 'package:mobile_electronic_record_card/client/impl/user_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/role_controller.dart';
+import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/authenticate_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/storage_repository_impl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 
 import '../model/entity/role_entity.dart';
 import '../model/model.dart';
@@ -17,15 +18,9 @@ import '../service/mapper/impl/user_mapper.dart';
 import '../service/mapper/mapper.dart';
 
 class UserController {
+  final sharedPrefLocator = getIt.get<SharedPreferenceHelper>();
+  final secureStorageLocator = getIt.get<SecureStorageHelper>();
   Future<List<UserEntity>> get users => getAllFromDb();
-
-  Future<void> synchronization() async {
-    await getAllFromServer()
-        .then((value) => setAllToDb(value)
-            .then((_) => Log.i('Data received into db', tag: 'user_controller'))
-            .catchError((e) => Log.e(e, tag: 'user_controller')))
-        .catchError((e) => Log.e(e, tag: 'user_controller'));
-  }
 
   Future<List<UserEntity>> getAllFromDb() async {
     Mapper<UserEntity, User> userMapper = UserMapper();
@@ -38,6 +33,15 @@ class UserController {
     Mapper<UserEntity, User> userMapper = UserMapper();
     return (await RoleRepositoryImpl().getUsers(roleId))
         ?.map((user) => userMapper.toEntity(user))
+        .toList();
+  }
+
+  Future<List<UserEntity>>? getStudentsByGroupAndSubjectFromDb(
+      int groupId, int subjectId) async {
+    Mapper<UserEntity, User> userMapper = UserMapper();
+    return (await UserRepositoryImpl()
+            .getStudentsByGroupAndSubject(groupId, subjectId))
+        .map((user) => userMapper.toEntity(user))
         .toList();
   }
 
@@ -71,8 +75,12 @@ class UserController {
         .toList();
   }
 
-  Future<List<UserEntity>> getAllFromServer() async {
-    return await UserHttpClientImpl().getAll();
+  Future<void> getAllFromServer() async {
+    return UserHttpClientImpl().getAll().then((value) => setAllToDb(value)
+        .then((value) =>
+        Log.i('Data received into db', tag: 'user_controller'))
+        .catchError((e) => Log.e(e, tag: 'user_controller'))
+        .catchError((e) => Log.e(e, tag: 'user_controller')));
   }
 
   Future<void> setAllToDb(List<UserEntity> users) async {
@@ -82,12 +90,18 @@ class UserController {
     }
   }
 
+  Future<void> setUserToDb(UserEntity user) async {
+    UserRepository userRepository = UserRepositoryImpl();
+    userRepository.save(UserMapper().toModel(user));
+  }
+
   Future<UserEntity> getByLoginFromServer(String login) async {
     UserEntity user = await UserHttpClientImpl().getByLogin(login);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('userId', user.id!);
+    setUserToDb(user);
+
+    sharedPrefLocator.setUserId(user.id!);
     if (user.groupId != null) {
-      prefs.setInt('groupId', user.groupId!);
+      sharedPrefLocator.setGroupId(user.groupId!);
     }
     if (user.roles != null) {
       await RoleController()
@@ -98,8 +112,8 @@ class UserController {
           for (var element in roles) {
             r.add(element!);
           }
-          prefs.setInt('rolesCount', roles.length);
-          prefs.setStringList('rolesName', r);
+          sharedPrefLocator.setRolesCount(roles.length);
+          sharedPrefLocator.setRolesName(r);
         }
       });
     }
@@ -110,8 +124,8 @@ class UserController {
     await UserHttpClientImpl()
         .authenticate(AuthenticateEntity(login, password).toJson())
         .then((value) {
-      StorageRepositoryImpl()
-          .saveSecureData(AuthenticateEntity.fromJson(value).token!);
+      secureStorageLocator
+          .writeToken(AuthenticateEntity.fromJson(value).token!);
     });
   }
 }

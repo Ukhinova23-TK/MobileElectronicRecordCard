@@ -7,7 +7,8 @@ class GroupProvider extends ChangeNotifier {
 
   Future<List<GroupEntity>>? get groups => _groups;
 
-  void initGroups() => _groups = GroupController().groups;
+  void initGroups(int subjectId) =>
+      _groups = GroupController().getBySubject(subjectId);
 
   void fetchGroups() async => notifyListeners();
 }

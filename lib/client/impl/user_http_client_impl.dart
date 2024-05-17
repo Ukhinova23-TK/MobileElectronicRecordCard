@@ -1,16 +1,19 @@
 import 'dart:convert';
 
-import 'package:http/http.dart' as http;
+import 'package:mobile_electronic_record_card/client/user_http_client.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/endpoint/endpoint.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
-
-import '../../constants/api_constants.dart';
-import '../../model/entity/role_entity.dart';
-import '../user_http_client.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
 
 class UserHttpClientImpl implements UserHttpClient {
   @override
   Future<List<UserEntity>> getAll() async {
-    final response = await http.get(Uri.parse('$resourceUrl$userUrl'));
+    final version = await UserRepositoryImpl().getMaxVersion();
+    final response = await EndPoint.http.get(
+        Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
+            '${EndPoint.getByVersionUrl}$version'),
+        headers: headers);
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => UserEntity.fromJson(e))
         .toList();
@@ -19,14 +22,16 @@ class UserHttpClientImpl implements UserHttpClient {
   @override
   Future<UserEntity> getByLogin(String login) async {
     final response =
-        await http.get(Uri.parse('$resourceUrl$userUrl$userByLoginUrl/$login'));
+        await EndPoint.http.get(Uri.parse('${EndPoint.resourceUrl}'
+            '${EndPoint.userUrl}${EndPoint.userByLoginUrl}/$login'));
     return UserEntity.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   }
 
   @override
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> cred) async {
-    final response = await http.post(
-        Uri.parse('$resourceUrl$userUrl$userAuthenticateUrl'),
+    final response = await EndPoint.http.post(
+        Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
+            '${EndPoint.userAuthenticateUrl}'),
         headers: headers,
         body: jsonEncode(cred));
     return json.decode(utf8.decode(response.bodyBytes));

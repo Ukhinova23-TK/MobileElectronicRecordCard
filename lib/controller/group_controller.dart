@@ -11,15 +11,6 @@ import '../service/mapper/mapper.dart';
 class GroupController {
   Future<List<GroupEntity>> get groups => getAllFromDb();
 
-  Future<void> synchronization() async {
-    await getAllFromServer()
-        .then((value) => setAllToDb(value)
-            .then((value) =>
-                Log.i('Data received into db', tag: 'group_controller'))
-            .catchError((e) => Log.e(e, tag: 'group_controller')))
-        .catchError((e) => Log.e(e, tag: 'group_controller'));
-  }
-
   Future<List<GroupEntity>> getAllFromDb() async {
     Mapper<GroupEntity, Student_group> groupMapper = GroupMapper();
     return (await GroupRepositoryImpl().getAll())
@@ -27,8 +18,19 @@ class GroupController {
         .toList();
   }
 
-  Future<List<GroupEntity>> getAllFromServer() {
-    return GroupHttpClientImpl().getAll();
+  Future<void> getAllFromServer() async {
+    return GroupHttpClientImpl().getAll().then((value) => setAllToDb(value)
+        .then(
+            (value) => Log.i('Data received into db', tag: 'group_controller'))
+        .catchError((e) => Log.e(e, tag: 'group_controller'))
+        .catchError((e) => Log.e(e, tag: 'group_controller')));
+  }
+
+  Future<List<GroupEntity>> getBySubject(int subjectId) async {
+    Mapper<GroupEntity, Student_group> groupMapper = GroupMapper();
+    return (await GroupRepositoryImpl().getBySubject(subjectId))
+        .map((controlType) => groupMapper.toEntity(controlType))
+        .toList();
   }
 
   Future<void> setAllToDb(List<GroupEntity> groups) async {

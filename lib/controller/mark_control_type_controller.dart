@@ -11,17 +11,14 @@ import '../service/mapper/mapper.dart';
 class MarkControlTypeController {
   Future<List<MarkControlTypeEntity>> get markControlTypes => getAllFromDb();
 
-  Future<void> synchronization() async {
-    await getAllFromServer()
+  Future<void> getAllFromServer() {
+    return MarkControlTypeHttpClientImpl()
+        .getAll()
         .then((value) => setAllToDb(value)
             .then((value) =>
-                Log.i('Data received into db', tag: 'mark_controller'))
-            .catchError((e) => Log.e(e, tag: 'mark_controller')))
-        .catchError((e) => Log.e(e, tag: 'mark_controller'));
-  }
-
-  Future<List<MarkControlTypeEntity>> getAllFromServer() {
-    return MarkControlTypeHttpClientImpl().getAll();
+                Log.i('Data received into db', tag: 'mark_control_type_controller'))
+            .catchError((e) => Log.e(e, tag: 'mark_control_type_controller')))
+        .catchError((e) => Log.e(e, tag: 'mark_control_type_controller'));
   }
 
   Future<List<MarkControlTypeEntity>> getAllFromDb() async {

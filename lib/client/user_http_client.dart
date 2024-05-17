@@ -1,4 +1,3 @@
-import 'package:mobile_electronic_record_card/model/entity/role_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 
 abstract class UserHttpClient {

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 
-//  TODO подвязать данные
 class InfoModalWindow extends StatefulWidget {
-  const InfoModalWindow({super.key});
+  final List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms;
+  const InfoModalWindow({required this.tsctms, super.key});
 
   @override
   State<InfoModalWindow> createState() => _InfoModalWindowState();
 }
 
 class _InfoModalWindowState extends State<InfoModalWindow> {
-  _InfoModalWindowState();
+  late List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms;
 
   @override
   void initState() {
     super.initState();
+    tsctms = widget.tsctms;
   }
 
   @override
@@ -32,10 +34,10 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                     Text('Процент пятерок, %'),
                   ],
                 )),
-            const Expanded(
+            Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text('100')],
+              children: [Text(percentGreatMark(tsctms).toString())],
             )),
             _width()
           ],
@@ -51,10 +53,10 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                     Text('Средний балл'),
                   ],
                 )),
-            const Expanded(
+            Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text('5.0')],
+              children: [Text(avgMark(tsctms).toString())],
             )),
             _width()
           ],
@@ -70,10 +72,10 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                     Text('Красный диплом'),
                   ],
                 )),
-            const Expanded(
+            Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text('Возможен')],
+              children: [Text(isRedDiploma(tsctms) ? 'Возможен' : 'Не возможен')],
             )),
             _width()
           ],
@@ -81,6 +83,43 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
         _height(),
       ],
     );
+  }
+
+  double avgMark(List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms) {
+    double avg = 0.0;
+    List<TeacherSubjectControlTypeMarkSemesterEntity> data = filterList(tsctms);
+    for (TeacherSubjectControlTypeMarkSemesterEntity element in data) {
+      avg += element.mark?.value ?? 0.0;
+    }
+    return data.isNotEmpty ? avg /= data.length : 0.0;
+  }
+
+  int percentGreatMark(
+      List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms) {
+    List<TeacherSubjectControlTypeMarkSemesterEntity> data = filterList(tsctms);
+    int perfect = data.length;
+    int real = data.where((element) => element.mark?.value == 5).length;
+    return (perfect !=0 && real != 0) ? (real * 100 / perfect).round() : 0;
+  }
+
+  bool isRedDiploma(List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms) {
+    List<TeacherSubjectControlTypeMarkSemesterEntity> data = filterList(tsctms);
+    data = data.where((element) => element.mark?.id == 3).toList();
+    for (TeacherSubjectControlTypeMarkSemesterEntity element in data) {
+      if (element.mark?.value == 2 ||
+          element.mark?.value == 3 ||
+          element.mark?.value == 1) {
+        return false;
+      }
+    }
+    return percentGreatMark(data) >= 75;
+  }
+
+  List<TeacherSubjectControlTypeMarkSemesterEntity> filterList(
+      List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms) {
+    return tsctms
+        .where((element) => element.controlType.id != 1 && element.mark == null)
+        .toList();
   }
 
   Widget _height() => const SizedBox(height: 26);

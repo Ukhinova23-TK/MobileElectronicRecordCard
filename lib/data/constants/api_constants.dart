@@ -1,38 +1,8 @@
 import 'package:flutter/material.dart';
 
-// Строковые переменные для отправки запроса
-
-const String resourceUrl = 'http://192.168.3.67:8080/';
-
-const String controlTypeUrl = 'api/control-types';
-const String controlTypeGetByVersionUrl = '/version/';
-const String controlTypeWithMarksUrl = '/with-marks';
-
-const String groupUrl = 'api/groups';
-const String groupGetByVersionUrl = '/version/';
-const String groupAndCriteriaUrl = '/filter';
-
-const String markUrl = 'api/marks';
-const String markGetByVersionUrl = '/version/';
-
-const String roleUrl = 'api/roles';
-
-const String subjectUrl = 'api/subjects';
-const String subjectGetByVersionUrl = '/version/';
-
-const String userUrl = 'api/users';
-const String userGetByVersionUrl = '/version/';
-const String userAndCriteriaUrl = '/filter';
-const String userByLoginUrl = '/login';
-const String userAuthenticateUrl = '/authenticate';
-
-const String usctUrl = 'api/user-subject-control-types';
-const String usctGetByVersionUrl = '/version/';
-const String usctAndCriteriaUrl = '/filter';
-
 const Map<String, String> headers = {
   "Accept": "application/json",
-  "content-type": "application/json"
+  "Content-Type": "application/json"
 };
 
 //  Строковые переменные для страницы авторизации
@@ -51,7 +21,6 @@ const String buttonAuthPage = 'Вход';
 
 //  Строковые переменные для страницы предметов
 const String titleSubjectPage = 'Предметы';
-const String hintSearch = 'Введите значение для поиска';
 
 //  Строковые переменные для страницы групп
 const String titleGroupPage = 'Группы';

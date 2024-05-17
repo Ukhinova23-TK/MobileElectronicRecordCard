@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
-import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
+import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
+import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
+import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
+import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
+import 'package:provider/provider.dart';
 
 class StudentMarkPage extends StatefulWidget {
-  const StudentMarkPage({super.key});
+  final int? selectedItemNavBar;
+  final bool? bottomNavBar;
+  final int subjectId;
+  final int groupId;
+
+  const StudentMarkPage(
+      {required this.subjectId,
+      required this.groupId,
+      this.selectedItemNavBar,
+      this.bottomNavBar,
+      super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,28 +29,27 @@ class StudentMarkPage extends StatefulWidget {
 }
 
 class StudentMarkPageState extends State<StudentMarkPage> {
-  Future<List<ControlTypeEntity>>? students;
-  Future<List<MarkEntity>?>? marks;
-  // показатель выбора
   bool isSelectItem = false;
-  // список выбранных записей с id и показателем выбора
   Map<int, bool> selectedItem = {};
+  // TODO сделать чтобы _needSave зависела от последней синхронизации
+  bool _needSave = false;
+  late int _selectedIndex;
+  late bool _bottomNavBar;
+  late int _subjectId;
+  late int _groupId;
 
   @override
   void initState() {
     super.initState();
-    students = ControlTypeController().controlTypes.catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'student_mark_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
-    marks = MarkController().getByControlTypeFromDb(2).catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'student_mark_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
+    _needSave = false;
+    _selectedIndex = widget.selectedItemNavBar ?? 0;
+    _bottomNavBar = widget.bottomNavBar ?? false;
+    _subjectId = widget.subjectId;
+    _groupId = widget.groupId;
+    Provider.of<StudentMarkProvider>(context, listen: false)
+        .initStudentMark(_groupId, _subjectId);
+    Provider.of<MarkProvider>(context, listen: false)
+        .initMarks(_groupId, _subjectId);
   }
 
   @override
@@ -46,79 +57,152 @@ class StudentMarkPageState extends State<StudentMarkPage> {
     String title = 'Ведомость';
     return Scaffold(
       appBar: buildAppBar(title),
-      body: buildFutureBuilder(),
+      body: Consumer<StudentMarkProvider>(
+          builder: (context, studentMarkProvider, _) =>
+              buildFutureBuilder(studentMarkProvider)),
       floatingActionButton: _buildSelectAllButton(),
+      bottomNavigationBar: buildBottomNavigationBar(),
     );
+  }
+
+  BottomNavigationBar? buildBottomNavigationBar() {
+    if (_bottomNavBar) {
+      return BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.school_outlined), label: 'Студент'),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      );
+    } else {
+      return null;
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    BottomNavBarChoose(
+            index: index, context: context, bottomNavBar: _bottomNavBar)
+        .changeItem();
   }
 
   AppBar buildAppBar(String title) {
     return AppBar(
-      title: Text(title),
       actions: [
         IconButton(
-          onPressed: () => synchronization(),
-          icon: const Icon(Icons.access_time),
-        )
+            onPressed: () => {}, icon: Icon(_needSave ? Icons.save : null))
       ],
+      title: Text(title),
     );
   }
 
-  FutureBuilder<List<ControlTypeEntity>> buildFutureBuilder() {
+  FutureBuilder<List<StudentAndMarkEntity>> buildFutureBuilder(
+      StudentMarkProvider studentMarkProvider) {
     return FutureBuilder(
-      future: students,
+      future: studentMarkProvider.studentMarks,
       builder: (context, snapshot) {
         return buildListView(snapshot);
       },
     );
   }
 
-  synchronization() {
-    ControlTypeController().synchronization().then((_) => {
-          MarkController().synchronization().then((value) => {
-                MarkControlTypeController().synchronization().then((value) => {
-                      setState(() {
-                        students = ControlTypeController().controlTypes;
-                        marks = MarkController().getByControlTypeFromDb(1);
-                      })
-                    })
-              })
-        });
+  ListView buildListView(AsyncSnapshot<List<StudentAndMarkEntity>> snapshot) {
+    if (!snapshot.hasData) {
+      return ListView.builder(
+          itemCount: 1,
+          itemBuilder: (context, index) {
+            return const ListTile(
+              title: Text("Нет данных"),
+            );
+          });
+    } else {
+      return ListView.builder(
+          itemCount: snapshot.data?.length,
+          itemBuilder: (builder, index) {
+            if (snapshot.data == null) {
+              return null;
+            }
+            StudentAndMarkEntity data = snapshot.data![index];
+            selectedItem[index] = selectedItem[index] ?? false;
+            // показатель выбранности конкретной записи
+            bool? isSelectedData = selectedItem[index];
+
+            return ListTile(
+              onLongPress: () => onLongPress(isSelectedData, index),
+              onTap: () => onTap(isSelectedData, index, data),
+              title: Text(
+                '''${data.user.firstName} ${data.user.lastName} 
+                  ${data.user.middleName ?? ''}''',
+                textAlign: TextAlign.left,
+                textDirection: TextDirection.rtl,
+              ),
+              trailing: Text(
+                data.mark?.title ?? 'Нет оценки',
+              ),
+              leading: _buildSelectIcon(isSelectedData!, data),
+              tileColor: setColor(data.mark?.value),
+            );
+          });
+    }
   }
 
-  ListView buildListView(AsyncSnapshot<List<ControlTypeEntity>> snapshot) {
-    return ListView.builder(
-        itemCount: snapshot.data?.length,
-        itemBuilder: (builder, index) {
-          if (snapshot.data == null) {
-            return null;
-          }
-          ControlTypeEntity data = snapshot.data![index];
-          selectedItem[index] = selectedItem[index] ?? false;
-          // показатель выбранности конкретной записи
-          bool? isSelectedData = selectedItem[index];
-
-          return ListTile(
-            onLongPress: () => onLongPress(isSelectedData, index),
-            onTap: () => onTap(isSelectedData, index),
-            title: Text(data.title ?? ""),
-            leading: _buildSelectIcon(isSelectedData!, data),
-          );
-        });
+  Color? setColor(int? markValue) {
+    switch (markValue) {
+      case 2:
+        return failMarkColor;
+      case 3:
+        return satisfactoryMarkColor;
+      case 4:
+        return wellMarkColor;
+      case 5:
+        return greatMarkColor;
+      default:
+        return noMarkColor;
+    }
   }
 
-  Future<void> buildMarks(List<MarkEntity>? marks) {
-    return showModalBottomSheet<void>(
+  void buildMarks(List<MarkEntity>? marks,
+      [StudentAndMarkEntity? currentItem]) async {
+    final result = await showModalBottomSheet<int>(
       context: context,
       builder: (BuildContext context) {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [MarksModalWindow(marks)]);
+            children: [MarksModalWindow(marks, currentItem)]);
       },
     );
+    if (result != null) {
+      var studentMarkFutures = <Future>[];
+      if (currentItem == null && selectedItem.containsValue(true)) {
+        List<StudentAndMarkEntity> studentMarks =
+            await Provider.of<StudentMarkProvider>(context, listen: false)
+                .studentMarks;
+        selectedItem.entries.where((element) => element.value).forEach(
+            (element) => studentMarkFutures.add(StudentMarkController()
+                .set(studentMarks[element.key].user.id!, result, _subjectId)));
+      } else {
+        studentMarkFutures.add(StudentMarkController()
+            .set(currentItem!.user.id!, result, _subjectId));
+      }
+      Future.wait(studentMarkFutures).then((value) => setState(() {
+            Provider.of<StudentMarkProvider>(context, listen: false)
+                .initStudentMark(_groupId, _subjectId);
+            Provider.of<StudentMarkProvider>(context, listen: false)
+                .fetchStudentMark();
+            _needSave = true;
+            isSelectItem = false;
+          }));
+    }
   }
 
-  Widget? _buildSelectIcon(bool isSelectedData, ControlTypeEntity data) {
+  Widget? _buildSelectIcon(bool isSelectedData, StudentAndMarkEntity data) {
     if (isSelectItem) {
       return Icon(
         isSelectedData ? Icons.check_box : Icons.check_box_outline_blank,
@@ -135,7 +219,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
     });
   }
 
-  void onTap(bool isSelectedData, int index) {
+  void onTap(bool isSelectedData, int index, StudentAndMarkEntity currentItem) {
     if (isSelectItem) {
       setState(() {
         selectedItem[index] = !isSelectedData;
@@ -143,7 +227,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
       });
     } else {
       //marks?.then((value) => buildMarks(value));
-      _openMarksModalWindow();
+      _openMarksModalWindow(currentItem);
     }
   }
 
@@ -159,6 +243,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
               isFalseAvailable ? Icons.done_all : Icons.remove_done,
             ),
           ),
+          const SizedBox(height: 16),
           FloatingActionButton(
             onPressed: () => _openMarksModalWindow(),
             child: const Icon(Icons.assignment_turned_in_outlined),
@@ -170,8 +255,16 @@ class StudentMarkPageState extends State<StudentMarkPage> {
     }
   }
 
-  void _openMarksModalWindow() {
-    marks?.then((value) => buildMarks(value));
+  void _openMarksModalWindow([StudentAndMarkEntity? currentItem]) {
+    if (currentItem != null) {
+      Provider.of<MarkProvider>(context, listen: false)
+          .marks
+          .then((value) => buildMarks(value, currentItem));
+    } else {
+      Provider.of<MarkProvider>(context, listen: false)
+          .marks
+          .then((value) => buildMarks(value));
+    }
   }
 
   void _selectAll() {

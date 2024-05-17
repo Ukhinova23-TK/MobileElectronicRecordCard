@@ -34,16 +34,21 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<int>? getMaxVersion() async {
-    List<User> users = await User().select().orderByDesc('version').toList();
-    if (users.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in users) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+    User? user = await User()
+        .select(columnsToSelect: [UserFields.version.max()])
+        .orderBy('version')
+        .toSingle();
+    return user?.version ?? 0;
+  }
+
+  @override
+  Future<List<User>> getStudentsByGroupAndSubject(
+      int groupId, int subjectId) async {
+    return User.fromMapList(
+        (await ElectronicRecordCardDbModel().execDataTable("""select u.*
+        from student_group sg join "user" u on u.groupId = sg.id
+        join user_subject_control_type usct on usct.student_id = u.id
+        join subject s on s.id = usct.subject_id
+        where s.id = $subjectId and sg.id = $groupId""")));
   }
 }

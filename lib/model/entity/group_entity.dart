@@ -12,7 +12,7 @@ class GroupEntity {
     var id = json['id'];
     var name = json['name'];
     var fullName = json['fullName'];
-    var admissionDate = json['admissionDate'];
+    var admissionDate = DateTime.parse(json['admissionDate']);
     var version = json['version'];
     return GroupEntity(
         id: id,
@@ -29,6 +29,18 @@ class GroupEntity {
       'fullName': group.fullName,
       'admissionDate': group.admissionDate,
       'version': group.version
+    };
+  }
+
+  static Map<String, dynamic> toCriteriaTeacherJson(int id){
+    return {
+      'users.studentUserSubjectControlTypes.teacher.id': id
+    };
+  }
+
+  static Map<String, dynamic> toCriteriaStudentJson(int id){
+    return {
+      'users.id': id
     };
   }
 }

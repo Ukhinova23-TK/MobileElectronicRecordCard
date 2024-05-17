@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
+import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
+import 'package:provider/provider.dart';
 
 class RecordCardPage extends StatefulWidget {
   final int? selectedItemNavBar;
@@ -20,24 +22,21 @@ class RecordCardPage extends StatefulWidget {
 }
 
 class _RecordCardPageState extends State<RecordCardPage> {
-  List<String> semesters = [];
+  final sharedLocator = getIt.get<SharedPreferenceHelper>();
   Future<List<SubjectEntity>>? subjects;
   Future<ControlTypeEntity>? controlType;
   Future<List<UserEntity>>? users;
   late int _selectedIndex;
   late bool bottomNavBar;
+  int? dropdownValue;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 1;
     bottomNavBar = widget.bottomNavBar ?? false;
-    subjects = SubjectController().subjects.catchError((onError) {
-      Log.e('Ошибка загрузки данных', tag: 'record_card_page');
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(const SnackBar(content: Text('Ошибка загрузки данных')));
-    });
+    Provider.of<UserSubjectControlTypeProvider>(context, listen: false)
+        .initUserSubjectsControlTypes(sharedLocator.getUserId()!);
   }
 
   @override
@@ -49,65 +48,91 @@ class _RecordCardPageState extends State<RecordCardPage> {
         actions: [
           IconButton(
               onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.filter_alt)),
           IconButton(
-              onPressed: () => openInfoModalWindow(),
+              onPressed: () => Provider.of<UserSubjectControlTypeProvider>(
+                      context,
+                      listen: false)
+                  .userSubjectsControlTypes
+                  ?.then((value) => openInfoModalWindow(value)),
               icon: const Icon(Icons.percent_outlined))
         ],
       ),
-      body: Column(
-        children: [
-          _height(),
-          Row(
-            children: [
-              _width(),
-              //  TODO подвязать данные
-              const DropdownMenuExample(
-                semesters: [
-                  '1 semester',
-                  '2 semester',
-                  '3 semester',
-                  '4 semester',
-                  '5 semester',
-                  '6 semester'
-                ],
-              )
-            ],
-          ),
-          _height(),
-          FutureBuilder(
-              future: subjects,
+      body: Consumer<UserSubjectControlTypeProvider>(
+          builder: (context, usctProvider, _) => FutureBuilder(
+              future: usctProvider.userSubjectsControlTypes,
               builder: (context, snapshot) {
-                if (snapshot.data == null) {
+                if (snapshot.hasData && snapshot.data?.length != 0) {
+                  List<int> dataUniqueSemester =
+                      snapshot.data!.map((e) => e.semester).toSet().toList();
+                  dataUniqueSemester.sort();
+                  List<TeacherSubjectControlTypeMarkSemesterEntity> data =
+                      snapshot.data!
+                          .where((element) =>
+                              element.semester ==
+                              (dropdownValue ?? dataUniqueSemester.first))
+                          .toList();
+                  return Column(children: [
+                    _height(),
+                    Row(
+                      children: [
+                        _width(),
+                        DropdownMenu<int>(
+                            initialSelection: dataUniqueSemester.first,
+                            onSelected: (int? value) {
+                              setState(() {
+                                dropdownValue = value;
+                              });
+                            },
+                            dropdownMenuEntries: dataUniqueSemester
+                                .map<DropdownMenuEntry<int>>((int value) {
+                              return DropdownMenuEntry<int>(
+                                  value: value,
+                                  label: '${value.toString()} семестр');
+                            }).toList()),
+                      ],
+                    ),
+                    _height(),
+                    ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        shrinkWrap: true,
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(data[index].subject.name ?? ""),
+                            subtitle: Text(data[index].controlType.title ?? ""),
+                            trailing:
+                                Text(data[index].mark?.title ?? "Нет оценки"),
+                            tileColor: setColor(data[index].mark?.value),
+                          );
+                        }),
+                  ]);
+                } else {
                   return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
                       itemCount: 1,
                       itemBuilder: (context, index) {
                         return const ListTile(
                           title: Text("Нет данных"),
                         );
                       });
-                } else {
-                  return ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: snapshot.data?.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(snapshot.data?[index].name ?? ""),
-                          //  TODO подвязать данные
-                          subtitle: const Text('Тип контроля'),
-                          trailing: const Text('Оценка'),
-                          tileColor: greatMarkColor,
-                        );
-                      });
                 }
-              })
-        ],
-      ),
+              })),
       bottomNavigationBar: buildBottomNavigationBar(),
     );
+  }
+
+  Color? setColor(int? markValue) {
+    switch (markValue) {
+      case 2:
+        return failMarkColor;
+      case 3:
+        return satisfactoryMarkColor;
+      case 4:
+        return wellMarkColor;
+      case 5:
+        return greatMarkColor;
+      default:
+        return noMarkColor;
+    }
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
@@ -137,14 +162,15 @@ class _RecordCardPageState extends State<RecordCardPage> {
         .changeItem();
   }
 
-  Future<void> openInfoModalWindow() {
+  Future<void> openInfoModalWindow(
+      List<TeacherSubjectControlTypeMarkSemesterEntity> list) {
     return showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return const Column(
+        return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children: [InfoModalWindow()]);
+            children: [InfoModalWindow(tsctms: list)]);
       },
     );
   }
@@ -152,42 +178,4 @@ class _RecordCardPageState extends State<RecordCardPage> {
   Widget _height() => const SizedBox(height: 16);
 
   Widget _width() => const SizedBox(width: 16);
-}
-
-class DropdownMenuExample extends StatefulWidget {
-  final List<String>? semesters;
-
-  const DropdownMenuExample({super.key, this.semesters});
-
-  @override
-  State<DropdownMenuExample> createState() => _DropdownMenuExampleState();
-}
-
-class _DropdownMenuExampleState extends State<DropdownMenuExample> {
-  late List<String>? semesters = [];
-  late String? dropdownValue;
-
-  @override
-  void initState() {
-    super.initState();
-    semesters = widget.semesters;
-    dropdownValue = semesters?.first;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownMenu<String>(
-      initialSelection: semesters?.first,
-      onSelected: (String? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-        });
-      },
-      dropdownMenuEntries:
-          semesters!.map<DropdownMenuEntry<String>>((String value) {
-        return DropdownMenuEntry<String>(value: value, label: value);
-      }).toList(),
-    );
-  }
 }

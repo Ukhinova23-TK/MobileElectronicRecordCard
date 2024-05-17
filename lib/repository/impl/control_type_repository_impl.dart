@@ -35,17 +35,23 @@ class ControlTypeRepositoryImpl implements ControlTypeRepository {
 
   @override
   Future<int>? getMaxVersion() async {
-    List<Control_type> controlTypes =
-        await Control_type().select().orderByDesc('version').toList();
-    if (controlTypes.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in controlTypes) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+    Control_type? controlType = await Control_type()
+        .select(columnsToSelect: [Control_typeFields.version.max()])
+        .groupBy('version')
+        .toSingle();
+    return controlType?.version ?? 0;
+  }
+
+  @override
+  Future<List<Mark>?> getMarksByGroupAndSubject(
+      int groupId, int subjectId) async {
+    return Mark.fromMapList((await ElectronicRecordCardDbModel()
+        .execDataTable("""select distinct m.*
+        from student_group sg join "user" u on u.groupId = sg.id
+        join user_subject_control_type usct on usct.student_id = u.id
+        join subject s on s.id = usct.subject_id
+        join mark_control_type mct on mct.control_typeId = usct.control_type_id
+        join mark m on m.id = mct.markId
+        where s.id = $subjectId and sg.id = $groupId""")));
   }
 }

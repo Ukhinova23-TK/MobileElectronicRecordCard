@@ -1,12 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_logcat/flutter_logcat.dart';
+import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
+import 'package:mobile_electronic_record_card/controller/group_controller.dart';
+import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
+import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
+import 'package:mobile_electronic_record_card/controller/role_controller.dart';
+import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
+import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
+import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
+import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_subject_control_type_repository_impl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../constants/api_constants.dart';
 
 class AuthorizationPage extends StatelessWidget {
   const AuthorizationPage({super.key});
@@ -142,8 +158,7 @@ class __FormContentState extends State<_FormContent> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4)
-                    ),
+                        borderRadius: BorderRadius.circular(4)),
                     backgroundColor: greatMarkColor),
                 child: const Padding(
                   padding: EdgeInsets.all(10.0),
@@ -185,6 +200,30 @@ class __FormContentState extends State<_FormContent> {
         ..showSnackBar(
             const SnackBar(content: Text('Неверная пара логин/пароль')));
     });
+  }
+
+  void data() async {
+    await SubjectController().getAllFromServer();
+    await ControlTypeController().getAllFromServer();
+    await MarkController().getAllFromServer();
+    await MarkControlTypeController().getAllFromServer();
+    await GroupController().getAllFromServer();
+    await RoleController().getAllFromServer();
+    await UserController().getAllFromServer();
+    await UserSubjectControlTypeController().getAllFromServer();
+    await StudentMarkController().getAllFromServer();
+  }
+
+  void delete() async {
+    await SubjectRepositoryImpl().deleteAll();
+    await ControlTypeRepositoryImpl().deleteAll();
+    await MarkRepositoryImpl().deleteAll();
+    await MarkControlTypeRepositoryImpl().deleteAll();
+    await GroupRepositoryImpl().deleteAll();
+    await RoleRepositoryImpl().deleteAll();
+    await UserRepositoryImpl().deleteAll();
+    await UserSubjectControlTypeRepositoryImpl().deleteAll();
+    await StudentMarkRepositoryImpl().deleteAll();
   }
 
   void routeToPage(int rolesCount, List<String> rolesName) {

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
-import 'package:mobile_electronic_record_card/model/entity/user_subject_control_type_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 
 class UserSubjectControlTypeProvider extends ChangeNotifier {
-  Future<List<UserSubjectControlTypeEntity>>? _userSubjectsControlTypes;
+  Future<List<TeacherSubjectControlTypeMarkSemesterEntity>>? _userSubjectsControlTypes;
 
-  Future<List<UserSubjectControlTypeEntity>>? get userSubjectsControlTypes =>
+  Future<List<TeacherSubjectControlTypeMarkSemesterEntity>>? get userSubjectsControlTypes =>
       _userSubjectsControlTypes;
 
-  void initUserSubjectsControlTypes(int controlTypeId) =>
+  void initUserSubjectsControlTypes(int userId) =>
       _userSubjectsControlTypes =
-          UserSubjectControlTypeController().userSubjectControlTypes;
+          UserSubjectControlTypeController().getByStudentFromDb(userId);
 
   void fetchControlTypes() async => notifyListeners();
 }

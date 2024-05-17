@@ -1,10 +1,28 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_electronic_record_card/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
+import 'package:mobile_electronic_record_card/controller/group_controller.dart';
+import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
+import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
+import 'package:mobile_electronic_record_card/controller/role_controller.dart';
+import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
+import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
+import 'package:mobile_electronic_record_card/controller/user_controller.dart';
+import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
+import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_subject_control_type_repository_impl.dart';
 import 'package:provider/provider.dart';
 
 class SubjectPage extends StatefulWidget {
@@ -30,6 +48,32 @@ class SubjectPageState extends State<SubjectPage> {
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     bottomNavBar = widget.bottomNavBar ?? false;
     Provider.of<SubjectProvider>(context, listen: false).initSubjects();
+    //delete();
+    data();
+  }
+
+  void data() async {
+    await SubjectController().getAllFromServer();
+    await ControlTypeController().getAllFromServer();
+    await MarkController().getAllFromServer();
+    await MarkControlTypeController().getAllFromServer();
+    await GroupController().getAllFromServer();
+    await RoleController().getAllFromServer();
+    await UserController().getAllFromServer();
+    await UserSubjectControlTypeController().getAllFromServer();
+    await StudentMarkController().getAllFromServer();
+  }
+
+  void delete() async {
+    await SubjectRepositoryImpl().deleteAll();
+    await ControlTypeRepositoryImpl().deleteAll();
+    await MarkRepositoryImpl().deleteAll();
+    await MarkControlTypeRepositoryImpl().deleteAll();
+    await GroupRepositoryImpl().deleteAll();
+    await RoleRepositoryImpl().deleteAll();
+    await UserRepositoryImpl().deleteAll();
+    await UserSubjectControlTypeRepositoryImpl().deleteAll();
+    await StudentMarkRepositoryImpl().deleteAll();
   }
 
   @override
@@ -130,28 +174,18 @@ class SubjectPageState extends State<SubjectPage> {
       return ListView.builder(
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
-            return SubjectList(snapshot[index].name ?? "");
+            return ListTile(
+                title: Text(snapshot[index].name ?? ""),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          GroupPage(subjectId: snapshot[index].id ?? 0),
+                    ),
+                  );
+                });
           });
     }
-  }
-}
-
-class SubjectList extends StatelessWidget {
-  const SubjectList(this.name, {super.key});
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(name),
-      onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const GroupPage(),
-          ),
-        );
-      },
-    );
   }
 }

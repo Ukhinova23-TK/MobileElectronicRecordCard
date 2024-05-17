@@ -12,4 +12,6 @@ abstract class UserSubjectControlTypeRepository {
   Future<void> deleteAll();
 
   Future<int>? getMaxVersion();
+
+  Future<List<User_subject_control_type>> getByGroupAndSubject(int groupId, int subjectId);
 }

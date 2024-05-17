@@ -5,6 +5,8 @@ abstract class GroupRepository {
 
   Future<List<Student_group>> getAll();
 
+  Future<List<Student_group>> getBySubject(int subjectId);
+
   Future<Student_group?> get(int id);
 
   Future<void> delete(int id);

@@ -14,6 +14,18 @@ class UserSubjectControlTypeRepositoryImpl
     return await User_subject_control_type().getById(id);
   }
 
+  Future<User_subject_control_type?> getByStudentAndSubject(
+      int userId, int subjectId) async {
+    return await User_subject_control_type()
+        .select()
+        .student_id
+        .equals(userId)
+        .and
+        .subject_id
+        .equals(subjectId)
+        .toSingle();
+  }
+
   @override
   Future<List<User_subject_control_type>> getAll() async {
     return await User_subject_control_type().select().toList();
@@ -31,20 +43,42 @@ class UserSubjectControlTypeRepositoryImpl
 
   @override
   Future<int>? getMaxVersion() async {
-    List<User_subject_control_type> userSubjectControlTypes =
+    User_subject_control_type? userSubjectControlType =
         await User_subject_control_type()
-            .select()
-            .orderByDesc('version')
-            .toList();
-    if (userSubjectControlTypes.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in userSubjectControlTypes) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+            .select(columnsToSelect: [
+              User_subject_control_typeFields.version.max()
+            ])
+            .orderBy('version')
+            .toSingle();
+    return userSubjectControlType?.version ?? 0;
+  }
+
+  @override
+  Future<List<User_subject_control_type>> getByGroupAndSubject(
+      int groupId, int subjectId) async {
+    return User_subject_control_type.fromMapList(
+        (await ElectronicRecordCardDbModel().execDataTable("""select usct.*
+        from student_group sg join "user" u on u.groupId = sg.id
+        join user_subject_control_type usct on usct.student_id = u.id
+        join subject s on s.id = usct.subject_id
+        where s.id = $subjectId and sg.id = $groupId""")));
+  }
+
+  Future<List<Map<String, dynamic>>> getByStudent(int userId) async {
+    return await ElectronicRecordCardDbModel().execDataTable("""
+    select u.id as "user.id", u.last_name as "user.lastName",
+    u.first_name as "user.firstName", u.middle_name as "user.middleName",
+    m.id as "mark.id", m.name as "mark.name",
+    m.title as "mark.title", m.value as "mark.value",
+    s.id as "subject.id", s.name as "subject.name",
+    ct.id as "control_type.id", ct.name as "control_type.name",
+    ct.title as "control_type.title", usct.semester
+    from "user" u join user_subject_control_type usct on u.id = usct.teacher_id
+    join subject s on usct.subject_id = s.id
+    join control_type ct on usct.control_type_id = ct.id
+    left join student_mark sm on usct.id = sm.user_subject_control_type_id
+    left join mark m on sm.mark_id = m.id
+    where usct.student_id = $userId
+    """);
   }
 }

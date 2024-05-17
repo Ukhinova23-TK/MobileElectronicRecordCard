@@ -30,17 +30,10 @@ class SubjectRepositoryImpl implements SubjectRepository {
 
   @override
   Future<int>? getMaxVersion() async {
-    List<Subject> subjects =
-        await Subject().select().orderByDesc('version').toList();
-    if (subjects.isEmpty) {
-      return 0;
-    } else {
-      List<int> versions = [];
-      for (var element in subjects) {
-        versions.add(element.version ?? 0);
-      }
-      versions.sort();
-      return versions.last;
-    }
+    Subject? subject = await Subject()
+        .select(columnsToSelect: [SubjectFields.version.max()])
+        .groupBy('version')
+        .toSingle();
+    return subject?.version ?? 0;
   }
 }

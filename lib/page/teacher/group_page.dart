@@ -1,16 +1,22 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_electronic_record_card/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
 import 'package:mobile_electronic_record_card/provider/group_provider.dart';
 import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
   final int? selectedItemNavBar;
   final bool? bottomNavBar;
+  final int subjectId;
 
-  const GroupPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const GroupPage(
+      {required this.subjectId,
+      this.selectedItemNavBar,
+      this.bottomNavBar,
+      super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -21,14 +27,16 @@ class GroupPage extends StatefulWidget {
 class GroupPageState extends State<GroupPage> {
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
-  late bool bottomNavBar;
+  late bool _bottomNavBar;
+  late int _subjectId;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
-    bottomNavBar = widget.bottomNavBar ?? false;
-    Provider.of<GroupProvider>(context, listen: false).initGroups();
+    _bottomNavBar = widget.bottomNavBar ?? false;
+    _subjectId = widget.subjectId;
+    Provider.of<GroupProvider>(context, listen: false).initGroups(_subjectId);
   }
 
   @override
@@ -66,7 +74,7 @@ class GroupPageState extends State<GroupPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if (bottomNavBar) {
+    if (_bottomNavBar) {
       return BottomNavigationBar(
         items: const [
           BottomNavigationBarItem(
@@ -88,7 +96,7 @@ class GroupPageState extends State<GroupPage> {
       _selectedIndex = index;
     });
     BottomNavBarChoose(
-            index: index, context: context, bottomNavBar: bottomNavBar)
+            index: index, context: context, bottomNavBar: _bottomNavBar)
         .changeItem();
   }
 
@@ -109,7 +117,7 @@ class GroupPageState extends State<GroupPage> {
       return buildListView(list);
     }
     if (snapshot.hasData) {
-      snapshot.data!
+      list = snapshot.data!
           .where((e) =>
               e.name!.toLowerCase().contains(searchText.value.toLowerCase()) ||
               ((e.fullName != null) &&
@@ -134,23 +142,20 @@ class GroupPageState extends State<GroupPage> {
       return ListView.builder(
           itemCount: snapshot.length,
           itemBuilder: (context, index) {
-            return GroupList(
-                snapshot[index].name ?? "", snapshot[index].fullName ?? "");
+            return ListTile(
+                title: Text(snapshot[index].name ?? ""),
+                subtitle: Text(snapshot[index].fullName ?? ""),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StudentMarkPage(
+                          subjectId: _subjectId,
+                          groupId: snapshot[index].id ?? 0),
+                    ),
+                  );
+                });
           });
     }
-  }
-}
-
-class GroupList extends StatelessWidget {
-  const GroupList(this.name, this.fullName, {super.key});
-  final String name;
-  final String fullName;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(name),
-      subtitle: Text(fullName),
-    );
   }
 }

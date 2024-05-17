@@ -14,9 +14,11 @@ class StudentMarkEntity {
 
   static StudentMarkEntity fromJson(Map<String, dynamic> json) {
     var id = json['id'];
-    var markId = json['mark_id'];
-    var userSubjectControlTypeId = json['user_subject_control_type_id'];
-    var completionDate = json['completion_date'];
+    var markId = json['markId'];
+    var userSubjectControlTypeId = json['userSubjectControlTypeId'];
+    var completionDate = json['completionDate'].runtimeType == String
+        ? DateTime.parse(json['completionDate'])
+        : DateTime.fromMicrosecondsSinceEpoch(json['completionDate']);
     var version = json['version'];
     return StudentMarkEntity(
         id: id,
@@ -29,9 +31,9 @@ class StudentMarkEntity {
   static Map<String, dynamic> toJson(StudentMarkEntity studentMark) {
     return {
       'id': studentMark.id,
-      'mark_id': studentMark.markId,
-      'user_subject_control_type_id': studentMark.userSubjectControlTypeId,
-      'completion_date': studentMark.completionDate,
+      'markId': studentMark.markId,
+      'userSubjectControlTypeId': studentMark.userSubjectControlTypeId,
+      'completionDate': studentMark.completionDate,
       'version': studentMark.version
     };
   }
