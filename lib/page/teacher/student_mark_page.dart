@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
@@ -8,6 +9,7 @@ import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class StudentMarkPage extends StatefulWidget {
@@ -32,8 +34,8 @@ class StudentMarkPage extends StatefulWidget {
 class StudentMarkPageState extends State<StudentMarkPage> {
   bool isSelectItem = false;
   Map<int, bool> selectedItem = {};
-  // TODO сделать чтобы _needSave зависела от последней синхронизации
-  bool _needSave = false;
+  final sharedLocator = getIt.get<SharedPreferenceHelper>();
+  late bool _needSave;
   late int _selectedIndex;
   late bool _bottomNavBar;
   late int _subjectId;
@@ -42,7 +44,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   @override
   void initState() {
     super.initState();
-    _needSave = false;
+    _needSave = sharedLocator.getNeedSave() ?? false;
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     _bottomNavBar = widget.bottomNavBar ?? false;
     _subjectId = widget.subjectId;
@@ -205,7 +207,8 @@ class StudentMarkPageState extends State<StudentMarkPage> {
                 .initStudentMark(_groupId, _subjectId);
             Provider.of<StudentMarkProvider>(context, listen: false)
                 .fetchStudentMark();
-            _needSave = true;
+            sharedLocator.setNeedSave(true);
+            _needSave = sharedLocator.getNeedSave() ?? true;
             isSelectItem = false;
           }));
     }
