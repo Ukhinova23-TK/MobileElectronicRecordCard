@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/group_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
-import 'package:mobile_electronic_record_card/controller/user_controller.dart';
-import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
@@ -62,18 +54,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> data() async {
-    await SubjectController().getAllFromServer();
-    await ControlTypeController().getAllFromServer();
-    await MarkController().getAllFromServer();
-    await MarkControlTypeController().getAllFromServer();
-    await StudentMarkController().getAllFromServer();
-    await GroupController().getAllFromServer();
-    await UserController().getAllFromServer();
-    await UserSubjectControlTypeController().getAllFromServer();
-    Log.d('Data successful', tag: 'main');
-  }
-
   Future<void> delete() async {
     await SubjectRepositoryImpl().deleteAll();
     await ControlTypeRepositoryImpl().deleteAll();
@@ -91,7 +71,6 @@ class _MyAppState extends State<MyApp> {
     //secureLocator.removeToken();
     //sharedLocator.deleteAll();
     //Future.microtask(() async => await delete());
-    //Future.microtask(() async => await data());
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(

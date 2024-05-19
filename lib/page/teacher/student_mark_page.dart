@@ -95,10 +95,14 @@ class StudentMarkPageState extends State<StudentMarkPage> {
 
   AppBar buildAppBar(String title) {
     return AppBar(
-      actions: [
-        IconButton(
-            onPressed: () => {}, icon: Icon(_needSave ? Icons.save : null))
-      ],
+      actions: _needSave
+          ? [
+              IconButton(
+                icon: const Icon(Icons.save),
+                onPressed: () => {},
+              )
+            ]
+          : [],
       title: Text(title),
     );
   }

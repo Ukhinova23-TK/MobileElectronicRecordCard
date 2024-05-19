@@ -30,6 +30,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
   late int _selectedIndex;
   late bool bottomNavBar;
   int? dropdownValue;
+  bool _infoModal = false;
 
   @override
   void initState() {
@@ -46,16 +47,18 @@ class _RecordCardPageState extends State<RecordCardPage> {
       appBar: AppBar(
         backgroundColor: appbarColor,
         title: const Text('Зачетка'),
-        actions: [
+        actions: <Widget>[
           IconButton(
               onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)),
-          IconButton(
-              onPressed: () => Provider.of<UserSubjectControlTypeProvider>(
-                      context,
-                      listen: false)
-                  .userSubjectsControlTypes
-                  ?.then((value) => openInfoModalWindow(value)),
-              icon: const Icon(Icons.percent_outlined))
+          _infoModal
+              ? IconButton(
+                  onPressed: () => Provider.of<UserSubjectControlTypeProvider>(
+                          context,
+                          listen: false)
+                      .userSubjectsControlTypes
+                      ?.then((value) => openInfoModalWindow(value)),
+                  icon: const Icon(Icons.percent_outlined))
+              : Container()
         ],
       ),
       body: Consumer<UserSubjectControlTypeProvider>(
@@ -82,6 +85,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
                             onSelected: (int? value) {
                               setState(() {
                                 dropdownValue = value;
+                                _infoModal = true;
                               });
                             },
                             dropdownMenuEntries: dataUniqueSemester
