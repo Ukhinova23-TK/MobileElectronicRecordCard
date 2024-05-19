@@ -4,12 +4,12 @@ import 'package:mobile_electronic_record_card/controller/control_type_controller
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
@@ -17,12 +17,11 @@ import 'package:mobile_electronic_record_card/repository/impl/control_type_repos
 import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/user_subject_control_type_repository_impl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 
 class AuthorizationPage extends StatelessWidget {
   const AuthorizationPage({super.key});
@@ -95,6 +94,7 @@ class __FormContentState extends State<_FormContent> {
   bool _isPasswordVisible = false;
   String? login;
   String? password;
+  final sharedLocator = getIt.get<SharedPreferenceHelper>();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -184,17 +184,16 @@ class __FormContentState extends State<_FormContent> {
   }
 
   Future<void> authenticate() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
     UserController().authenticate(login!, password!).then((user) {
       UserController().getByLoginFromServer(login!).then((value) {
-        int? rolesCount = pref.getInt('rolesCount');
-        List<String>? rolesName = pref.getStringList('rolesName');
+        int? rolesCount = sharedLocator.getRolesCount();
+        List<String>? rolesName = sharedLocator.getRolesName();
         if (rolesCount != null && rolesName != null) {
           routeToPage(rolesCount, rolesName);
         }
       });
     }).catchError((onError) {
-      Log.e('Ошибка авторизации под учетными данными: $login/$password');
+      Log.e('Ошибка авторизации под учетными данными');
       ScaffoldMessenger.of(context)
         ..removeCurrentSnackBar()
         ..showSnackBar(
@@ -202,31 +201,33 @@ class __FormContentState extends State<_FormContent> {
     });
   }
 
-  void data() async {
+  Future<void> data() async {
     await SubjectController().getAllFromServer();
     await ControlTypeController().getAllFromServer();
     await MarkController().getAllFromServer();
     await MarkControlTypeController().getAllFromServer();
+    await StudentMarkController().getAllFromServer();
     await GroupController().getAllFromServer();
-    await RoleController().getAllFromServer();
     await UserController().getAllFromServer();
     await UserSubjectControlTypeController().getAllFromServer();
-    await StudentMarkController().getAllFromServer();
+    Log.d('Data successful', tag: 'auth');
   }
 
-  void delete() async {
+  Future<void> delete() async {
     await SubjectRepositoryImpl().deleteAll();
     await ControlTypeRepositoryImpl().deleteAll();
     await MarkRepositoryImpl().deleteAll();
     await MarkControlTypeRepositoryImpl().deleteAll();
+    await StudentMarkRepositoryImpl().deleteAll();
     await GroupRepositoryImpl().deleteAll();
-    await RoleRepositoryImpl().deleteAll();
     await UserRepositoryImpl().deleteAll();
     await UserSubjectControlTypeRepositoryImpl().deleteAll();
-    await StudentMarkRepositoryImpl().deleteAll();
+    Log.d('Delete successful', tag: 'auth');
   }
 
   void routeToPage(int rolesCount, List<String> rolesName) {
+    //Future.microtask(() async => await delete());
+    //Future.microtask(() async => await data());
     if (rolesCount == 1 && rolesName.first == RoleName.student) {
       Navigator.pushAndRemoveUntil(
           context,

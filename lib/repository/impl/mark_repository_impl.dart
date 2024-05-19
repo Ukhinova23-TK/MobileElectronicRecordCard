@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../mark_repository.dart';
+import 'package:mobile_electronic_record_card/repository/mark_repository.dart';
 
 class MarkRepositoryImpl implements MarkRepository {
   @override

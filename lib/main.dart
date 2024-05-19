@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/group_controller.dart';
 import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
 import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
@@ -24,7 +24,6 @@ import 'package:mobile_electronic_record_card/repository/impl/control_type_repos
 import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
 import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
@@ -68,11 +67,11 @@ class _MyAppState extends State<MyApp> {
     await ControlTypeController().getAllFromServer();
     await MarkController().getAllFromServer();
     await MarkControlTypeController().getAllFromServer();
+    await StudentMarkController().getAllFromServer();
     await GroupController().getAllFromServer();
-    await RoleController().getAllFromServer();
     await UserController().getAllFromServer();
     await UserSubjectControlTypeController().getAllFromServer();
-    await StudentMarkController().getAllFromServer();
+    Log.d('Data successful', tag: 'main');
   }
 
   Future<void> delete() async {
@@ -80,11 +79,11 @@ class _MyAppState extends State<MyApp> {
     await ControlTypeRepositoryImpl().deleteAll();
     await MarkRepositoryImpl().deleteAll();
     await MarkControlTypeRepositoryImpl().deleteAll();
+    await StudentMarkRepositoryImpl().deleteAll();
     await GroupRepositoryImpl().deleteAll();
-    await RoleRepositoryImpl().deleteAll();
     await UserRepositoryImpl().deleteAll();
     await UserSubjectControlTypeRepositoryImpl().deleteAll();
-    await StudentMarkRepositoryImpl().deleteAll();
+    Log.d('Delete successful', tag: 'main');
   }
 
   @override

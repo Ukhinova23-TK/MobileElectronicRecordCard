@@ -10,10 +10,13 @@ class StudentMarkHttpClientImpl implements StudentMarkHttpClient {
   @override
   Future<List<StudentMarkEntity>> getAll() async {
     final version = await StudentMarkRepositoryImpl().getMaxVersion();
-    final response = await EndPoint.http.get(
+    final Map<String, dynamic> body = {};
+    final response = await EndPoint.http.post(
         Uri.parse('${EndPoint.resourceUrl}${EndPoint.studentMarkUrl}'
-            '${EndPoint.getByVersionUrl}$version'),
-        headers: headers);
+            '${EndPoint.getByVersionUrl}$version'
+            '${EndPoint.studentMarAndCriteriaUrl}'),
+        headers: headers,
+        body: jsonEncode(body));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => StudentMarkEntity.fromJson(e))
         .toList();

@@ -1,7 +1,6 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/student_mark_repository.dart';
 import 'package:sqfentity_gen/sqfentity_gen.dart';
-
-import '../student_mark_repository.dart';
 
 class StudentMarkRepositoryImpl implements StudentMarkRepository {
   @override

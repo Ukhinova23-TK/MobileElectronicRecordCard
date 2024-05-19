@@ -5,6 +5,7 @@ import 'package:mobile_electronic_record_card/model/entity/control_type_entity.d
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
+import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
@@ -98,11 +99,28 @@ class _RecordCardPageState extends State<RecordCardPage> {
                         itemCount: data.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(data[index].subject.name ?? ""),
-                            subtitle: Text(data[index].controlType.title ?? ""),
-                            trailing:
-                                Text(data[index].mark?.title ?? "Нет оценки"),
-                            tileColor: setColor(data[index].mark?.value),
+                            title: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: Text(
+                                  data[index].subject.name ?? "",
+                                  textAlign: TextAlign.left,
+                                  textDirection: TextDirection.rtl,
+                                )),
+                            subtitle: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: Text(
+                                  data[index].controlType.title ?? "",
+                                  textAlign: TextAlign.left,
+                                  textDirection: TextDirection.rtl,
+                                )),
+                            trailing: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: Text(
+                                  data[index].mark?.title ?? "Нет оценки",
+                                  textAlign: TextAlign.right,
+                                  textDirection: TextDirection.ltr,
+                                )),
+                            tileColor: setColor(data[index].mark?.name),
                           );
                         }),
                   ]);
@@ -120,16 +138,16 @@ class _RecordCardPageState extends State<RecordCardPage> {
     );
   }
 
-  Color? setColor(int? markValue) {
-    switch (markValue) {
-      case 2:
-        return failMarkColor;
-      case 3:
-        return satisfactoryMarkColor;
-      case 4:
-        return wellMarkColor;
-      case 5:
+  Color? setColor(String? markName) {
+    switch (markName) {
+      case MarkName.excellent || MarkName.failed || MarkName.release:
         return greatMarkColor;
+      case MarkName.good:
+        return wellMarkColor;
+      case MarkName.satisfactory:
+        return satisfactoryMarkColor;
+      case MarkName.unsatisfactory || MarkName.passed:
+        return failMarkColor;
       default:
         return noMarkColor;
     }

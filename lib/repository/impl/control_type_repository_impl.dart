@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../control_type_repository.dart';
+import 'package:mobile_electronic_record_card/repository/control_type_repository.dart';
 
 class ControlTypeRepositoryImpl implements ControlTypeRepository {
   @override

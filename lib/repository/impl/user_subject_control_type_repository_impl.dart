@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../user_subject_control_type_repository.dart';
+import 'package:mobile_electronic_record_card/repository/user_subject_control_type_repository.dart';
 
 class UserSubjectControlTypeRepositoryImpl
     implements UserSubjectControlTypeRepository {

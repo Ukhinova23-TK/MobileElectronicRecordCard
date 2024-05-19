@@ -4,18 +4,17 @@ import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/authenticate_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/role_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
+import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/repository/impl/role_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/user_repository.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
-
-import '../model/entity/role_entity.dart';
-import '../model/model.dart';
-import '../repository/impl/user_repository_impl.dart';
-import '../repository/user_repository.dart';
-import '../service/mapper/impl/role_mapper.dart';
-import '../service/mapper/impl/user_mapper.dart';
-import '../service/mapper/mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/role_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/user_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class UserController {
   final sharedPrefLocator = getIt.get<SharedPreferenceHelper>();
@@ -97,7 +96,6 @@ class UserController {
 
   Future<UserEntity> getByLoginFromServer(String login) async {
     UserEntity user = await UserHttpClientImpl().getByLogin(login);
-    setUserToDb(user);
 
     sharedPrefLocator.setUserId(user.id!);
     if (user.groupId != null) {

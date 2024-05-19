@@ -1,13 +1,12 @@
 import 'package:flutter_logcat/log/log.dart';
-
-import '../client/impl/mark_http_client_impl.dart';
-import '../model/entity/mark_entity.dart';
-import '../model/model.dart';
-import '../repository/impl/control_type_repository_impl.dart';
-import '../repository/impl/mark_repository_impl.dart';
-import '../repository/mark_repository.dart';
-import '../service/mapper/impl/mark_mapper.dart';
-import '../service/mapper/mapper.dart';
+import 'package:mobile_electronic_record_card/client/impl/mark_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/mark_repository.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/mark_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class MarkController {
   Future<List<MarkEntity>> get marks => getAllFromDb();

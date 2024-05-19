@@ -3,6 +3,7 @@ import 'package:mobile_electronic_record_card/controller/student_mark_controller
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
@@ -136,32 +137,37 @@ class StudentMarkPageState extends State<StudentMarkPage> {
             return ListTile(
               onLongPress: () => onLongPress(isSelectedData, index),
               onTap: () => onTap(isSelectedData, index, data),
-              title: Text(
-                '''${data.user.firstName} ${data.user.lastName} 
-                  ${data.user.middleName ?? ''}''',
-                textAlign: TextAlign.left,
-                textDirection: TextDirection.rtl,
-              ),
-              trailing: Text(
-                data.mark?.title ?? 'Нет оценки',
-              ),
+              title: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Text(
+                    '''${data.user.lastName} ${data.user.firstName} ${data.user.middleName ?? ''}''',
+                    textAlign: TextAlign.left,
+                    textDirection: TextDirection.rtl,
+                  )),
+              trailing: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.4,
+                  child: Text(
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.ltr,
+                    data.mark?.title ?? 'Нет оценки',
+                  )),
               leading: _buildSelectIcon(isSelectedData!, data),
-              tileColor: setColor(data.mark?.value),
+              tileColor: setColor(data.mark?.name),
             );
           });
     }
   }
 
-  Color? setColor(int? markValue) {
-    switch (markValue) {
-      case 2:
-        return failMarkColor;
-      case 3:
-        return satisfactoryMarkColor;
-      case 4:
-        return wellMarkColor;
-      case 5:
+  Color? setColor(String? markName) {
+    switch (markName) {
+      case MarkName.excellent || MarkName.failed || MarkName.release:
         return greatMarkColor;
+      case MarkName.good:
+        return wellMarkColor;
+      case MarkName.satisfactory:
+        return satisfactoryMarkColor;
+      case MarkName.unsatisfactory || MarkName.passed:
+        return failMarkColor;
       default:
         return noMarkColor;
     }
@@ -171,11 +177,10 @@ class StudentMarkPageState extends State<StudentMarkPage> {
       [StudentAndMarkEntity? currentItem]) async {
     final result = await showModalBottomSheet<int>(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [MarksModalWindow(marks, currentItem)]);
+        return SingleChildScrollView(
+            child: MarksModalWindow(marks, currentItem));
       },
     );
     if (result != null) {

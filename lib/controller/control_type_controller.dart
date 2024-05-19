@@ -1,12 +1,11 @@
 import 'package:flutter_logcat/log/log.dart';
-
-import '../client/impl/control_type_http_client_impl.dart';
-import '../model/entity/control_type_entity.dart';
-import '../model/model.dart';
-import '../repository/control_type_repository.dart';
-import '../repository/impl/control_type_repository_impl.dart';
-import '../service/mapper/impl/control_type_mapper.dart';
-import '../service/mapper/mapper.dart';
+import 'package:mobile_electronic_record_card/client/impl/control_type_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
+import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/control_type_repository.dart';
+import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/control_type_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class ControlTypeController {
   Future<List<ControlTypeEntity>> get controlTypes => getAllFromDb();

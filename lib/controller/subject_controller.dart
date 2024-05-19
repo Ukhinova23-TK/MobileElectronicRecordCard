@@ -1,12 +1,11 @@
 import 'package:flutter_logcat/flutter_logcat.dart';
-
-import '../client/impl/subject_http_client_impl.dart';
-import '../model/entity/subject_entity.dart';
-import '../model/model.dart';
-import '../repository/impl/subject_repository_impl.dart';
-import '../repository/subject_repository.dart';
-import '../service/mapper/impl/subject_mapper.dart';
-import '../service/mapper/mapper.dart';
+import 'package:mobile_electronic_record_card/client/impl/subject_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
+import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
+import 'package:mobile_electronic_record_card/repository/subject_repository.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/subject_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class SubjectController {
   Future<List<SubjectEntity>> get subjects => getAllFromDb();

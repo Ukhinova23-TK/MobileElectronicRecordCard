@@ -10,10 +10,12 @@ class SubjectHttpClientImpl implements SubjectHttpClient {
   @override
   Future<List<SubjectEntity>> getAll() async {
     final version = await SubjectRepositoryImpl().getMaxVersion();
-    final response = await EndPoint.http.get(
+    final Map<String, dynamic> body = {};
+    final response = await EndPoint.http.post(
         Uri.parse('${EndPoint.resourceUrl}${EndPoint.subjectUrl}'
-            '${EndPoint.getByVersionUrl}$version'),
-        headers: headers);
+            '${EndPoint.getByVersionUrl}$version${EndPoint.subjectAndCriteriaUrl}'),
+        headers: headers,
+        body: jsonEncode(body));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => SubjectEntity.fromJson(e))
         .toList();

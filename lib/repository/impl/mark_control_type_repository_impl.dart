@@ -1,7 +1,6 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/mark_control_type_repository.dart';
 import 'package:sqfentity_gen/sqfentity_gen.dart';
-
-import '../mark_control_type_repository.dart';
 
 class MarkControlTypeRepositoryImpl implements MarkControlTypeRepository {
   @override

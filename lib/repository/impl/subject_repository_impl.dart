@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../subject_repository.dart';
+import 'package:mobile_electronic_record_card/repository/subject_repository.dart';
 
 class SubjectRepositoryImpl implements SubjectRepository {
   @override

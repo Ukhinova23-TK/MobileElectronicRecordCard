@@ -1,12 +1,11 @@
 import 'package:flutter_logcat/log/log.dart';
-
-import '../client/impl/group_http_client_impl.dart';
-import '../model/entity/group_entity.dart';
-import '../model/model.dart';
-import '../repository/group_repository.dart';
-import '../repository/impl/group_repository_impl.dart';
-import '../service/mapper/impl/group_mapper.dart';
-import '../service/mapper/mapper.dart';
+import 'package:mobile_electronic_record_card/client/impl/group_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
+import 'package:mobile_electronic_record_card/model/model.dart';
+import 'package:mobile_electronic_record_card/repository/group_repository.dart';
+import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
+import 'package:mobile_electronic_record_card/service/mapper/impl/group_mapper.dart';
+import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class GroupController {
   Future<List<GroupEntity>> get groups => getAllFromDb();

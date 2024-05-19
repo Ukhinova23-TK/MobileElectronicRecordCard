@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../group_repository.dart';
+import 'package:mobile_electronic_record_card/repository/group_repository.dart';
 
 class GroupRepositoryImpl implements GroupRepository {
   @override

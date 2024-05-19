@@ -10,10 +10,12 @@ class UserHttpClientImpl implements UserHttpClient {
   @override
   Future<List<UserEntity>> getAll() async {
     final version = await UserRepositoryImpl().getMaxVersion();
-    final response = await EndPoint.http.get(
+    final Map<String, dynamic> body = {};
+    final response = await EndPoint.http.post(
         Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
-            '${EndPoint.getByVersionUrl}$version'),
-        headers: headers);
+            '${EndPoint.getByVersionUrl}$version${EndPoint.userAndCriteriaUrl}'),
+        headers: headers,
+        body: jsonEncode(body));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => UserEntity.fromJson(e))
         .toList();
@@ -21,9 +23,8 @@ class UserHttpClientImpl implements UserHttpClient {
 
   @override
   Future<UserEntity> getByLogin(String login) async {
-    final response =
-        await EndPoint.http.get(Uri.parse('${EndPoint.resourceUrl}'
-            '${EndPoint.userUrl}${EndPoint.userByLoginUrl}/$login'));
+    final response = await EndPoint.http.get(Uri.parse('${EndPoint.resourceUrl}'
+        '${EndPoint.userUrl}${EndPoint.userByLoginUrl}/$login'));
     return UserEntity.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   }
 

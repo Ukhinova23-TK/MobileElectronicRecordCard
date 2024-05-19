@@ -1,6 +1,5 @@
 import 'package:mobile_electronic_record_card/model/model.dart';
-
-import '../role_repository.dart';
+import 'package:mobile_electronic_record_card/repository/role_repository.dart';
 
 class RoleRepositoryImpl implements RoleRepository {
   @override

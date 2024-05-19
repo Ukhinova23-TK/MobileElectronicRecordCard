@@ -44,6 +44,7 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
             _width()
           ],
         ),
+        _height(),
         Row(
           children: [
             _width(),
@@ -63,6 +64,7 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
             _width()
           ],
         ),
+        _height(),
         Row(
           children: [
             _width(),
