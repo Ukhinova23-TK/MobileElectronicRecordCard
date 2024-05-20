@@ -1,5 +1,6 @@
 import 'package:flutter_logcat/log/log.dart';
 import 'package:mobile_electronic_record_card/client/impl/user_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/controller/role_controller.dart';
 import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
@@ -16,7 +17,7 @@ import 'package:mobile_electronic_record_card/service/mapper/impl/role_mapper.da
 import 'package:mobile_electronic_record_card/service/mapper/impl/user_mapper.dart';
 import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
-class UserController {
+class UserController implements DeleteController {
   final sharedPrefLocator = getIt.get<SharedPreferenceHelper>();
   final secureStorageLocator = getIt.get<SecureStorageHelper>();
   Future<List<UserEntity>> get users => getAllFromDb();
@@ -125,5 +126,14 @@ class UserController {
       secureStorageLocator
           .writeToken(AuthenticateEntity.fromJson(value).token!);
     });
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    await UserRepositoryImpl().delete(id);
+  }
+
+  Future<void> deleteAll() async {
+    await UserRepositoryImpl().deleteAll();
   }
 }

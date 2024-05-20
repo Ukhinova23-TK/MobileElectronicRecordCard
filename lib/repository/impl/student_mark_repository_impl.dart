@@ -1,3 +1,4 @@
+import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/repository/student_mark_repository.dart';
 import 'package:sqfentity_gen/sqfentity_gen.dart';
@@ -27,7 +28,7 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
   Future<BoolResult> update(Student_mark studentMark) {
     return ElectronicRecordCardDbModel().execSQL("""update student_mark
     set mark_id = ${studentMark.mark_id}, 
-    completion_date = ${studentMark.completion_date?.millisecond}
+    completion_date = ${studentMark.completion_date?.millisecondsSinceEpoch}
     where user_subject_control_type_id = 
     ${studentMark.user_subject_control_type_id}
     """);
@@ -70,6 +71,19 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
     left join mark m on sm.mark_id = m.id
     where u.groupId = $groupId and s.id = $subjectId
     """);
+  }
+
+  @override
+  Future<List<Student_mark>> getStudentMarksByGroupAndSubject(
+      int groupId, int subjectId) async {
+    return (await ElectronicRecordCardDbModel().execDataTable("""
+    select sm.*
+    from "user" u join user_subject_control_type usct on u.id = usct.student_id
+    join student_mark sm on usct.id = sm.user_subject_control_type_id
+    join mark m on sm.mark_id = m.id
+    where u.groupId = $groupId and usct.subject_id = $subjectId
+    and m.name != '${MarkName.nonAdmission}'
+    """)).map((e) => Student_mark.fromMap(e)).toList();
   }
 
   Future<List<Map<String, dynamic>>>? getByStudentAndSubject(

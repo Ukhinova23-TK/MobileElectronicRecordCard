@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
@@ -12,14 +11,6 @@ import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
-import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/user_subject_control_type_repository_impl.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
@@ -54,23 +45,10 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  Future<void> delete() async {
-    await SubjectRepositoryImpl().deleteAll();
-    await ControlTypeRepositoryImpl().deleteAll();
-    await MarkRepositoryImpl().deleteAll();
-    await MarkControlTypeRepositoryImpl().deleteAll();
-    await StudentMarkRepositoryImpl().deleteAll();
-    await GroupRepositoryImpl().deleteAll();
-    await UserRepositoryImpl().deleteAll();
-    await UserSubjectControlTypeRepositoryImpl().deleteAll();
-    Log.d('Delete successful', tag: 'main');
-  }
-
   @override
   Widget build(BuildContext context) {
-    //secureLocator.removeToken();
-    //sharedLocator.deleteAll();
-    //Future.microtask(() async => await delete());
+    secureLocator.removeToken();
+    sharedLocator.deleteAll();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(

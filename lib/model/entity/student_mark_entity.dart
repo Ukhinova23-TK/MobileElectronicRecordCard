@@ -16,9 +16,10 @@ class StudentMarkEntity {
     var id = json['id'];
     var markId = json['markId'];
     var userSubjectControlTypeId = json['userSubjectControlTypeId'];
-    var completionDate = json['completionDate'].runtimeType == String
-        ? DateTime.parse(json['completionDate'])
-        : DateTime.fromMicrosecondsSinceEpoch(json['completionDate']);
+    var completionDate = int.tryParse(json['completionDate'].toString()) != null
+        ? DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(json['completionDate'].toString())!)
+        : DateTime.tryParse(json['completionDate'].toString());
     var version = json['version'];
     return StudentMarkEntity(
         id: id,
@@ -33,7 +34,7 @@ class StudentMarkEntity {
       'id': studentMark.id,
       'markId': studentMark.markId,
       'userSubjectControlTypeId': studentMark.userSubjectControlTypeId,
-      'completionDate': studentMark.completionDate,
+      'completionDate': studentMark.completionDate.toString().split(' ').first,
       'version': studentMark.version
     };
   }

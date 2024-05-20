@@ -1,5 +1,6 @@
 import 'package:flutter_logcat/log/log.dart';
 import 'package:mobile_electronic_record_card/client/impl/group_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/repository/group_repository.dart';
@@ -7,7 +8,7 @@ import 'package:mobile_electronic_record_card/repository/impl/group_repository_i
 import 'package:mobile_electronic_record_card/service/mapper/impl/group_mapper.dart';
 import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
-class GroupController {
+class GroupController implements DeleteController {
   Future<List<GroupEntity>> get groups => getAllFromDb();
 
   Future<List<GroupEntity>> getAllFromDb() async {
@@ -37,5 +38,14 @@ class GroupController {
     for (var element in groups) {
       groupRepository.save(GroupMapper().toModel(element));
     }
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    await GroupRepositoryImpl().delete(id);
+  }
+
+  Future<void> deleteAll() async {
+    await GroupRepositoryImpl().deleteAll();
   }
 }

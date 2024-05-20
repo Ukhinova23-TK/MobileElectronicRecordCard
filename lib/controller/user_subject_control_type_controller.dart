@@ -1,5 +1,6 @@
 import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/client/impl/user_subject_control_type_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_subject_control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
@@ -8,7 +9,7 @@ import 'package:mobile_electronic_record_card/repository/user_subject_control_ty
 import 'package:mobile_electronic_record_card/service/mapper/impl/user_subject_control_type_mapper.dart';
 import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
-class UserSubjectControlTypeController {
+class UserSubjectControlTypeController implements DeleteController {
   Future<List<UserSubjectControlTypeEntity>> get userSubjectControlTypes =>
       getAllFromDb();
 
@@ -46,5 +47,14 @@ class UserSubjectControlTypeController {
       userSubjectControlTypeRepository
           .save(UserSubjectControlTypeMapper().toModel(element));
     }
+  }
+
+  @override
+  Future<void> delete(int id) async {
+    await UserSubjectControlTypeRepositoryImpl().delete(id);
+  }
+
+  Future<void> deleteAll() async {
+    await UserSubjectControlTypeRepositoryImpl().deleteAll();
   }
 }

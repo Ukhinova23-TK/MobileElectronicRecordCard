@@ -23,14 +23,16 @@ class StudentMarkHttpClientImpl implements StudentMarkHttpClient {
   }
 
   @override
-  Future<void> post(StudentMarkEntity studentMark) async {
-    // TODO: implement post
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> update(StudentMarkEntity studentMark) async {
-    // TODO: implement update
-    throw UnimplementedError();
+  Future<List<StudentMarkEntity>> push(
+      List<StudentMarkEntity> studentMarks) async {
+    final response = await EndPoint.http.post(
+        Uri.parse('${EndPoint.resourceUrl}'
+            '${EndPoint.studentMarkUrl}${EndPoint.studentMarkAllUrl}'),
+        headers: headers,
+        body: jsonEncode(
+            studentMarks.map((e) => StudentMarkEntity.toJson(e)).toList()));
+    return (json.decode(utf8.decode(response.bodyBytes)) as List)
+        .map((e) => StudentMarkEntity.fromJson(e))
+        .toList();
   }
 }

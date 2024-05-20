@@ -10,11 +10,14 @@ class UserSubjectControlTypeHttpClientImpl
     implements UserSubjectControlTypeHttpClient {
   @override
   Future<List<UserSubjectControlTypeEntity>> getAll() async {
-    final version = await UserSubjectControlTypeRepositoryImpl().getMaxVersion();
-    final response = await EndPoint.http.get(
+    final version =
+        await UserSubjectControlTypeRepositoryImpl().getMaxVersion();
+    final Map<String, dynamic> body = {};
+    final response = await EndPoint.http.post(
         Uri.parse('${EndPoint.resourceUrl}${EndPoint.usctUrl}'
-            '${EndPoint.getByVersionUrl}$version'),
-        headers: headers);
+            '${EndPoint.getByVersionUrl}$version${EndPoint.usctAndCriteriaUrl}'),
+        headers: headers,
+        body: jsonEncode(body));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => UserSubjectControlTypeEntity.fromJson(e))
         .toList();

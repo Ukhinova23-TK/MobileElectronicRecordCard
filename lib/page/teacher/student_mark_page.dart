@@ -10,6 +10,7 @@ import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.da
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
+import 'package:mobile_electronic_record_card/service/synchronization/impl/synchronization_service_impl.dart';
 import 'package:provider/provider.dart';
 
 class StudentMarkPage extends StatefulWidget {
@@ -101,12 +102,23 @@ class StudentMarkPageState extends State<StudentMarkPage> {
           ? [
               IconButton(
                 icon: const Icon(Icons.save),
-                onPressed: () => {},
+                onPressed: () => saveToServer(),
               )
             ]
           : [],
       title: Text(title),
     );
+  }
+
+  void saveToServer() {
+    StudentMarkController()
+        .getStudentMarksByGroupAndSubjectFromDb(_groupId, _subjectId)
+        .then((value) => SynchronizationServiceImpl().push(value).then((value) {
+              setState(() {
+                sharedLocator.setNeedSave(false);
+                _needSave = sharedLocator.getNeedSave() ?? false;
+              });
+            }));
   }
 
   FutureBuilder<List<StudentAndMarkEntity>> buildFutureBuilder(
@@ -136,17 +148,24 @@ class StudentMarkPageState extends State<StudentMarkPage> {
               return null;
             }
             StudentAndMarkEntity data = snapshot.data![index];
-            selectedItem[index] = selectedItem[index] ?? false;
-            // показатель выбранности конкретной записи
-            bool? isSelectedData = selectedItem[index];
+            bool isSelectedData = false;
+            if (data.mark?.name != MarkName.nonAdmission) {
+              selectedItem[index] ??= false;
+              isSelectedData = selectedItem[index]!;
+            }
 
             return ListTile(
-              onLongPress: () => onLongPress(isSelectedData, index),
-              onTap: () => onTap(isSelectedData, index, data),
+              onLongPress: () => data.mark?.name != MarkName.nonAdmission
+                  ? onLongPress(isSelectedData, index)
+                  : {},
+              onTap: () => data.mark?.name != MarkName.nonAdmission
+                  ? onTap(isSelectedData, index, data)
+                  : {},
               title: SizedBox(
                   width: MediaQuery.of(context).size.width * 0.6,
                   child: Text(
-                    '''${data.user.lastName} ${data.user.firstName} ${data.user.middleName ?? ''}''',
+                    '${data.user.lastName} ${data.user.firstName} '
+                    '${data.user.middleName ?? ''}',
                     textAlign: TextAlign.left,
                     textDirection: TextDirection.rtl,
                   )),
@@ -157,7 +176,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
                     textDirection: TextDirection.ltr,
                     data.mark?.title ?? 'Нет оценки',
                   )),
-              leading: _buildSelectIcon(isSelectedData!, data),
+              leading: _buildSelectIcon(isSelectedData, data),
               tileColor: setColor(data.mark?.name),
             );
           });

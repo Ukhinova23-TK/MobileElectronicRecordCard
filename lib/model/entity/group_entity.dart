@@ -12,7 +12,10 @@ class GroupEntity {
     var id = json['id'];
     var name = json['name'];
     var fullName = json['fullName'];
-    var admissionDate = DateTime.parse(json['admissionDate']);
+    var admissionDate = int.tryParse(json['admissionDate'].toString()) != null
+        ? DateTime.fromMillisecondsSinceEpoch(
+        int.tryParse(json['admissionDate'].toString())!)
+        : DateTime.tryParse(json['admissionDate'].toString());
     var version = json['version'];
     return GroupEntity(
         id: id,

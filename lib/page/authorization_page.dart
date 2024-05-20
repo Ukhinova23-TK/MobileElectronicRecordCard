@@ -1,27 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/controller/control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/group_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_control_type_controller.dart';
-import 'package:mobile_electronic_record_card/controller/mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
-import 'package:mobile_electronic_record_card/controller/subject_controller.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
-import 'package:mobile_electronic_record_card/controller/user_subject_control_type_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
-import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/group_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/mark_control_type_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/student_mark_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/subject_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/user_repository_impl.dart';
-import 'package:mobile_electronic_record_card/repository/impl/user_subject_control_type_repository_impl.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
+import 'package:mobile_electronic_record_card/service/synchronization/impl/synchronization_service_impl.dart';
 
 class AuthorizationPage extends StatelessWidget {
   const AuthorizationPage({super.key});
@@ -184,7 +170,10 @@ class __FormContentState extends State<_FormContent> {
   }
 
   Future<void> authenticate() async {
-    UserController().authenticate(login!, password!).then((user) {
+    UserController().authenticate(login!, password!).then((user) async {
+      var synchronizationService = SynchronizationServiceImpl();
+      await synchronizationService.clearDb();
+      await synchronizationService.fetch();
       UserController().getByLoginFromServer(login!).then((value) {
         int? rolesCount = sharedLocator.getRolesCount();
         List<String>? rolesName = sharedLocator.getRolesName();
@@ -201,33 +190,7 @@ class __FormContentState extends State<_FormContent> {
     });
   }
 
-  Future<void> data() async {
-    await SubjectController().getAllFromServer();
-    await ControlTypeController().getAllFromServer();
-    await MarkController().getAllFromServer();
-    await MarkControlTypeController().getAllFromServer();
-    await StudentMarkController().getAllFromServer();
-    await GroupController().getAllFromServer();
-    await UserController().getAllFromServer();
-    await UserSubjectControlTypeController().getAllFromServer();
-    Log.d('Data successful', tag: 'auth');
-  }
-
-  Future<void> delete() async {
-    await SubjectRepositoryImpl().deleteAll();
-    await ControlTypeRepositoryImpl().deleteAll();
-    await MarkRepositoryImpl().deleteAll();
-    await MarkControlTypeRepositoryImpl().deleteAll();
-    await StudentMarkRepositoryImpl().deleteAll();
-    await GroupRepositoryImpl().deleteAll();
-    await UserRepositoryImpl().deleteAll();
-    await UserSubjectControlTypeRepositoryImpl().deleteAll();
-    Log.d('Delete successful', tag: 'auth');
-  }
-
   void routeToPage(int rolesCount, List<String> rolesName) {
-    //Future.microtask(() async => await delete());
-    //Future.microtask(() async => await data());
     if (rolesCount == 1 && rolesName.first == RoleName.student) {
       Navigator.pushAndRemoveUntil(
           context,

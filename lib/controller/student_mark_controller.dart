@@ -1,5 +1,6 @@
 import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/client/impl/student_mark_http_client_impl.dart';
+import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
@@ -9,8 +10,17 @@ import 'package:mobile_electronic_record_card/repository/student_mark_repository
 import 'package:mobile_electronic_record_card/service/mapper/impl/student_mark_mapper.dart';
 import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
-class StudentMarkController {
+class StudentMarkController implements DeleteController {
   Future<List<StudentMarkEntity>> get marks => getAllFromDb();
+
+  Future<StudentMarkEntity?> getByUserSubjectControlTypeFromDb(
+      int usctId) async {
+    var studentMark =
+        await StudentMarkRepositoryImpl().getByUserSubjectControlType(usctId);
+    return studentMark != null
+        ? StudentMarkMapper().toEntity(studentMark)
+        : null;
+  }
 
   Future<List<StudentAndMarkEntity>> getByGroupAndSubjectFromDb(
       int groupId, int subjectId) async {
@@ -20,12 +30,21 @@ class StudentMarkController {
         .toList();
   }
 
-  void _setToDb(StudentMarkEntity studentMark) {
-    StudentMarkRepositoryImpl().save(StudentMarkMapper().toModel(studentMark));
+  Future<List<StudentMarkEntity>> getStudentMarksByGroupAndSubjectFromDb(
+      int groupId, int subjectId) async {
+    return (await StudentMarkRepositoryImpl()
+        .getStudentMarksByGroupAndSubject(groupId, subjectId))
+        .map((e) => StudentMarkMapper().toEntity(e))
+        .toList();
   }
 
-  void _updateToDb(StudentMarkEntity studentMark) {
-    StudentMarkRepositoryImpl()
+  Future<void> setToDb(StudentMarkEntity studentMark) async {
+    await StudentMarkRepositoryImpl()
+        .save(StudentMarkMapper().toModel(studentMark));
+  }
+
+  Future<void> updateToDb(StudentMarkEntity studentMark) async {
+    await StudentMarkRepositoryImpl()
         .update(StudentMarkMapper().toModel(studentMark));
   }
 
@@ -37,18 +56,23 @@ class StudentMarkController {
     if (sm != null && sm.isNotEmpty) {
       sm.first.markId = markId;
       sm.first.completionDate = DateTime.now();
-      _updateToDb(sm.first);
+      await updateToDb(sm.first);
     } else {
       var usct = await UserSubjectControlTypeRepositoryImpl()
           .getByStudentAndSubject(userId, subjectId);
       if (usct != null) {
-        _setToDb(StudentMarkEntity(
+        await setToDb(StudentMarkEntity(
             markId: markId,
             completionDate: DateTime.now(),
             userSubjectControlTypeId: usct.id,
             version: 0));
       }
     }
+    var sm1 = (await StudentMarkRepositoryImpl()
+        .getByStudentAndSubject(userId, subjectId))
+        ?.map((e) => StudentMarkEntity.fromJson(e))
+        .toList();
+    Log.d(sm1!.first.completionDate.toString());
   }
 
   Future<List<StudentMarkEntity>> getAllFromDb() async {
@@ -75,7 +99,12 @@ class StudentMarkController {
     }
   }
 
-  /*Future<void> postOnServer(StudentMarkEntity studentMarkEntity) async {}
+  @override
+  Future<void> delete(int id) async {
+    await StudentMarkRepositoryImpl().delete(id);
+  }
 
-  Future<void> updateOnServer(StudentMarkEntity studentMarkEntity) async {}*/
+  Future<void> deleteAll() async {
+    await StudentMarkRepositoryImpl().deleteAll();
+  }
 }

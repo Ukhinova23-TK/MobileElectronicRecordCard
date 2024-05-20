@@ -6,6 +6,7 @@ class SharedPreferenceHelper {
   static const String rolesCount = 'rolesCount';
   static const String rolesName = 'rolesName';
   static const String needSave = 'needSave';
+  static const String deletionVersion = 'deletionVersion';
 
   final SharedPreferences prefs;
 
@@ -42,11 +43,18 @@ class SharedPreferenceHelper {
 
   Future<bool> deleteRolesName() => prefs.remove(rolesName);
 
+  int? getDeletionVersion() => prefs.getInt(deletionVersion);
+
+  Future<bool> setDeletionVersion(int value) => prefs.setInt(deletionVersion, value);
+
+  Future<bool> deleteDeletionVersion() => prefs.remove(deletionVersion);
+
   void deleteAll() {
     prefs.remove(userId);
     prefs.remove(groupId);
     prefs.remove(rolesCount);
     prefs.remove(rolesName);
     prefs.remove(needSave);
+    prefs.remove(deletionVersion);
   }
 }

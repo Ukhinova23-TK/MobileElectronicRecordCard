@@ -27,7 +27,10 @@ class EndPoint {
   static const String usctAndCriteriaUrl = '/filter';
 
   static const String studentMarkUrl = 'api/student-marks';
+  static const String studentMarkAllUrl = '/all';
   static const String studentMarAndCriteriaUrl = '/filter';
+
+  static const String deletionUrl = 'api/deletions';
 
   static final http = InterceptedHttp.build(interceptors: [AuthInterceptor()]);
 }
