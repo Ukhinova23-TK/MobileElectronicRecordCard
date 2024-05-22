@@ -3,12 +3,15 @@ import 'package:mobile_electronic_record_card/data/constants/api_constants.dart'
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_and_group_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
+import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/provider/user_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final int? selectedItemNavBar;
+
+  const ProfilePage({super.key, this.selectedItemNavBar});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -17,6 +20,8 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final sharedLocator = getIt.get<SharedPreferenceHelper>();
   late int? userId;
+  late int _selectedIndex;
+  late BottomNavBarChoose bottomNavBar;
   List<String>? rolesName = [];
   bool _isPasswordVisible = false;
   String? oldPassword;
@@ -36,6 +41,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ? Provider.of<UserProvider>(context, listen: false)
             .initCurrentUser(userId!)
         : null;
+    _selectedIndex =
+        widget.selectedItemNavBar ?? rolesName!.length;
+    bottomNavBar = BottomNavBarChoose(context: context);
   }
 
   @override
@@ -44,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Consumer<UserProvider>(
           builder: (context, userProvider, _) =>
               buildFutureBuilder(userProvider)),
+      bottomNavigationBar: buildBottomNavigationBar(),
     );
   }
 
@@ -328,6 +337,22 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
     );
+  }
+
+  BottomNavigationBar? buildBottomNavigationBar() {
+    return BottomNavigationBar(
+      items: bottomNavBar.getItems(),
+      currentIndex: _selectedIndex,
+      selectedItemColor: greatMarkColor,
+      onTap: _onItemTapped,
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    bottomNavBar.changeItem(index);
   }
 
   Widget _height() => const SizedBox(height: 16);

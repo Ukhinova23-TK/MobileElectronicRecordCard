@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
         home: token != null
             ? (sharedLocator.getGroupId() != null
                 ? const RecordCardPage()
-                : SubjectPage(bottomNavBar: sharedLocator.getRolesCount() == 2))
+                : const SubjectPage())
             : const AuthorizationPage(),
       ),
     );

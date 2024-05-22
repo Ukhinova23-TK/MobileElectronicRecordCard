@@ -15,7 +15,6 @@ import 'package:provider/provider.dart';
 
 class StudentMarkPage extends StatefulWidget {
   final int? selectedItemNavBar;
-  final bool? bottomNavBar;
   final int subjectId;
   final int groupId;
 
@@ -23,7 +22,6 @@ class StudentMarkPage extends StatefulWidget {
       {required this.subjectId,
       required this.groupId,
       this.selectedItemNavBar,
-      this.bottomNavBar,
       super.key});
 
   @override
@@ -38,18 +36,18 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   final sharedLocator = getIt.get<SharedPreferenceHelper>();
   late bool _needSave;
   late int _selectedIndex;
-  late bool _bottomNavBar;
   late int _subjectId;
   late int _groupId;
+  late BottomNavBarChoose bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _needSave = sharedLocator.getNeedSave() ?? false;
     _selectedIndex = widget.selectedItemNavBar ?? 0;
-    _bottomNavBar = widget.bottomNavBar ?? false;
     _subjectId = widget.subjectId;
     _groupId = widget.groupId;
+    bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<StudentMarkProvider>(context, listen: false)
         .initStudentMark(_groupId, _subjectId);
     Provider.of<MarkProvider>(context, listen: false)
@@ -69,30 +67,19 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if (_bottomNavBar) {
-      return BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined), label: 'Студент'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: greatMarkColor,
-        onTap: _onItemTapped,
-      );
-    } else {
-      return null;
-    }
+    return BottomNavigationBar(
+      items: bottomNavBar.getItems(),
+      currentIndex: _selectedIndex,
+      selectedItemColor: greatMarkColor,
+      onTap: _onItemTapped,
+    );
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(
-            index: index, context: context, bottomNavBar: _bottomNavBar)
-        .changeItem();
+    bottomNavBar.changeItem(index);
   }
 
   AppBar buildAppBar(String title) {

@@ -1,17 +1,18 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class SubjectPage extends StatefulWidget {
   final int? selectedItemNavBar;
-  final bool? bottomNavBar;
 
-  const SubjectPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const SubjectPage({this.selectedItemNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -20,15 +21,16 @@ class SubjectPage extends StatefulWidget {
 }
 
 class SubjectPageState extends State<SubjectPage> {
+  final sharedLocator = getIt.get<SharedPreferenceHelper>();
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
-  late bool bottomNavBar;
+  late BottomNavBarChoose bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
-    bottomNavBar = widget.bottomNavBar ?? false;
+    bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<SubjectProvider>(context, listen: false).initSubjects();
   }
 
@@ -66,30 +68,19 @@ class SubjectPageState extends State<SubjectPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if (bottomNavBar) {
-      return BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined), label: 'Студент'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: greatMarkColor,
-        onTap: _onItemTapped,
-      );
-    } else {
-      return null;
-    }
+    return BottomNavigationBar(
+      items: bottomNavBar.getItems(),
+      currentIndex: _selectedIndex,
+      selectedItemColor: greatMarkColor,
+      onTap: _onItemTapped,
+    );
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(
-            index: index, context: context, bottomNavBar: bottomNavBar)
-        .changeItem();
+    bottomNavBar.changeItem(index);
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder(

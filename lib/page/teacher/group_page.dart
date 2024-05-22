@@ -1,22 +1,20 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
 import 'package:mobile_electronic_record_card/provider/group_provider.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
   final int? selectedItemNavBar;
-  final bool? bottomNavBar;
   final int subjectId;
 
   const GroupPage(
-      {required this.subjectId,
-      this.selectedItemNavBar,
-      this.bottomNavBar,
-      super.key});
+      {required this.subjectId, this.selectedItemNavBar, super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -25,17 +23,18 @@ class GroupPage extends StatefulWidget {
 }
 
 class GroupPageState extends State<GroupPage> {
+  final sharedLocator = getIt.get<SharedPreferenceHelper>();
   final searchText = ValueNotifier<String>('');
   late int _selectedIndex;
-  late bool _bottomNavBar;
   late int _subjectId;
+  late BottomNavBarChoose bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
-    _bottomNavBar = widget.bottomNavBar ?? false;
     _subjectId = widget.subjectId;
+    bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<GroupProvider>(context, listen: false).initGroups(_subjectId);
   }
 
@@ -74,30 +73,19 @@ class GroupPageState extends State<GroupPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if (_bottomNavBar) {
-      return BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined), label: 'Студент'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: greatMarkColor,
-        onTap: _onItemTapped,
-      );
-    } else {
-      return null;
-    }
+    return BottomNavigationBar(
+      items: bottomNavBar.getItems(),
+      currentIndex: _selectedIndex,
+      selectedItemColor: greatMarkColor,
+      onTap: _onItemTapped,
+    );
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(
-            index: index, context: context, bottomNavBar: _bottomNavBar)
-        .changeItem();
+    bottomNavBar.changeItem(index);
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder(

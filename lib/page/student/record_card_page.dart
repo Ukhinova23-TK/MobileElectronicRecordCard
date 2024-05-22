@@ -14,9 +14,8 @@ import 'package:provider/provider.dart';
 
 class RecordCardPage extends StatefulWidget {
   final int? selectedItemNavBar;
-  final bool? bottomNavBar;
 
-  const RecordCardPage({this.selectedItemNavBar, this.bottomNavBar, super.key});
+  const RecordCardPage({this.selectedItemNavBar, super.key});
 
   @override
   State<RecordCardPage> createState() => _RecordCardPageState();
@@ -28,17 +27,18 @@ class _RecordCardPageState extends State<RecordCardPage> {
   Future<ControlTypeEntity>? controlType;
   Future<List<UserEntity>>? users;
   late int _selectedIndex;
-  late bool bottomNavBar;
+  late BottomNavBarChoose bottomNavBar;
   int? dropdownValue;
   bool _infoModal = false;
 
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.selectedItemNavBar ?? 1;
-    bottomNavBar = widget.bottomNavBar ?? false;
+    _selectedIndex = widget.selectedItemNavBar ??
+        (sharedLocator.getRolesCount() == 2 ? 1 : 0);
     Provider.of<UserSubjectControlTypeProvider>(context, listen: false)
         .initUserSubjectsControlTypes(sharedLocator.getUserId()!);
+    bottomNavBar = BottomNavBarChoose(context: context);
   }
 
   @override
@@ -158,30 +158,19 @@ class _RecordCardPageState extends State<RecordCardPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    if (bottomNavBar) {
-      return BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), label: 'Преподаватель'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.school_outlined), label: 'Студент'),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: greatMarkColor,
-        onTap: _onItemTapped,
-      );
-    } else {
-      return null;
-    }
+    return BottomNavigationBar(
+      items: bottomNavBar.getItems(),
+      currentIndex: _selectedIndex,
+      selectedItemColor: greatMarkColor,
+      onTap: _onItemTapped,
+    );
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-    BottomNavBarChoose(
-            index: index, context: context, bottomNavBar: bottomNavBar)
-        .changeItem();
+    bottomNavBar.changeItem(index);
   }
 
   Future<void> openInfoModalWindow(
