@@ -6,6 +6,7 @@ import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/logout.dart';
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
@@ -83,15 +84,18 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   }
 
   AppBar buildAppBar(String title) {
+    List<Widget> buttons = [];
+    if (_needSave) {
+      buttons.add(IconButton(
+        icon: const Icon(Icons.save),
+        onPressed: () => saveToServer(),
+      ));
+    }
+    buttons.add(IconButton(
+        icon: const Icon(Icons.logout_outlined),
+        onPressed: () => logout(context)));
     return AppBar(
-      actions: _needSave
-          ? [
-              IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () => saveToServer(),
-              )
-            ]
-          : [],
+      actions: buttons,
       title: Text(title),
     );
   }

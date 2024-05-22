@@ -7,6 +7,7 @@ import 'package:mobile_electronic_record_card/model/entity/teacher_subject_contr
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/logout.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
@@ -29,7 +30,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
   late int _selectedIndex;
   late BottomNavBarChoose bottomNavBar;
   int? dropdownValue;
-  bool _infoModal = false;
+  bool _infoModal = true;
 
   @override
   void initState() {
@@ -44,23 +45,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: appbarColor,
-        title: const Text('Зачетка'),
-        actions: <Widget>[
-          IconButton(
-              onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)),
-          _infoModal
-              ? IconButton(
-                  onPressed: () => Provider.of<UserSubjectControlTypeProvider>(
-                          context,
-                          listen: false)
-                      .userSubjectsControlTypes
-                      ?.then((value) => openInfoModalWindow(value)),
-                  icon: const Icon(Icons.percent_outlined))
-              : Container()
-        ],
-      ),
+      appBar: buildAppBar(context),
       body: Consumer<UserSubjectControlTypeProvider>(
           builder: (context, usctProvider, _) => FutureBuilder(
               future: usctProvider.userSubjectsControlTypes,
@@ -85,7 +70,6 @@ class _RecordCardPageState extends State<RecordCardPage> {
                             onSelected: (int? value) {
                               setState(() {
                                 dropdownValue = value;
-                                _infoModal = true;
                               });
                             },
                             dropdownMenuEntries: dataUniqueSemester
@@ -139,6 +123,29 @@ class _RecordCardPageState extends State<RecordCardPage> {
                 }
               })),
       bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    List<Widget> buttons = [];
+    buttons.add(IconButton(
+        onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)));
+    if (_infoModal) {
+      buttons.add(IconButton(
+          onPressed: () => Provider.of<UserSubjectControlTypeProvider>(context,
+                  listen: false)
+              .userSubjectsControlTypes
+              ?.then((value) => openInfoModalWindow(value)),
+          icon: const Icon(Icons.percent_outlined)));
+    }
+    buttons.add(IconButton(
+      icon: const Icon(Icons.logout_outlined),
+      onPressed: () => logout(context),
+    ));
+    return AppBar(
+      backgroundColor: appbarColor,
+      title: const Text('Зачетка'),
+      actions: buttons,
     );
   }
 

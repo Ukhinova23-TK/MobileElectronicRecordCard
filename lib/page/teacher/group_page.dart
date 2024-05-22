@@ -4,6 +4,7 @@ import 'package:mobile_electronic_record_card/data/constants/api_constants.dart'
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/logout.dart';
 import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
 import 'package:mobile_electronic_record_card/provider/group_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
@@ -57,10 +58,13 @@ class GroupPageState extends State<GroupPage> {
               return AppBar(
                 backgroundColor: appbarColor,
                 title: const Text(title),
-                actions: const [
-                  AppBarSearchButton(
+                actions: [
+                  const AppBarSearchButton(
                     buttonHasTwoStates: false,
-                  )
+                  ),
+                  IconButton(
+                      icon: const Icon(Icons.logout_outlined),
+                      onPressed: () => logout(context))
                 ],
               );
             },

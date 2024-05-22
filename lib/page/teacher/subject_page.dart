@@ -4,6 +4,7 @@ import 'package:mobile_electronic_record_card/data/constants/api_constants.dart'
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/logout.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
@@ -52,10 +53,13 @@ class SubjectPageState extends State<SubjectPage> {
               return AppBar(
                 backgroundColor: appbarColor,
                 title: const Text(title),
-                actions: const [
-                  AppBarSearchButton(
+                actions: [
+                  const AppBarSearchButton(
                     buttonHasTwoStates: false,
-                  )
+                  ),
+                  IconButton(
+                      icon: const Icon(Icons.logout_outlined),
+                      onPressed: () => logout(context))
                 ],
               );
             },
