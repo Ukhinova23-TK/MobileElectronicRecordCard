@@ -4,6 +4,7 @@ import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
+import 'package:mobile_electronic_record_card/page/profile_page.dart';
 import 'package:mobile_electronic_record_card/page/student/record_card_page.dart';
 import 'package:mobile_electronic_record_card/page/teacher/subject_page.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
@@ -191,7 +192,11 @@ class __FormContentState extends State<_FormContent> {
   }
 
   void routeToPage(int rolesCount, List<String> rolesName) {
-    if (rolesCount == 1 && rolesName.first == RoleName.student) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const ProfilePage()),
+        (Route<dynamic> route) => false);
+    /*if (rolesCount == 1 && rolesName.first == RoleName.student) {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -207,7 +212,7 @@ class __FormContentState extends State<_FormContent> {
             builder: (context) => SubjectPage(bottomNavBar: rolesCount != 1),
           ),
           (Route<dynamic> route) => false);
-    }
+    }*/
   }
 
   Widget _gap() => const SizedBox(height: 16);

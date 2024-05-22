@@ -58,9 +58,8 @@ class StudentMarkPageState extends State<StudentMarkPage> {
 
   @override
   Widget build(BuildContext context) {
-    String title = 'Ведомость';
     return Scaffold(
-      appBar: buildAppBar(title),
+      appBar: buildAppBar(titleStudentMarkPage),
       body: Consumer<StudentMarkProvider>(
           builder: (context, studentMarkProvider, _) =>
               buildFutureBuilder(studentMarkProvider)),

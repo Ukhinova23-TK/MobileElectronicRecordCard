@@ -10,6 +10,7 @@ import 'package:mobile_electronic_record_card/provider/group_provider.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
+import 'package:mobile_electronic_record_card/provider/user_provider.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
@@ -66,7 +67,8 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(
           create: (_) => UserSubjectControlTypeProvider(),
         ),
-        ChangeNotifierProvider(create: (_) => StudentMarkProvider())
+        ChangeNotifierProvider(create: (_) => StudentMarkProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: MaterialApp(
         theme: ThemeData(

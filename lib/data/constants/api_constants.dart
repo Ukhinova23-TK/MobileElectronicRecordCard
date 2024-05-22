@@ -25,6 +25,15 @@ const String titleSubjectPage = 'Предметы';
 //  Строковые переменные для страницы групп
 const String titleGroupPage = 'Группы';
 
+//  Строковые переменные для страницы ведомости
+const String titleStudentMarkPage = 'Ведомость';
+
+//  Строковые переменные для страницы зачетки
+const String titleRecordCardPage = 'Зачетка';
+
+//  Строковые переменные для страницы профиля
+const String titleProfilePage = 'Профиль';
+
 // Цветовые решения
 const Color appbarColor = Color.fromARGB(255, 245, 245, 245);
 const Color noMarkColor = Color.fromARGB(255, 230, 230, 230);

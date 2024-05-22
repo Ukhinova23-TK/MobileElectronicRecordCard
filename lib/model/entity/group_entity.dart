@@ -8,15 +8,15 @@ class GroupEntity {
   GroupEntity(
       {this.id, this.name, this.fullName, this.admissionDate, this.version});
 
-  static GroupEntity fromJson(Map<String, dynamic> json) {
-    var id = json['id'];
-    var name = json['name'];
-    var fullName = json['fullName'];
-    var admissionDate = int.tryParse(json['admissionDate'].toString()) != null
+  static GroupEntity fromJson(Map<String, dynamic> json, {String prefix = ""}) {
+    var id = json['${prefix}id'];
+    var name = json['${prefix}name'];
+    var fullName = json['${prefix}fullName'];
+    var admissionDate = int.tryParse(json['${prefix}admissionDate'].toString()) != null
         ? DateTime.fromMillisecondsSinceEpoch(
-        int.tryParse(json['admissionDate'].toString())!)
-        : DateTime.tryParse(json['admissionDate'].toString());
-    var version = json['version'];
+        int.tryParse(json['${prefix}admissionDate'].toString())!)
+        : DateTime.tryParse(json['${prefix}admissionDate'].toString());
+    var version = json['${prefix}version'];
     return GroupEntity(
         id: id,
         name: name,

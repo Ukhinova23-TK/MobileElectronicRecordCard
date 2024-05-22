@@ -1,4 +1,4 @@
-import 'package:flutter_logcat/log/log.dart';
+import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/client/impl/group_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';

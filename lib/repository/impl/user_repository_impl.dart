@@ -51,4 +51,14 @@ class UserRepositoryImpl implements UserRepository {
         join subject s on s.id = usct.subject_id
         where s.id = $subjectId and sg.id = $groupId""")));
   }
+
+  Future<List<Map<String, dynamic>>> getUser(int userId) async {
+    return await ElectronicRecordCardDbModel().execDataTable(
+        """select u.login  as "user.login", u.last_name as "user.lastName",
+        u.first_name as "user.firstName", u.middle_name as "user.middleName",
+        sg.name as "group.name", sg.full_name as "group.fullName"
+        from "user" u
+        left join student_group sg on u.groupId = sg.id
+        where u.id = $userId""");
+  }
 }

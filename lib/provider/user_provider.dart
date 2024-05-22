@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/controller/user_controller.dart';
-import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
+import 'package:mobile_electronic_record_card/model/entity/user_and_group_entity.dart';
 
 class UserProvider extends ChangeNotifier {
-  late Future<List<UserEntity>>? _students;
-  late Future<List<UserEntity>?> _teachers;
+  late Future<UserAndGroupEntity> _currentUser;
 
-  Future<List<UserEntity>>? get students => _students;
+  Future<UserAndGroupEntity> get currentUser => _currentUser;
 
-  Future<List<UserEntity>?> get teachers => _teachers;
-
-  void initStudents(int groupId, int subjectId) => _students =
-      UserController().getStudentsByGroupAndSubjectFromDb(groupId, subjectId);
-
-  void initTeachers() => _teachers = UserController().getTeachersFromDb();
+  void initCurrentUser(int userId) => _currentUser =
+      UserController().getCurrentUserFromDb(userId);
 
   void fetchUsers() async => notifyListeners();
 }
