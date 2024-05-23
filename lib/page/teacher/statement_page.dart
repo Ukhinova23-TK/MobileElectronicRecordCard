@@ -65,12 +65,17 @@ class StatementPageState extends State<StatementPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      items: bottomNavBar.getItems(),
-      currentIndex: _selectedIndex,
-      selectedItemColor: greatMarkColor,
-      onTap: _onItemTapped,
-    );
+    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    if(bottomItems.isNotEmpty) {
+      return BottomNavigationBar(
+        items: bottomNavBar.getItems(),
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onItemTapped(int index) {
@@ -98,7 +103,31 @@ class StatementPageState extends State<StatementPage> {
             }))));
     buttons.add(IconButton(
         icon: const Icon(Icons.logout_outlined),
-        onPressed: () => logout(context)));
+        onPressed: () {
+          if (_needSave) {
+            showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Предупреждение'),
+                    content: const Text(
+                        'У вас есть не сохраненные на сервер данные. '
+                        'При выходе из учетной записи эти данные будут потеряны. '
+                        'Вы уверены, что хотите выйти?'),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Назад')),
+                      TextButton(
+                          onPressed: () => logout(context),
+                          child: const Text('Выход'))
+                    ],
+                  );
+                });
+          } else {
+            logout(context);
+          }
+        }));
     return AppBar(
       actions: buttons,
       title: Text(title),
@@ -150,7 +179,8 @@ class StatementPageState extends State<StatementPage> {
 
             WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
               setState(() {
-                _needSave = snapshot.data?.any((element) => element.saved) ?? false;
+                _needSave =
+                    snapshot.data?.any((element) => element.saved) ?? false;
               });
             });
 
