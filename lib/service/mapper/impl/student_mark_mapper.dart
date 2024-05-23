@@ -11,6 +11,7 @@ class StudentMarkMapper implements Mapper<StudentMarkEntity, Student_mark> {
         markId: model.mark_id,
         userSubjectControlTypeId: model.user_subject_control_type_id,
         completionDate: model.completion_date,
+        saved: model.saved,
         version: model.version);
   }
 
@@ -21,6 +22,7 @@ class StudentMarkMapper implements Mapper<StudentMarkEntity, Student_mark> {
         completion_date: entity.completionDate,
         mark_id: entity.markId,
         user_subject_control_type_id: entity.userSubjectControlTypeId,
+        saved: entity.saved,
         version: entity.version);
   }
 }

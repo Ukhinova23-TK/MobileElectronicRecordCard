@@ -157,6 +157,7 @@ class TableUser extends SqfEntityTableBase {
       SqfEntityFieldBase('last_name', DbType.text, isNotNull: true),
       SqfEntityFieldBase('first_name', DbType.text, isNotNull: true),
       SqfEntityFieldBase('middle_name', DbType.text),
+      SqfEntityFieldBase('record_book_number', DbType.text),
       SqfEntityFieldBase('version', DbType.integer, isNotNull: true),
       SqfEntityFieldRelationshipBase(
           TableStudent_group.getInstance, DeleteRule.NO_ACTION,
@@ -221,6 +222,8 @@ class TableStudent_mark extends SqfEntityTableBase {
       SqfEntityFieldBase('completion_date', DbType.date,
           minValue: DateTime.parse('1900-01-01')),
       SqfEntityFieldBase('version', DbType.integer, isNotNull: true),
+      SqfEntityFieldBase('saved', DbType.bool,
+          defaultValue: false, isNotNull: true),
       SqfEntityFieldRelationshipBase(
           TableMark.getInstance, DeleteRule.NO_ACTION,
           relationType: RelationType.ONE_TO_MANY, fieldName: 'mark_id'),
@@ -4927,17 +4930,18 @@ class User extends TableBase {
       this.last_name,
       this.first_name,
       this.middle_name,
+      this.record_book_number,
       this.version,
       this.groupId}) {
     _setDefaultValues();
     softDeleteActivated = false;
   }
   User.withFields(this.id, this.login, this.last_name, this.first_name,
-      this.middle_name, this.version, this.groupId) {
+      this.middle_name, this.record_book_number, this.version, this.groupId) {
     _setDefaultValues();
   }
   User.withId(this.id, this.login, this.last_name, this.first_name,
-      this.middle_name, this.version, this.groupId) {
+      this.middle_name, this.record_book_number, this.version, this.groupId) {
     _setDefaultValues();
   }
   // fromMap v2.0
@@ -4958,6 +4962,9 @@ class User extends TableBase {
     if (o['middle_name'] != null) {
       middle_name = o['middle_name'].toString();
     }
+    if (o['record_book_number'] != null) {
+      record_book_number = o['record_book_number'].toString();
+    }
     if (o['version'] != null) {
       version = int.tryParse(o['version'].toString());
     }
@@ -4977,6 +4984,7 @@ class User extends TableBase {
   String? last_name;
   String? first_name;
   String? middle_name;
+  String? record_book_number;
   int? version;
   int? groupId;
   bool? isSaved;
@@ -5073,6 +5081,9 @@ class User extends TableBase {
     if (middle_name != null || !forView) {
       map['middle_name'] = middle_name;
     }
+    if (record_book_number != null || !forView) {
+      map['record_book_number'] = record_book_number;
+    }
     if (version != null || !forView) {
       map['version'] = version;
     }
@@ -5107,6 +5118,9 @@ class User extends TableBase {
     }
     if (middle_name != null || !forView) {
       map['middle_name'] = middle_name;
+    }
+    if (record_book_number != null || !forView) {
+      map['record_book_number'] = record_book_number;
     }
     if (version != null || !forView) {
       map['version'] = version;
@@ -5152,12 +5166,30 @@ class User extends TableBase {
 
   @override
   List<dynamic> toArgs() {
-    return [id, login, last_name, first_name, middle_name, version, groupId];
+    return [
+      id,
+      login,
+      last_name,
+      first_name,
+      middle_name,
+      record_book_number,
+      version,
+      groupId
+    ];
   }
 
   @override
   List<dynamic> toArgsWithIds() {
-    return [id, login, last_name, first_name, middle_name, version, groupId];
+    return [
+      id,
+      login,
+      last_name,
+      first_name,
+      middle_name,
+      record_book_number,
+      version,
+      groupId
+    ];
   }
 
   static Future<List<User>?> fromWebUrl(Uri uri,
@@ -5392,8 +5424,17 @@ class User extends TableBase {
   Future<int?> upsert({bool ignoreBatch = true}) async {
     try {
       final result = await _mnUser.rawInsert(
-          'INSERT OR REPLACE INTO user (id, login, last_name, first_name, middle_name, version, groupId)  VALUES (?,?,?,?,?,?,?)',
-          [id, login, last_name, first_name, middle_name, version, groupId],
+          'INSERT OR REPLACE INTO user (id, login, last_name, first_name, middle_name, record_book_number, version, groupId)  VALUES (?,?,?,?,?,?,?,?)',
+          [
+            id,
+            login,
+            last_name,
+            first_name,
+            middle_name,
+            record_book_number,
+            version,
+            groupId
+          ],
           ignoreBatch);
       if (result! > 0) {
         saveResult = BoolResult(
@@ -5418,7 +5459,7 @@ class User extends TableBase {
   Future<BoolCommitResult> upsertAll(List<User> users,
       {bool? exclusive, bool? noResult, bool? continueOnError}) async {
     final results = await _mnUser.rawInsertAll(
-        'INSERT OR REPLACE INTO user (id, login, last_name, first_name, middle_name, version, groupId)  VALUES (?,?,?,?,?,?,?)',
+        'INSERT OR REPLACE INTO user (id, login, last_name, first_name, middle_name, record_book_number, version, groupId)  VALUES (?,?,?,?,?,?,?,?)',
         users,
         exclusive: exclusive,
         noResult: noResult,
@@ -5719,6 +5760,12 @@ class UserFilterBuilder extends ConjunctionBase {
   UserField? _middle_name;
   UserField get middle_name {
     return _middle_name = _setField(_middle_name, 'middle_name', DbType.text);
+  }
+
+  UserField? _record_book_number;
+  UserField get record_book_number {
+    return _record_book_number =
+        _setField(_record_book_number, 'record_book_number', DbType.text);
   }
 
   UserField? _version;
@@ -6061,6 +6108,13 @@ class UserFields {
   static TableField get middle_name {
     return _fMiddle_name = _fMiddle_name ??
         SqlSyntax.setField(_fMiddle_name, 'middle_name', DbType.text);
+  }
+
+  static TableField? _fRecord_book_number;
+  static TableField get record_book_number {
+    return _fRecord_book_number = _fRecord_book_number ??
+        SqlSyntax.setField(
+            _fRecord_book_number, 'record_book_number', DbType.text);
   }
 
   static TableField? _fVersion;
@@ -7361,17 +7415,18 @@ class Student_mark extends TableBase {
       {this.id,
       this.completion_date,
       this.version,
+      this.saved,
       this.mark_id,
       this.user_subject_control_type_id}) {
     _setDefaultValues();
     softDeleteActivated = false;
   }
   Student_mark.withFields(this.id, this.completion_date, this.version,
-      this.mark_id, this.user_subject_control_type_id) {
+      this.saved, this.mark_id, this.user_subject_control_type_id) {
     _setDefaultValues();
   }
-  Student_mark.withId(this.id, this.completion_date, this.version, this.mark_id,
-      this.user_subject_control_type_id) {
+  Student_mark.withId(this.id, this.completion_date, this.version, this.saved,
+      this.mark_id, this.user_subject_control_type_id) {
     _setDefaultValues();
   }
   // fromMap v2.0
@@ -7388,6 +7443,9 @@ class Student_mark extends TableBase {
     }
     if (o['version'] != null) {
       version = int.tryParse(o['version'].toString());
+    }
+    if (o['saved'] != null) {
+      saved = o['saved'].toString() == '1' || o['saved'].toString() == 'true';
     }
     mark_id = int.tryParse(o['mark_id'].toString());
 
@@ -7410,6 +7468,7 @@ class Student_mark extends TableBase {
   int? id;
   DateTime? completion_date;
   int? version;
+  bool? saved;
   int? mark_id;
   int? user_subject_control_type_id;
   bool? isSaved;
@@ -7470,6 +7529,11 @@ class Student_mark extends TableBase {
     if (version != null || !forView) {
       map['version'] = version;
     }
+    if (saved != null) {
+      map['saved'] = forQuery ? (saved! ? 1 : 0) : saved;
+    } else if (saved != null || !forView) {
+      map['saved'] = null;
+    }
     if (mark_id != null) {
       map['mark_id'] = forView
           ? plMark == null
@@ -7513,6 +7577,11 @@ class Student_mark extends TableBase {
     if (version != null || !forView) {
       map['version'] = version;
     }
+    if (saved != null) {
+      map['saved'] = forQuery ? (saved! ? 1 : 0) : saved;
+    } else if (saved != null || !forView) {
+      map['saved'] = null;
+    }
     if (mark_id != null) {
       map['mark_id'] = forView
           ? plMark == null
@@ -7553,6 +7622,7 @@ class Student_mark extends TableBase {
       id,
       completion_date != null ? completion_date!.millisecondsSinceEpoch : null,
       version,
+      saved,
       mark_id,
       user_subject_control_type_id
     ];
@@ -7564,6 +7634,7 @@ class Student_mark extends TableBase {
       id,
       completion_date != null ? completion_date!.millisecondsSinceEpoch : null,
       version,
+      saved,
       mark_id,
       user_subject_control_type_id
     ];
@@ -7740,13 +7811,14 @@ class Student_mark extends TableBase {
   Future<int?> upsert({bool ignoreBatch = true}) async {
     try {
       final result = await _mnStudent_mark.rawInsert(
-          'INSERT OR REPLACE INTO student_mark (id, completion_date, version, mark_id, user_subject_control_type_id)  VALUES (?,?,?,?,?)',
+          'INSERT OR REPLACE INTO student_mark (id, completion_date, version, saved, mark_id, user_subject_control_type_id)  VALUES (?,?,?,?,?,?)',
           [
             id,
             completion_date != null
                 ? completion_date!.millisecondsSinceEpoch
                 : null,
             version,
+            saved,
             mark_id,
             user_subject_control_type_id
           ],
@@ -7775,7 +7847,7 @@ class Student_mark extends TableBase {
   Future<BoolCommitResult> upsertAll(List<Student_mark> student_marks,
       {bool? exclusive, bool? noResult, bool? continueOnError}) async {
     final results = await _mnStudent_mark.rawInsertAll(
-        'INSERT OR REPLACE INTO student_mark (id, completion_date, version, mark_id, user_subject_control_type_id)  VALUES (?,?,?,?,?)',
+        'INSERT OR REPLACE INTO student_mark (id, completion_date, version, saved, mark_id, user_subject_control_type_id)  VALUES (?,?,?,?,?,?)',
         student_marks,
         exclusive: exclusive,
         noResult: noResult,
@@ -7824,6 +7896,7 @@ class Student_mark extends TableBase {
 
   void _setDefaultValues() {
     isSaved = false;
+    saved = saved ?? false;
   }
 
   @override
@@ -8047,6 +8120,11 @@ class Student_markFilterBuilder extends ConjunctionBase {
   Student_markField? _version;
   Student_markField get version {
     return _version = _setField(_version, 'version', DbType.integer);
+  }
+
+  Student_markField? _saved;
+  Student_markField get saved {
+    return _saved = _setField(_saved, 'saved', DbType.bool);
   }
 
   Student_markField? _mark_id;
@@ -8315,6 +8393,12 @@ class Student_markFields {
   static TableField get version {
     return _fVersion =
         _fVersion ?? SqlSyntax.setField(_fVersion, 'version', DbType.integer);
+  }
+
+  static TableField? _fSaved;
+  static TableField get saved {
+    return _fSaved =
+        _fSaved ?? SqlSyntax.setField(_fSaved, 'saved', DbType.bool);
   }
 
   static TableField? _fMark_id;

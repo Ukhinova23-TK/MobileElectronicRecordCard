@@ -28,7 +28,8 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
   Future<BoolResult> update(Student_mark studentMark) {
     return ElectronicRecordCardDbModel().execSQL("""update student_mark
     set mark_id = ${studentMark.mark_id}, 
-    completion_date = ${studentMark.completion_date?.millisecondsSinceEpoch}
+    completion_date = ${studentMark.completion_date?.millisecondsSinceEpoch},
+    saved = ${studentMark.saved}
     where user_subject_control_type_id = 
     ${studentMark.user_subject_control_type_id}
     """);
@@ -64,7 +65,7 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
     select u.id as "user.id", u.last_name as "user.lastName",
     u.first_name as "user.firstName", u.middle_name as "user.middleName", 
     m.id as "mark.id", m.name as "mark.name", 
-    m.title as "mark.title", m.value as "mark.value"
+    m.title as "mark.title", m.value as "mark.value", sm.saved as "saved"
     from "user" u join user_subject_control_type usct on u.id = usct.student_id
     join subject s on usct.subject_id = s.id
     left join student_mark sm on usct.id = sm.user_subject_control_type_id
@@ -82,7 +83,7 @@ class StudentMarkRepositoryImpl implements StudentMarkRepository {
     join student_mark sm on usct.id = sm.user_subject_control_type_id
     join mark m on sm.mark_id = m.id
     where u.groupId = $groupId and usct.subject_id = $subjectId
-    and m.name != '${MarkName.nonAdmission}'
+    and m.name != '${MarkName.nonAdmission} and sm.saved = true'
     """)).map((e) => Student_mark.fromMap(e)).toList();
   }
 

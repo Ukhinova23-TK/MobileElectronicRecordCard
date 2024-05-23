@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/controller/student_mark_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
@@ -10,16 +9,15 @@ import 'package:mobile_electronic_record_card/page/synchronization_function.dart
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
-import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:mobile_electronic_record_card/service/synchronization/impl/synchronization_service_impl.dart';
 import 'package:provider/provider.dart';
 
-class StudentMarkPage extends StatefulWidget {
+class StatementPage extends StatefulWidget {
   final int? selectedItemNavBar;
   final int subjectId;
   final int groupId;
 
-  const StudentMarkPage(
+  const StatementPage(
       {required this.subjectId,
       required this.groupId,
       this.selectedItemNavBar,
@@ -27,14 +25,13 @@ class StudentMarkPage extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return StudentMarkPageState();
+    return StatementPageState();
   }
 }
 
-class StudentMarkPageState extends State<StudentMarkPage> {
+class StatementPageState extends State<StatementPage> {
   bool isSelectItem = false;
   Map<int, bool> selectedItem = {};
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
   late bool _needSave;
   late int _selectedIndex;
   late int _subjectId;
@@ -44,7 +41,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
   @override
   void initState() {
     super.initState();
-    _needSave = sharedLocator.getNeedSave() ?? false;
+    _needSave = false;
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     _subjectId = widget.subjectId;
     _groupId = widget.groupId;
@@ -113,8 +110,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
         .getStudentMarksByGroupAndSubjectFromDb(_groupId, _subjectId)
         .then((value) => SynchronizationServiceImpl().push(value).then((value) {
               setState(() {
-                sharedLocator.setNeedSave(false);
-                _needSave = sharedLocator.getNeedSave() ?? false;
+                _needSave = false;
               });
             }));
   }
@@ -151,6 +147,12 @@ class StudentMarkPageState extends State<StudentMarkPage> {
               selectedItem[index] ??= false;
               isSelectedData = selectedItem[index]!;
             }
+
+            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              setState(() {
+                _needSave = snapshot.data?.any((element) => element.saved) ?? false;
+              });
+            });
 
             return ListTile(
               onLongPress: () => data.mark?.name != MarkName.nonAdmission
@@ -222,10 +224,7 @@ class StudentMarkPageState extends State<StudentMarkPage> {
       Future.wait(studentMarkFutures).then((value) => setState(() {
             Provider.of<StudentMarkProvider>(context, listen: false)
                 .initStudentMark(_groupId, _subjectId);
-            Provider.of<StudentMarkProvider>(context, listen: false)
-                .fetchStudentMark();
-            sharedLocator.setNeedSave(true);
-            _needSave = sharedLocator.getNeedSave() ?? true;
+            _needSave = true;
             isSelectItem = false;
           }));
     }
@@ -255,7 +254,6 @@ class StudentMarkPageState extends State<StudentMarkPage> {
         isSelectItem = selectedItem.containsValue(true);
       });
     } else {
-      //marks?.then((value) => buildMarks(value));
       _openMarksModalWindow(currentItem);
     }
   }
@@ -298,8 +296,6 @@ class StudentMarkPageState extends State<StudentMarkPage> {
 
   void _selectAll() {
     bool isFalseAvailable = selectedItem.containsValue(false);
-    // If false will be available then it will select all the checkbox
-    // If there will be no false then it will de-select all
     selectedItem.updateAll((key, value) => isFalseAvailable);
     setState(() {
       isSelectItem = selectedItem.containsValue(true);

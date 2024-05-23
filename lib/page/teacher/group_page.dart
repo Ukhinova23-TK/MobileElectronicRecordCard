@@ -5,7 +5,7 @@ import 'package:mobile_electronic_record_card/data/shared_preference/shared_pref
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
-import 'package:mobile_electronic_record_card/page/teacher/student_mark_page.dart';
+import 'package:mobile_electronic_record_card/page/teacher/statement_page.dart';
 import 'package:mobile_electronic_record_card/provider/group_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
@@ -149,7 +149,7 @@ class GroupPageState extends State<GroupPage> {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => StudentMarkPage(
+                      builder: (context) => StatementPage(
                           subjectId: _subjectId,
                           groupId: snapshot[index].id ?? 0),
                     ),
