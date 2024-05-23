@@ -7,7 +7,7 @@ import 'package:mobile_electronic_record_card/model/entity/teacher_subject_contr
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
-import 'package:mobile_electronic_record_card/page/logout.dart';
+import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
@@ -30,7 +30,6 @@ class _RecordCardPageState extends State<RecordCardPage> {
   late int _selectedIndex;
   late BottomNavBarChoose bottomNavBar;
   int? dropdownValue;
-  bool _infoModal = true;
 
   @override
   void initState() {
@@ -130,14 +129,18 @@ class _RecordCardPageState extends State<RecordCardPage> {
     List<Widget> buttons = [];
     buttons.add(IconButton(
         onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)));
-    if (_infoModal) {
-      buttons.add(IconButton(
-          onPressed: () => Provider.of<UserSubjectControlTypeProvider>(context,
-                  listen: false)
-              .userSubjectsControlTypes
-              ?.then((value) => openInfoModalWindow(value)),
-          icon: const Icon(Icons.percent_outlined)));
-    }
+    buttons.add(IconButton(
+        onPressed: () =>
+            Provider.of<UserSubjectControlTypeProvider>(context, listen: false)
+                .userSubjectsControlTypes
+                ?.then((value) => openInfoModalWindow(value)),
+        icon: const Icon(Icons.percent_outlined)));
+    buttons.add(IconButton(
+        icon: const Icon(Icons.refresh_outlined),
+        onPressed: () => synchronization().then((value) => setState(() {
+              Provider.of<UserSubjectControlTypeProvider>(context)
+                  .initUserSubjectsControlTypes(sharedLocator.getUserId()!);
+            }))));
     buttons.add(IconButton(
       icon: const Icon(Icons.logout_outlined),
       onPressed: () => logout(context),

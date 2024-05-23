@@ -6,7 +6,7 @@ import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
-import 'package:mobile_electronic_record_card/page/logout.dart';
+import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/teacher/marks_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/mark_provider.dart';
 import 'package:mobile_electronic_record_card/provider/student_mark_provider.dart';
@@ -91,6 +91,14 @@ class StudentMarkPageState extends State<StudentMarkPage> {
         onPressed: () => saveToServer(),
       ));
     }
+    buttons.add(IconButton(
+        icon: const Icon(Icons.refresh_outlined),
+        onPressed: () => synchronization().then((value) => setState(() {
+              Provider.of<StudentMarkProvider>(context, listen: false)
+                  .initStudentMark(_groupId, _subjectId);
+              Provider.of<MarkProvider>(context, listen: false)
+                  .initMarks(_groupId, _subjectId);
+            }))));
     buttons.add(IconButton(
         icon: const Icon(Icons.logout_outlined),
         onPressed: () => logout(context)));

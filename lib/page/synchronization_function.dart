@@ -13,3 +13,8 @@ Future<void> logout(BuildContext context) async {
       ),
       (Route<dynamic> route) => false);
 }
+
+Future<void> synchronization() async {
+  var synchronizationService = SynchronizationServiceImpl();
+  await synchronizationService.fetch();
+}

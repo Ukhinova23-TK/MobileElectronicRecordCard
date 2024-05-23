@@ -12,5 +12,5 @@ class UserSubjectControlTypeProvider extends ChangeNotifier {
       _userSubjectsControlTypes =
           UserSubjectControlTypeController().getByStudentFromDb(userId);
 
-  void fetchControlTypes() async => notifyListeners();
+  void fetchUserSubjectsControlTypes() async => notifyListeners();
 }
