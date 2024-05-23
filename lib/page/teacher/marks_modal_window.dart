@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
+import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 
 class MarksModalWindow extends StatefulWidget {
   final List<MarkEntity>? marks;
@@ -22,7 +23,9 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
   @override
   void initState() {
     super.initState();
-    marks = widget.marks;
+    marks = widget.marks
+        ?.where((element) => element.name != MarkName.nonAdmission)
+        .toList();
     currentItem = widget.currentItem;
     selectedOption = currentItem?.mark?.id ?? marks?.first.id;
   }
