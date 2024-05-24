@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/user_subject_control_type_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_subject_control_type_entity.dart';
@@ -23,21 +21,9 @@ class UserSubjectControlTypeController implements DeleteController {
 
   Future<List<TeacherSubjectControlTypeMarkSemesterEntity>> getByStudentFromDb(
       int userId) async {
-    return (await UserSubjectControlTypeRepositoryImpl()
-        .getByStudent(userId))
+    return (await UserSubjectControlTypeRepositoryImpl().getByStudent(userId))
         .map((e) => TeacherSubjectControlTypeMarkSemesterEntity.fromJson(e))
         .toList();
-  }
-
-  Future<void> getAllFromServer() async {
-    return UserSubjectControlTypeHttpClientImpl().getAll().then((value) =>
-        setAllToDb(value)
-            .then((value) => Log.i('Data received into db',
-                tag: 'user_subject_control_type_controller'))
-            .catchError(
-                (e) => Log.e(e, tag: 'user_subject_control_type_controller'))
-            .catchError(
-                (e) => Log.e(e, tag: 'user_subject_control_type_controller')));
   }
 
   Future<void> setAllToDb(List<UserSubjectControlTypeEntity> usct) async {

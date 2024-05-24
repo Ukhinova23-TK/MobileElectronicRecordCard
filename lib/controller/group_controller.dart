@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/group_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
@@ -16,14 +14,6 @@ class GroupController implements DeleteController {
     return (await GroupRepositoryImpl().getAll())
         .map((controlType) => groupMapper.toEntity(controlType))
         .toList();
-  }
-
-  Future<void> getAllFromServer() async {
-    return GroupHttpClientImpl().getAll().then((value) => setAllToDb(value)
-        .then(
-            (value) => Log.i('Data received into db', tag: 'group_controller'))
-        .catchError((e) => Log.e(e, tag: 'group_controller'))
-        .catchError((e) => Log.e(e, tag: 'group_controller')));
   }
 
   Future<List<GroupEntity>> getBySubject(int subjectId) async {

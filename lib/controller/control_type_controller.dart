@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/control_type_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/repository/control_type_repository.dart';
@@ -16,16 +14,6 @@ class ControlTypeController {
     return (await ControlTypeRepositoryImpl().getAll())
         .map((controlType) => controlTypeMapper.toEntity(controlType))
         .toList();
-  }
-
-  Future<void> getAllFromServer() {
-    return ControlTypeHttpClientImpl()
-        .getAll()
-        .then((value) => setAllToDb(value))
-        .then((value) =>
-            Log.i('Data received into db', tag: 'control_type_controller'))
-        .catchError((e) => Log.e(e, tag: 'control_type_controller'))
-        .catchError((e) => Log.e(e, tag: 'control_type_controller'));
   }
 
   Future<void> setAllToDb(List<ControlTypeEntity> controlTypes) async {

@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/mark_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/model/entity/mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
 import 'package:mobile_electronic_record_card/repository/impl/control_type_repository_impl.dart';
@@ -41,16 +39,6 @@ class MarkController {
             .getMarksByGroupAndSubject(groupId, subjectId))
         ?.map((mark) => markMapper.toEntity(mark))
         .toList();
-  }
-
-  Future<void> getAllFromServer() {
-    return MarkHttpClientImpl()
-        .getAll()
-        .then((value) => setAllToDb(value)
-            .then((value) =>
-                Log.i('Data received into db', tag: 'mark_controller'))
-            .catchError((e) => Log.e(e, tag: 'mark_controller')))
-        .catchError((e) => Log.e(e, tag: 'mark_controller'));
   }
 
   Future<void> setAllToDb(List<MarkEntity> marks) async {

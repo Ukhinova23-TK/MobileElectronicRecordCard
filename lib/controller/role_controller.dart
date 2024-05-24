@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/role_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/model/entity/role_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/role_name.dart';
 import 'package:mobile_electronic_record_card/model/model.dart';
@@ -16,16 +14,6 @@ class RoleController {
     return (await RoleRepositoryImpl().getAll())
         .map((mark) => roleMapper.toEntity(mark))
         .toList();
-  }
-
-  Future<void> getAllFromServer() {
-    return RoleHttpClientImpl()
-        .getAll()
-        .then((value) => setAllToDb(value)
-            .then((value) =>
-                Log.i('Data received into db', tag: 'role_controller'))
-            .catchError((e) => Log.e(e, tag: 'role_controller')))
-        .catchError((e) => Log.e(e, tag: 'role_controller'));
   }
 
   Future<void> setAllToDb(List<RoleEntity> roles) async {

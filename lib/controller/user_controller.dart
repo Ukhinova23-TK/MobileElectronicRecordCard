@@ -1,4 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
 import 'package:mobile_electronic_record_card/client/impl/user_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/controller/role_controller.dart';
@@ -33,14 +32,6 @@ class UserController implements DeleteController {
             .getStudentsByGroupAndSubject(groupId, subjectId))
         .map((user) => userMapper.toEntity(user))
         .toList();
-  }
-
-  Future<void> getAllFromServer() async {
-    return UserHttpClientImpl().getAll().then((value) => setAllToDb(value)
-        .then((value) =>
-        Log.i('Data received into db', tag: 'user_controller'))
-        .catchError((e) => Log.e(e, tag: 'user_controller'))
-        .catchError((e) => Log.e(e, tag: 'user_controller')));
   }
 
   Future<void> setAllToDb(List<UserEntity> users) async {

@@ -1,5 +1,3 @@
-import 'package:flutter_logcat/flutter_logcat.dart';
-import 'package:mobile_electronic_record_card/client/impl/student_mark_http_client_impl.dart';
 import 'package:mobile_electronic_record_card/controller/delete_controller.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_and_mark_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/student_mark_entity.dart';
@@ -78,15 +76,6 @@ class StudentMarkController implements DeleteController {
     return (await StudentMarkRepositoryImpl().getAll())
         .map((mark) => studentMarkMapper.toEntity(mark))
         .toList();
-  }
-
-  Future<void> getAllFromServer() async {
-    return StudentMarkHttpClientImpl().getAll().then((value) =>
-        setAllToDb(value)
-            .then((value) =>
-                Log.i('Data received into db', tag: 'student_mark_controller'))
-            .catchError((e) => Log.e(e, tag: 'student_mark_controller'))
-            .catchError((e) => Log.e(e, tag: 'student_mark_controller')));
   }
 
   Future<void> setAllToDb(List<StudentMarkEntity> studentMarks) async {

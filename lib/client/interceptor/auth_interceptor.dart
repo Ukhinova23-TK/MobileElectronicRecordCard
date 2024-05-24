@@ -19,6 +19,9 @@ class AuthInterceptor implements InterceptorContract {
   @override
   Future<BaseResponse> interceptResponse(
       {required BaseResponse response}) async {
+    if(response.statusCode == 401) {
+      Log.e(response.reasonPhrase.toString(), tag: 'Ошибка авторизации');
+    }
     if(response.statusCode == 403) {
       Log.e(response.reasonPhrase.toString(), tag: 'Ошибка доступа');
     }
