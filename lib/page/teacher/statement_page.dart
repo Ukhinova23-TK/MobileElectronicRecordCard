@@ -37,6 +37,7 @@ class StatementPageState extends State<StatementPage> {
   late int _subjectId;
   late int _groupId;
   late BottomNavBarChoose bottomNavBar;
+  int? dropdownValue;
 
   @override
   void initState() {
@@ -54,19 +55,12 @@ class StatementPageState extends State<StatementPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(titleStudentMarkPage),
-      body: Consumer<StudentMarkProvider>(
-          builder: (context, studentMarkProvider, _) =>
-              buildFutureBuilder(studentMarkProvider)),
-      floatingActionButton: _buildSelectAllButton(),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
+    return buildFutureBuilder();
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
     List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
-    if(bottomItems.isNotEmpty) {
+    if (bottomItems.isNotEmpty) {
       return BottomNavigationBar(
         items: bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
@@ -136,81 +130,121 @@ class StatementPageState extends State<StatementPage> {
 
   void saveToServer() {
     StudentMarkController()
-        .getStudentMarksByGroupAndSubjectFromDb(_groupId, _subjectId)
-        .then((value) => SynchronizationServiceImpl().push(value).then((value) {
-              setState(() {
-                _needSave = false;
-              });
+        .getStudentMarksByGroupAndSubjectFromDb(
+            _groupId, _subjectId, dropdownValue!)
+        .then((value) => SynchronizationServiceImpl().push(value).then((_) {
+              Provider.of<StudentMarkProvider>(context, listen: false)
+                  .initStudentMark(_groupId, _subjectId);
+              setState(() {});
             }));
   }
 
-  FutureBuilder<List<StudentAndMarkEntity>> buildFutureBuilder(
-      StudentMarkProvider studentMarkProvider) {
-    return FutureBuilder(
-      future: studentMarkProvider.studentMarks,
-      builder: (context, snapshot) {
-        return buildListView(snapshot);
+  Consumer<StudentMarkProvider> buildFutureBuilder() {
+    return Consumer<StudentMarkProvider>(
+      builder: (context, studentMarkProvider, _) {
+        return FutureBuilder(
+            future: studentMarkProvider.studentMarks,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Scaffold(
+                  appBar: buildAppBar(titleStudentMarkPage),
+                  body: ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return const ListTile(
+                          title: Text("Нет данных"),
+                        );
+                      }),
+                  floatingActionButton: _buildSelectAllButton(),
+                  bottomNavigationBar: buildBottomNavigationBar(),
+                );
+              } else {
+                List<int> dataUniqueSemester =
+                    snapshot.data!.map((e) => e.semester).toSet().toList();
+                dataUniqueSemester.sort();
+                List<StudentAndMarkEntity> data = snapshot.data!
+                    .where((element) =>
+                        element.semester ==
+                        (dropdownValue ?? dataUniqueSemester.first))
+                    .toList();
+                //WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                dropdownValue ??= dataUniqueSemester.first;
+                _needSave = data.any((element) => element.saved);
+                //});
+                return Scaffold(
+                  appBar: buildAppBar(titleStudentMarkPage),
+                  body: Column(
+                    children: [
+                      _height(),
+                      Row(
+                        children: [
+                          _width(),
+                          DropdownMenu<int>(
+                              initialSelection: dataUniqueSemester.first,
+                              onSelected: (int? value) {
+                                setState(() {
+                                  dropdownValue = value;
+                                });
+                              },
+                              dropdownMenuEntries: dataUniqueSemester
+                                  .map<DropdownMenuEntry<int>>((int value) {
+                                return DropdownMenuEntry<int>(
+                                    value: value,
+                                    label: '${value.toString()} семестр');
+                              }).toList()),
+                        ],
+                      ),
+                      _height(),
+                      buildListView(data),
+                    ],
+                  ),
+                  floatingActionButton: _buildSelectAllButton(),
+                  bottomNavigationBar: buildBottomNavigationBar(),
+                );
+              }
+            });
       },
     );
   }
 
-  ListView buildListView(AsyncSnapshot<List<StudentAndMarkEntity>> snapshot) {
-    if (!snapshot.hasData) {
-      return ListView.builder(
-          itemCount: 1,
-          itemBuilder: (context, index) {
-            return const ListTile(
-              title: Text("Нет данных"),
-            );
-          });
-    } else {
-      return ListView.builder(
-          itemCount: snapshot.data?.length,
-          itemBuilder: (builder, index) {
-            if (snapshot.data == null) {
-              return null;
-            }
-            StudentAndMarkEntity data = snapshot.data![index];
-            bool isSelectedData = false;
-            if (data.mark?.name != MarkName.nonAdmission) {
-              selectedItem[index] ??= false;
-              isSelectedData = selectedItem[index]!;
-            }
-
-            WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-              setState(() {
-                _needSave =
-                    snapshot.data?.any((element) => element.saved) ?? false;
-              });
-            });
-
-            return ListTile(
-              onLongPress: () => data.mark?.name != MarkName.nonAdmission
-                  ? onLongPress(isSelectedData, index)
-                  : {},
-              onTap: () => data.mark?.name != MarkName.nonAdmission
-                  ? onTap(isSelectedData, index, data)
-                  : {},
-              title: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Text(
-                    '${data.user.lastName} ${data.user.firstName} '
-                    '${data.user.middleName ?? ''}',
-                    textAlign: TextAlign.left,
-                    textDirection: TextDirection.rtl,
-                  )),
-              trailing: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  child: Text(
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.ltr,
-                    data.mark?.title ?? 'Нет оценки',
-                  )),
-              leading: _buildSelectIcon(isSelectedData, data),
-              tileColor: setColor(data.mark?.name),
-            );
-          });
-    }
+  ListView buildListView(List<StudentAndMarkEntity> snapshot) {
+    return ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        itemCount: snapshot.length,
+        itemBuilder: (builder, index) {
+          StudentAndMarkEntity data = snapshot[index];
+          bool isSelectedData = false;
+          if (data.mark?.name != MarkName.nonAdmission) {
+            selectedItem[index] ??= false;
+            isSelectedData = selectedItem[index]!;
+          }
+          return ListTile(
+            onLongPress: () => data.mark?.name != MarkName.nonAdmission
+                ? onLongPress(isSelectedData, index)
+                : {},
+            onTap: () => data.mark?.name != MarkName.nonAdmission
+                ? onTap(isSelectedData, index, data)
+                : {},
+            title: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.6,
+                child: Text(
+                  '${data.user.lastName} ${data.user.firstName} '
+                  '${data.user.middleName ?? ''}',
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.rtl,
+                )),
+            trailing: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.4,
+                child: Text(
+                  textAlign: TextAlign.right,
+                  textDirection: TextDirection.ltr,
+                  data.mark?.title ?? 'Нет оценки',
+                )),
+            leading: _buildSelectIcon(isSelectedData, data),
+            tileColor: setColor(data.mark?.name),
+          );
+        });
   }
 
   Color? setColor(String? markName) {
@@ -245,16 +279,23 @@ class StatementPageState extends State<StatementPage> {
             await Provider.of<StudentMarkProvider>(context, listen: false)
                 .studentMarks;
         selectedItem.entries.where((element) => element.value).forEach(
-            (element) => studentMarkFutures.add(StudentMarkController()
-                .set(studentMarks[element.key].user.id!, result, _subjectId)));
+            (element) => studentMarkFutures.add(StudentMarkController().set(
+                studentMarks
+                    .where(
+                        (studentMark) => studentMark.semester == dropdownValue)
+                    .toList()[element.key]
+                    .user
+                    .id!,
+                result,
+                _subjectId,
+                dropdownValue!)));
       } else {
         studentMarkFutures.add(StudentMarkController()
-            .set(currentItem!.user.id!, result, _subjectId));
+            .set(currentItem!.user.id!, result, _subjectId, dropdownValue!));
       }
       Future.wait(studentMarkFutures).then((value) => setState(() {
             Provider.of<StudentMarkProvider>(context, listen: false)
                 .initStudentMark(_groupId, _subjectId);
-            _needSave = true;
             isSelectItem = false;
           }));
     }
@@ -331,4 +372,8 @@ class StatementPageState extends State<StatementPage> {
       isSelectItem = selectedItem.containsValue(true);
     });
   }
+
+  Widget _height() => const SizedBox(height: 16);
+
+  Widget _width() => const SizedBox(width: 16);
 }

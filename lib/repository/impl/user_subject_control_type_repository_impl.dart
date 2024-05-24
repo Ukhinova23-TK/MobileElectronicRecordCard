@@ -13,8 +13,8 @@ class UserSubjectControlTypeRepositoryImpl
     return await User_subject_control_type().getById(id);
   }
 
-  Future<User_subject_control_type?> getByStudentAndSubject(
-      int userId, int subjectId) async {
+  Future<User_subject_control_type?> getByStudentAndSubjectAndSemester(
+      int userId, int subjectId, int semester) async {
     return await User_subject_control_type()
         .select()
         .student_id
@@ -22,6 +22,9 @@ class UserSubjectControlTypeRepositoryImpl
         .and
         .subject_id
         .equals(subjectId)
+        .and
+        .semester
+        .equals(semester)
         .toSingle();
   }
 

@@ -29,9 +29,9 @@ class StudentMarkController implements DeleteController {
   }
 
   Future<List<StudentMarkEntity>> getStudentMarksByGroupAndSubjectFromDb(
-      int groupId, int subjectId) async {
+      int groupId, int subjectId, int semester) async {
     return (await StudentMarkRepositoryImpl()
-        .getStudentMarksByGroupAndSubject(groupId, subjectId))
+        .getStudentMarksByGroupAndSubjectAndSemester(groupId, subjectId, semester))
         .map((e) => StudentMarkMapper().toEntity(e))
         .toList();
   }
@@ -46,9 +46,9 @@ class StudentMarkController implements DeleteController {
         .update(StudentMarkMapper().toModel(studentMark));
   }
 
-  Future<void> set(int userId, int markId, int subjectId) async {
+  Future<void> set(int userId, int markId, int subjectId, int semester) async {
     var sm = (await StudentMarkRepositoryImpl()
-        .getByStudentAndSubject(userId, subjectId))
+        .getByStudentAndSubjectAndSemester(userId, subjectId, semester))
         ?.map((e) => StudentMarkEntity.fromJson(e))
         .toList();
     if (sm != null && sm.isNotEmpty) {
@@ -58,7 +58,7 @@ class StudentMarkController implements DeleteController {
       await updateToDb(sm.first);
     } else {
       var usct = await UserSubjectControlTypeRepositoryImpl()
-          .getByStudentAndSubject(userId, subjectId);
+          .getByStudentAndSubjectAndSemester(userId, subjectId, semester);
       if (usct != null) {
         await setToDb(StudentMarkEntity(
             markId: markId,

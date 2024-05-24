@@ -21,6 +21,9 @@ abstract class StudentMarkRepository {
   Future<List<Map<String, dynamic>>> getByGroupAndSubject(
       int groupId, int subjectId);
 
-  Future<List<Student_mark>> getStudentMarksByGroupAndSubject(
-      int groupId, int subjectId);
+  Future<List<Map<String, dynamic>>>? getByStudentAndSubjectAndSemester(
+      int groupId, int subjectId, int semester);
+
+  Future<List<Student_mark>> getStudentMarksByGroupAndSubjectAndSemester(
+      int groupId, int subjectId, int semester);
 }
