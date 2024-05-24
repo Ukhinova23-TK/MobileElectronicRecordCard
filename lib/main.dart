@@ -48,8 +48,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    secureLocator.removeToken();
-    sharedLocator.deleteAll();
+    /*secureLocator.removeToken();
+    sharedLocator.deleteAll();*/
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(

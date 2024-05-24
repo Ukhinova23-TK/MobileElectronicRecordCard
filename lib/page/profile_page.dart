@@ -41,8 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ? Provider.of<UserProvider>(context, listen: false)
             .initCurrentUser(userId!)
         : null;
-    _selectedIndex =
-        widget.selectedItemNavBar ?? rolesName!.length;
+    _selectedIndex = widget.selectedItemNavBar ?? rolesName!.length;
     bottomNavBar = BottomNavBarChoose(context: context);
   }
 
@@ -64,9 +63,10 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasData) {
           return Column(
             children: [
-              const Expanded(flex: 2, child: _TopPortion()),
+              SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  child: const _TopPortion()),
               Expanded(
-                flex: 3,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SingleChildScrollView(
@@ -87,28 +87,26 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         children: [
                           _width(),
-                          Expanded(
-                              flex: 1,
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: const Expanded(
-                                      child: Column(
+                                  child: const Column(
                                     children: [
                                       Text(
                                         'Логин',
                                       )
                                     ],
-                                  )))),
-                          Expanded(
-                              flex: 2,
+                                  ))),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
                               child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Expanded(
-                                      child: Column(
+                                  child: Column(
                                     children: [
                                       Text(snapshot.data?.user.login ?? '')
                                     ],
-                                  ))))
+                                  )))
                         ],
                       ),
                       _height(),
@@ -116,24 +114,22 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         children: [
                           _width(),
-                          Expanded(
-                              flex: 1,
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Expanded(
-                                      child: Column(
+                                  child: Column(
                                     children: [
                                       Text(
                                         rolesName?.length != 0 ? 'Роль' : '',
                                       )
                                     ],
-                                  )))),
-                          Expanded(
-                              flex: 2,
+                                  ))),
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
                               child: Container(
                                   alignment: Alignment.centerLeft,
-                                  child: Expanded(
-                                      child: Column(
+                                  child: Column(
                                     children: [
                                       Text(rolesName?.length != 0 &&
                                               rolesName?.length == 1
@@ -144,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   '${rolesName?[1]}'
                                               : '')
                                     ],
-                                  ))))
+                                  )))
                         ],
                       ),
                       _height(),
@@ -157,20 +153,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   children: [
                                     _width(),
-                                    Expanded(
-                                        flex: 1,
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
                                         child: Container(
                                             alignment: Alignment.centerLeft,
-                                            child: const Expanded(
-                                                child: Column(
+                                            child: const Column(
                                               children: [
                                                 Text(
                                                   'Старый пароль',
                                                 )
                                               ],
-                                            )))),
-                                    Expanded(
-                                        flex: 2,
+                                            ))),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
                                         child: Column(children: [
                                           Row(
                                             children: [
@@ -221,20 +220,23 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Row(
                                   children: [
                                     _width(),
-                                    Expanded(
-                                        flex: 1,
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.3,
                                         child: Container(
                                             alignment: Alignment.centerLeft,
-                                            child: const Expanded(
-                                                child: Column(
+                                            child: const Column(
                                               children: [
                                                 Text(
                                                   'Пароль',
                                                 )
                                               ],
-                                            )))),
-                                    Expanded(
-                                        flex: 2,
+                                            ))),
+                                    SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.6,
                                         child: Column(children: [
                                           Row(
                                             children: [
@@ -298,8 +300,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         children: [
                           _width(),
-                          Expanded(
-                              flex: 1,
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
                               child: Container(
                                   alignment: Alignment.centerLeft,
                                   child: Column(
@@ -309,8 +311,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                           : '')
                                     ],
                                   ))),
-                          Expanded(
-                              flex: 2,
+                          SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
                               child: Container(
                                   alignment: Alignment.centerLeft,
                                   child: Column(

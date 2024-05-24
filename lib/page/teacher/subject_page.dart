@@ -80,12 +80,17 @@ class SubjectPageState extends State<SubjectPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    return BottomNavigationBar(
-      items: bottomNavBar.getItems(),
-      currentIndex: _selectedIndex,
-      selectedItemColor: greatMarkColor,
-      onTap: _onItemTapped,
-    );
+    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    if(bottomItems.isNotEmpty) {
+      return BottomNavigationBar(
+        items: bottomNavBar.getItems(),
+        currentIndex: _selectedIndex,
+        selectedItemColor: greatMarkColor,
+        onTap: _onItemTapped,
+      );
+    } else {
+      return null;
+    }
   }
 
   void _onItemTapped(int index) {

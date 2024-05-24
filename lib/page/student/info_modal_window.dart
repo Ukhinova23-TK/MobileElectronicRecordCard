@@ -98,7 +98,9 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
     for (TeacherSubjectControlTypeMarkSemesterEntity element in data) {
       avg += element.mark?.value ?? 0.0;
     }
-    return (data.isNotEmpty && avg != 0) ? avg /= data.length : 0.0;
+    return (data.isNotEmpty && avg != 0)
+        ? double.parse((avg /= data.length).toStringAsFixed(2))
+        : 0.0;
   }
 
   int percentGreatMark(
