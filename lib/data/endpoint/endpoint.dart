@@ -22,6 +22,8 @@ class EndPoint {
   static const String userAndCriteriaUrl = '/filter';
   static const String userByLoginUrl = '/login';
   static const String userAuthenticateUrl = '/authenticate';
+  static const String userRefreshTokenUrl = '/refresh';
+  static const String userLogoutUrl = '/logout';
 
   static const String usctUrl = 'api/user-subject-control-types';
   static const String usctAndCriteriaUrl = '/filter';

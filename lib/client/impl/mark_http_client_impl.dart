@@ -11,7 +11,7 @@ class MarkHttpClientImpl implements MarkHttpClient {
     final version = await MarkRepositoryImpl().getMaxVersion();
     final response = await EndPoint.http
         .get(Uri.parse('${EndPoint.resourceUrl}${EndPoint.markUrl}'
-        '${EndPoint.getByVersionUrl}$version'));
+            '${EndPoint.getByVersionUrl}$version'));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => MarkEntity.fromJson(e))
         .toList();

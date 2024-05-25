@@ -15,6 +15,8 @@ import 'package:mobile_electronic_record_card/provider/user_subject_control_type
 import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
+final globalNavigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setup();
@@ -71,6 +73,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (_) => UserProvider())
       ],
       child: MaterialApp(
+        navigatorKey: globalNavigatorKey,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: greatMarkColor),
           useMaterial3: true,

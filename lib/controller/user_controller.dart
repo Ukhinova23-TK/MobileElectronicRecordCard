@@ -71,16 +71,36 @@ class UserController implements DeleteController {
         .then((value) {
       secureStorageLocator
           .writeToken(AuthenticateEntity.fromJson(value).token!);
+      secureStorageLocator
+          .writeRefreshToken(AuthenticateEntity.fromJson(value).refreshToken!);
     });
   }
 
+  Future<void> refreshToken() async {
+    String? refresh = await secureStorageLocator.readRefreshToken();
+    if (refresh != null) {
+      await UserHttpClientImpl()
+          .refreshToken(AuthenticateEntity.toRefreshJson(refresh))
+          .then((value) {
+        secureStorageLocator
+            .writeToken(AuthenticateEntity.fromJson(value).token!);
+        secureStorageLocator.writeRefreshToken(
+            AuthenticateEntity.fromJson(value).refreshToken!);
+      });
+    }
+  }
+
+  Future<void> logout() async {
+    await UserHttpClientImpl()
+        .logout()
+        .then((value) => secureStorageLocator.removeAll());
+  }
+
   Future<UserAndGroupEntity> getCurrentUserFromDb(int userId) async {
-    UserAndGroupEntity u =
-     (await UserRepositoryImpl()
-        .getUser(userId))
+    return (await UserRepositoryImpl().getUser(userId))
         .map((e) => UserAndGroupEntity.fromJson(e))
-        .toList().first;
-    return u;
+        .toList()
+        .first;
   }
 
   @override

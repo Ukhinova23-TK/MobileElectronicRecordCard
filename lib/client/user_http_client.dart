@@ -5,5 +5,10 @@ abstract class UserHttpClient {
 
   Future<UserEntity> getByLogin(String login);
 
+  Future<Map<String, dynamic>> refreshToken(
+      Map<String, dynamic> refreshToken);
+
+  Future<Map<String, dynamic>> logout();
+
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> cred);
 }
