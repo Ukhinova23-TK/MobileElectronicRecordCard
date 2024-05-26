@@ -19,39 +19,39 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
-  late int? userId;
+  final _sharedLocator = getIt.get<SharedPreferenceHelper>();
+  late int? _userId;
   late int _selectedIndex;
-  late BottomNavBarChoose bottomNavBar;
+  late BottomNavBarChoose _bottomNavBar;
   List<String>? rolesName = [];
   bool _isOldPasswordVisible = false;
   bool _isNewPasswordVisible = false;
-  final oldPasswordController = TextEditingController();
-  final newPasswordController = TextEditingController();
+  final _oldPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    oldPasswordController.dispose();
-    newPasswordController.dispose();
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    userId = sharedLocator.getUserId();
-    sharedLocator.getRolesName()?.forEach((element) {
+    _userId = _sharedLocator.getUserId();
+    _sharedLocator.getRolesName()?.forEach((element) {
       element == RoleName.student
           ? rolesName?.add('Студент')
           : rolesName?.add('Преподаватель');
     });
-    userId != null
+    _userId != null
         ? Provider.of<UserProvider>(context, listen: false)
-            .initCurrentUser(userId!)
+            .initCurrentUser(_userId!)
         : null;
     _selectedIndex = widget.selectedItemNavBar ?? rolesName!.length;
-    bottomNavBar = BottomNavBarChoose(context: context);
+    _bottomNavBar = BottomNavBarChoose(context: context);
   }
 
   @override
@@ -153,158 +153,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       _height(),
-                      Form(
-                          key: _formKey,
-                          child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    _width(),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.3,
-                                        child: Container(
-                                            alignment: Alignment.centerLeft,
-                                            child: const Column(
-                                              children: [
-                                                Text(
-                                                  'Старый пароль',
-                                                )
-                                              ],
-                                            ))),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Column(children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                  child: TextFormField(
-                                                      controller:
-                                                          oldPasswordController,
-                                                      validator: (value) {
-                                                        if (value == null ||
-                                                            value.isEmpty) {
-                                                          return emptyPasswordAuthPage;
-                                                        }
-                                                        if (value.length < 12) {
-                                                          return tinyPasswordAuthPage;
-                                                        }
-                                                        return null;
-                                                      },
-                                                      obscureText:
-                                                          !_isOldPasswordVisible,
-                                                      decoration:
-                                                          InputDecoration(
-                                                              labelText:
-                                                                  labelPasswordAuthPage,
-                                                              hintText:
-                                                                  hintPasswordAuthPage,
-                                                              border:
-                                                                  const OutlineInputBorder(),
-                                                              suffixIcon:
-                                                                  IconButton(
-                                                                icon: Icon(_isOldPasswordVisible
-                                                                    ? Icons
-                                                                        .visibility_off
-                                                                    : Icons
-                                                                        .visibility),
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    _isOldPasswordVisible =
-                                                                        !_isOldPasswordVisible;
-                                                                  });
-                                                                },
-                                                              )))),
-                                            ],
-                                          )
-                                        ]))
-                                  ],
-                                ),
-                                _height(),
-                                Row(
-                                  children: [
-                                    _width(),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.3,
-                                        child: Container(
-                                            alignment: Alignment.centerLeft,
-                                            child: const Column(
-                                              children: [
-                                                Text(
-                                                  'Пароль',
-                                                )
-                                              ],
-                                            ))),
-                                    SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Column(children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                  child: TextFormField(
-                                                controller:
-                                                    newPasswordController,
-                                                validator: (value) {
-                                                  if (value == null ||
-                                                      value.isEmpty) {
-                                                    return emptyPasswordAuthPage;
-                                                  }
-                                                  if (value.length < 12) {
-                                                    return tinyPasswordAuthPage;
-                                                  }
-                                                  return null;
-                                                },
-                                                obscureText:
-                                                    !_isNewPasswordVisible,
-                                                decoration: InputDecoration(
-                                                    labelText:
-                                                        labelPasswordAuthPage,
-                                                    hintText:
-                                                        hintPasswordAuthPage,
-                                                    /*prefixIcon: const Icon(
-                                              Icons.lock_outline_rounded),*/
-                                                    border:
-                                                        const OutlineInputBorder(),
-                                                    suffixIcon: IconButton(
-                                                      icon: Icon(
-                                                          _isNewPasswordVisible
-                                                              ? Icons
-                                                                  .visibility_off
-                                                              : Icons
-                                                                  .visibility),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _isNewPasswordVisible =
-                                                              !_isNewPasswordVisible;
-                                                        });
-                                                      },
-                                                    )),
-                                              )),
-                                              IconButton(
-                                                icon: const Icon(Icons.save_as),
-                                                onPressed: () async {
-                                                  if (_formKey.currentState
-                                                          ?.validate() ??
-                                                      false) {
-                                                    await changePassword();
-                                                  }
-                                                },
-                                              )
-                                            ],
-                                          )
-                                        ]))
-                                  ],
-                                )
-                              ])),
+                      buildFormPasswords(context),
                       _height(),
                       Row(
                         children: [
@@ -350,12 +199,147 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Form buildFormPasswords(BuildContext context) {
+    return Form(
+        key: _formKey,
+        child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _width(),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: const Column(
+                            children: [
+                              Text(
+                                'Старый пароль',
+                              )
+                            ],
+                          ))),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Expanded(
+                                child: TextFormField(
+                                    controller: _oldPasswordController,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return emptyPasswordAuthPage;
+                                      }
+                                      if (value.length < 12) {
+                                        return tinyPasswordAuthPage;
+                                      }
+                                      return null;
+                                    },
+                                    obscureText: !_isOldPasswordVisible,
+                                    decoration: InputDecoration(
+                                        labelText: labelPasswordAuthPage,
+                                        hintText: hintPasswordAuthPage,
+                                        border: const OutlineInputBorder(),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(_isOldPasswordVisible
+                                              ? Icons.visibility_off
+                                              : Icons.visibility),
+                                          onPressed: () {
+                                            setState(() {
+                                              _isOldPasswordVisible =
+                                                  !_isOldPasswordVisible;
+                                            });
+                                          },
+                                        )
+                                    )
+                                )
+                            ),
+                          ],
+                        )
+                      ])
+                  )
+                ],
+              ),
+              _height(),
+              Row(
+                children: [
+                  _width(),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.3,
+                      child: Container(
+                          alignment: Alignment.centerLeft,
+                          child: const Column(
+                            children: [
+                              Text(
+                                'Пароль',
+                              )
+                            ],
+                          )
+                      )
+                  ),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Column(children: [
+                        Row(
+                          children: [
+                            Expanded(
+                                child: TextFormField(
+                              controller: _newPasswordController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return emptyPasswordAuthPage;
+                                }
+                                if (value.length < 12) {
+                                  return tinyPasswordAuthPage;
+                                }
+                                return null;
+                              },
+                              obscureText: !_isNewPasswordVisible,
+                              decoration: InputDecoration(
+                                  labelText: labelPasswordAuthPage,
+                                  hintText: hintPasswordAuthPage,
+                                  /*prefixIcon: const Icon(
+                                            Icons.lock_outline_rounded),*/
+                                  border: const OutlineInputBorder(),
+                                  suffixIcon: IconButton(
+                                    icon: Icon(_isNewPasswordVisible
+                                        ? Icons.visibility_off
+                                        : Icons.visibility),
+                                    onPressed: () {
+                                      setState(() {
+                                        _isNewPasswordVisible =
+                                            !_isNewPasswordVisible;
+                                      });
+                                    },
+                                  )),
+                            )),
+                            IconButton(
+                              icon: const Icon(Icons.save_as),
+                              onPressed: () async {
+                                if (_formKey.currentState?.validate() ??
+                                    false) {
+                                  await changePassword();
+                                }
+                              },
+                            )
+                          ],
+                        )
+                      ])
+                  )
+                ],
+              )
+            ])
+    );
+  }
+
   Future<void> changePassword() async {
     UserController()
-        .changePassword(oldPasswordController.text, newPasswordController.text)
+        .changePassword(_oldPasswordController.text, _newPasswordController.text)
         .then((_) {
-      newPasswordController.clear();
-      oldPasswordController.clear();
+      _newPasswordController.clear();
+      _oldPasswordController.clear();
       ScaffoldMessenger.of(context)
         ..removeCurrentSnackBar()
         ..showSnackBar(const SnackBar(content: Text('Пароль успешно сменен')));
@@ -368,7 +352,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   BottomNavigationBar? buildBottomNavigationBar() {
     return BottomNavigationBar(
-      items: bottomNavBar.getItems(),
+      items: _bottomNavBar.getItems(),
       currentIndex: _selectedIndex,
       selectedItemColor: greatMarkColor,
       onTap: _onItemTapped,
@@ -379,7 +363,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _selectedIndex = index;
     });
-    bottomNavBar.changeItem(index);
+    _bottomNavBar.changeItem(index);
   }
 
   Widget _height() => const SizedBox(height: 16);
@@ -405,7 +389,8 @@ class _TopPortion extends StatelessWidget {
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(50),
                 bottomRight: Radius.circular(50),
-              )),
+              )
+          ),
         ),
         Align(
           alignment: Alignment.bottomCenter,

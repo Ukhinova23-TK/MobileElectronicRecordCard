@@ -8,12 +8,12 @@ import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 
 class BottomNavBarChoose {
   BuildContext context;
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
+  final _sharedLocator = getIt.get<SharedPreferenceHelper>();
 
   BottomNavBarChoose({required this.context});
 
   void changeItem(int index) {
-    List<String>? roles = sharedLocator.getRolesName();
+    List<String>? roles = _sharedLocator.getRolesName();
     if (roles != null) {
       switch (index) {
         case 0:
@@ -52,7 +52,7 @@ class BottomNavBarChoose {
   }
 
   List<BottomNavigationBarItem> getItems() {
-    List<String>? roles = sharedLocator.getRolesName();
+    List<String>? roles = _sharedLocator.getRolesName();
     List<BottomNavigationBarItem> bottomItems = [];
     if (roles != null) {
       if (roles.contains(RoleName.teacher)) {

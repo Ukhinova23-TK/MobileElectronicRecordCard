@@ -12,12 +12,12 @@ class InfoModalWindow extends StatefulWidget {
 }
 
 class _InfoModalWindowState extends State<InfoModalWindow> {
-  late List<TeacherSubjectControlTypeMarkSemesterEntity> tsctms;
+  late List<TeacherSubjectControlTypeMarkSemesterEntity> _tsctms;
 
   @override
   void initState() {
     super.initState();
-    tsctms = widget.tsctms;
+    _tsctms = widget.tsctms;
   }
 
   @override
@@ -39,7 +39,7 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(percentGreatMark(tsctms).toString())],
+              children: [Text(percentGreatMark(_tsctms).toString())],
             )),
             _width()
           ],
@@ -59,7 +59,7 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
             Expanded(
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [Text(avgMark(tsctms).toString())],
+              children: [Text(avgMark(_tsctms).toString())],
             )),
             _width()
           ],
@@ -80,7 +80,7 @@ class _InfoModalWindowState extends State<InfoModalWindow> {
                 child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(isRedDiploma(tsctms) ? 'Возможен' : 'Не возможен')
+                Text(isRedDiploma(_tsctms) ? 'Возможен' : 'Не возможен')
               ],
             )),
             _width()

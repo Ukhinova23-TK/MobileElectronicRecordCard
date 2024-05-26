@@ -30,14 +30,14 @@ class StatementPage extends StatefulWidget {
 }
 
 class StatementPageState extends State<StatementPage> {
-  bool isSelectItem = false;
+  bool _isSelectItem = false;
   Map<int, bool> selectedItem = {};
   late bool _needSave;
   late int _selectedIndex;
   late int _subjectId;
   late int _groupId;
-  late BottomNavBarChoose bottomNavBar;
-  int? dropdownValue;
+  late BottomNavBarChoose _bottomNavBar;
+  int? _dropdownValue;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class StatementPageState extends State<StatementPage> {
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     _subjectId = widget.subjectId;
     _groupId = widget.groupId;
-    bottomNavBar = BottomNavBarChoose(context: context);
+    _bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<StudentMarkProvider>(context, listen: false)
         .initStudentMark(_groupId, _subjectId);
     Provider.of<MarkProvider>(context, listen: false)
@@ -59,10 +59,10 @@ class StatementPageState extends State<StatementPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    List<BottomNavigationBarItem> bottomItems = _bottomNavBar.getItems();
     if (bottomItems.isNotEmpty) {
       return BottomNavigationBar(
-        items: bottomNavBar.getItems(),
+        items: _bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
@@ -76,7 +76,7 @@ class StatementPageState extends State<StatementPage> {
     setState(() {
       _selectedIndex = index;
     });
-    bottomNavBar.changeItem(index);
+    _bottomNavBar.changeItem(index);
   }
 
   AppBar buildAppBar(String title) {
@@ -131,7 +131,7 @@ class StatementPageState extends State<StatementPage> {
   void saveToServer() {
     StudentMarkController()
         .getStudentMarksByGroupAndSubjectFromDb(
-            _groupId, _subjectId, dropdownValue!)
+            _groupId, _subjectId, _dropdownValue!)
         .then((value) => SynchronizationServiceImpl().push(value).then((_) {
               Provider.of<StudentMarkProvider>(context, listen: false)
                   .initStudentMark(_groupId, _subjectId);
@@ -165,10 +165,10 @@ class StatementPageState extends State<StatementPage> {
                 List<StudentAndMarkEntity> data = snapshot.data!
                     .where((element) =>
                         element.semester ==
-                        (dropdownValue ?? dataUniqueSemester.first))
+                        (_dropdownValue ?? dataUniqueSemester.first))
                     .toList();
                 //WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                dropdownValue ??= dataUniqueSemester.first;
+                _dropdownValue ??= dataUniqueSemester.first;
                 _needSave = data.any((element) => element.saved);
                 //});
                 return Scaffold(
@@ -183,7 +183,7 @@ class StatementPageState extends State<StatementPage> {
                               initialSelection: dataUniqueSemester.first,
                               onSelected: (int? value) {
                                 setState(() {
-                                  dropdownValue = value;
+                                  _dropdownValue = value;
                                 });
                               },
                               dropdownMenuEntries: dataUniqueSemester
@@ -282,27 +282,27 @@ class StatementPageState extends State<StatementPage> {
             (element) => studentMarkFutures.add(StudentMarkController().set(
                 studentMarks
                     .where(
-                        (studentMark) => studentMark.semester == dropdownValue)
+                        (studentMark) => studentMark.semester == _dropdownValue)
                     .toList()[element.key]
                     .user
                     .id!,
                 result,
                 _subjectId,
-                dropdownValue!)));
+                _dropdownValue!)));
       } else {
         studentMarkFutures.add(StudentMarkController()
-            .set(currentItem!.user.id!, result, _subjectId, dropdownValue!));
+            .set(currentItem!.user.id!, result, _subjectId, _dropdownValue!));
       }
       Future.wait(studentMarkFutures).then((value) => setState(() {
             Provider.of<StudentMarkProvider>(context, listen: false)
                 .initStudentMark(_groupId, _subjectId);
-            isSelectItem = false;
+            _isSelectItem = false;
           }));
     }
   }
 
   Widget? _buildSelectIcon(bool isSelectedData, StudentAndMarkEntity data) {
-    if (isSelectItem) {
+    if (_isSelectItem) {
       return Icon(
         isSelectedData ? Icons.check_box : Icons.check_box_outline_blank,
         color: Theme.of(context).primaryColor,
@@ -314,15 +314,15 @@ class StatementPageState extends State<StatementPage> {
   void onLongPress(bool isSelectedData, int index) {
     setState(() {
       selectedItem[index] = !isSelectedData;
-      isSelectItem = selectedItem.containsValue(true);
+      _isSelectItem = selectedItem.containsValue(true);
     });
   }
 
   void onTap(bool isSelectedData, int index, StudentAndMarkEntity currentItem) {
-    if (isSelectItem) {
+    if (_isSelectItem) {
       setState(() {
         selectedItem[index] = !isSelectedData;
-        isSelectItem = selectedItem.containsValue(true);
+        _isSelectItem = selectedItem.containsValue(true);
       });
     } else {
       _openMarksModalWindow(currentItem);
@@ -331,7 +331,7 @@ class StatementPageState extends State<StatementPage> {
 
   Widget? _buildSelectAllButton() {
     bool isFalseAvailable = selectedItem.containsValue(false);
-    if (isSelectItem) {
+    if (_isSelectItem) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -369,7 +369,7 @@ class StatementPageState extends State<StatementPage> {
     bool isFalseAvailable = selectedItem.containsValue(false);
     selectedItem.updateAll((key, value) => isFalseAvailable);
     setState(() {
-      isSelectItem = selectedItem.containsValue(true);
+      _isSelectItem = selectedItem.containsValue(true);
     });
   }
 

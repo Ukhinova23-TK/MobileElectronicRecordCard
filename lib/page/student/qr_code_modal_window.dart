@@ -13,8 +13,8 @@ class QrCodeModalWindow extends StatefulWidget {
 }
 
 class _QrCodeModalWindowState extends State<QrCodeModalWindow> {
-  String? qrData;
-  final secureLocator = getIt.get<SecureStorageHelper>();
+  String? _qrData;
+  final _secureLocator = getIt.get<SecureStorageHelper>();
 
   _QrCodeModalWindowState();
 
@@ -25,9 +25,9 @@ class _QrCodeModalWindowState extends State<QrCodeModalWindow> {
   }
 
   Future<void> getToken() async {
-    String? s = await secureLocator.readToken();
+    String? s = await _secureLocator.readToken();
     setState(() {
-      qrData = s;
+      _qrData = s;
     });
   }
 
@@ -38,9 +38,9 @@ class _QrCodeModalWindowState extends State<QrCodeModalWindow> {
         SizedBox(
           width: MediaQuery.of(context).size.width,
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            qrData != null
+            _qrData != null
                 ? QrImageView(
-                    data: qrData!,
+                    data: _qrData!,
                     version: QrVersions.auto,
                     size: 320.0,
                     errorStateBuilder: (cxt, err) {

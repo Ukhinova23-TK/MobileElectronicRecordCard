@@ -14,20 +14,20 @@ class MarksModalWindow extends StatefulWidget {
 }
 
 class _MarksModalWindowState extends State<MarksModalWindow> {
-  late List<MarkEntity>? marks;
-  StudentAndMarkEntity? currentItem;
-  int? selectedOption;
+  late List<MarkEntity>? _marks;
+  StudentAndMarkEntity? _currentItem;
+  int? _selectedOption;
 
   _MarksModalWindowState();
 
   @override
   void initState() {
     super.initState();
-    marks = widget.marks
+    _marks = widget.marks
         ?.where((element) => element.name != MarkName.nonAdmission)
         .toList();
-    currentItem = widget.currentItem;
-    selectedOption = currentItem?.mark?.id ?? marks?.first.id;
+    _currentItem = widget.currentItem;
+    _selectedOption = _currentItem?.mark?.id ?? _marks?.first.id;
   }
 
   @override
@@ -40,16 +40,16 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
         ListView.builder(
           scrollDirection: Axis.vertical,
           shrinkWrap: true,
-          itemCount: marks?.length,
+          itemCount: _marks?.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text(marks?[index].title ?? ""),
+              title: Text(_marks?[index].title ?? ""),
               leading: Radio<int>(
-                value: marks?[index].id ?? 1,
-                groupValue: selectedOption,
+                value: _marks?[index].id ?? 1,
+                groupValue: _selectedOption,
                 onChanged: (int? value) {
                   setState(() {
-                    selectedOption = value;
+                    _selectedOption = value;
                   });
                 },
               ),
@@ -61,7 +61,7 @@ class _MarksModalWindowState extends State<MarksModalWindow> {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).pop(selectedOption);
+                Navigator.of(context).pop(_selectedOption);
               },
               child: const Text("Сохранить"),
             )

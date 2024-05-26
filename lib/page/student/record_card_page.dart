@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
-import 'package:mobile_electronic_record_card/model/entity/control_type_entity.dart';
-import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/model/entity/teacher_subject_control_type_mark_semester_entity.dart';
-import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/student/qr_code_modal_window.dart';
@@ -24,22 +21,19 @@ class RecordCardPage extends StatefulWidget {
 }
 
 class _RecordCardPageState extends State<RecordCardPage> {
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
-  Future<List<SubjectEntity>>? subjects;
-  Future<ControlTypeEntity>? controlType;
-  Future<List<UserEntity>>? users;
+  final _sharedLocator = getIt.get<SharedPreferenceHelper>();
   late int _selectedIndex;
-  late BottomNavBarChoose bottomNavBar;
-  int? dropdownValue;
+  late BottomNavBarChoose _bottomNavBar;
+  int? _dropdownValue;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ??
-        (sharedLocator.getRolesCount() == 2 ? 1 : 0);
+        (_sharedLocator.getRolesCount() == 2 ? 1 : 0);
     Provider.of<UserSubjectControlTypeProvider>(context, listen: false)
-        .initUserSubjectsControlTypes(sharedLocator.getUserId()!);
-    bottomNavBar = BottomNavBarChoose(context: context);
+        .initUserSubjectsControlTypes(_sharedLocator.getUserId()!);
+    _bottomNavBar = BottomNavBarChoose(context: context);
   }
 
   @override
@@ -58,7 +52,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
                       snapshot.data!
                           .where((element) =>
                               element.semester ==
-                              (dropdownValue ?? dataUniqueSemester.first))
+                              (_dropdownValue ?? dataUniqueSemester.first))
                           .toList();
                   return Column(children: [
                     _height(),
@@ -69,7 +63,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
                             initialSelection: dataUniqueSemester.first,
                             onSelected: (int? value) {
                               setState(() {
-                                dropdownValue = value;
+                                _dropdownValue = value;
                               });
                             },
                             dropdownMenuEntries: dataUniqueSemester
@@ -141,7 +135,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
         icon: const Icon(Icons.refresh_outlined),
         onPressed: () => synchronization().then((value) => setState(() {
               Provider.of<UserSubjectControlTypeProvider>(context)
-                  .initUserSubjectsControlTypes(sharedLocator.getUserId()!);
+                  .initUserSubjectsControlTypes(_sharedLocator.getUserId()!);
             }))));
     buttons.add(IconButton(
       icon: const Icon(Icons.logout_outlined),
@@ -170,10 +164,10 @@ class _RecordCardPageState extends State<RecordCardPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    List<BottomNavigationBarItem> bottomItems = _bottomNavBar.getItems();
     if (bottomItems.isNotEmpty) {
       return BottomNavigationBar(
-        items: bottomNavBar.getItems(),
+        items: _bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
@@ -187,7 +181,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
     setState(() {
       _selectedIndex = index;
     });
-    bottomNavBar.changeItem(index);
+    _bottomNavBar.changeItem(index);
   }
 
   Future<void> openInfoModalWindow(

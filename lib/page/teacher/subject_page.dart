@@ -1,13 +1,11 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
-import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class SubjectPage extends StatefulWidget {
@@ -22,16 +20,15 @@ class SubjectPage extends StatefulWidget {
 }
 
 class SubjectPageState extends State<SubjectPage> {
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
-  final searchText = ValueNotifier<String>('');
+  final _searchText = ValueNotifier<String>('');
   late int _selectedIndex;
-  late BottomNavBarChoose bottomNavBar;
+  late BottomNavBarChoose _bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
-    bottomNavBar = BottomNavBarChoose(context: context);
+    _bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<SubjectProvider>(context, listen: false).initSubjects();
   }
 
@@ -43,7 +40,7 @@ class SubjectPageState extends State<SubjectPage> {
         child: Scaffold(
           appBar: AppBarWithSearchSwitch(
             onChanged: (text) {
-              searchText.value = text;
+              _searchText.value = text;
               setState(() {
                 Provider.of<SubjectProvider>(context, listen: false)
                     .fetchSubjects();
@@ -80,10 +77,10 @@ class SubjectPageState extends State<SubjectPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    List<BottomNavigationBarItem> bottomItems = _bottomNavBar.getItems();
     if(bottomItems.isNotEmpty) {
       return BottomNavigationBar(
-        items: bottomNavBar.getItems(),
+        items: _bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
@@ -97,7 +94,7 @@ class SubjectPageState extends State<SubjectPage> {
     setState(() {
       _selectedIndex = index;
     });
-    bottomNavBar.changeItem(index);
+    _bottomNavBar.changeItem(index);
   }
 
   FutureBuilder<List<SubjectEntity>> buildFutureBuilder(
@@ -112,14 +109,14 @@ class SubjectPageState extends State<SubjectPage> {
 
   ListView search(AsyncSnapshot<List<SubjectEntity>> snapshot) {
     List<SubjectEntity> list = [];
-    if (searchText.value == '') {
+    if (_searchText.value == '') {
       snapshot.data?.forEach((e) => list.add(e));
       return buildListView(list);
     }
     if (snapshot.hasData) {
       list = snapshot.data!
           .where((e) =>
-              e.name!.toLowerCase().contains(searchText.value.toLowerCase()))
+              e.name!.toLowerCase().contains(_searchText.value.toLowerCase()))
           .toList();
     }
     return buildListView(list);

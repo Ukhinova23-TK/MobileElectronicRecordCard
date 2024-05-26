@@ -1,13 +1,11 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
-import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/group_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/teacher/statement_page.dart';
 import 'package:mobile_electronic_record_card/provider/group_provider.dart';
-import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class GroupPage extends StatefulWidget {
@@ -24,18 +22,17 @@ class GroupPage extends StatefulWidget {
 }
 
 class GroupPageState extends State<GroupPage> {
-  final sharedLocator = getIt.get<SharedPreferenceHelper>();
-  final searchText = ValueNotifier<String>('');
+  final _searchText = ValueNotifier<String>('');
   late int _selectedIndex;
   late int _subjectId;
-  late BottomNavBarChoose bottomNavBar;
+  late BottomNavBarChoose _bottomNavBar;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     _subjectId = widget.subjectId;
-    bottomNavBar = BottomNavBarChoose(context: context);
+    _bottomNavBar = BottomNavBarChoose(context: context);
     Provider.of<GroupProvider>(context, listen: false).initGroups(_subjectId);
   }
 
@@ -48,7 +45,7 @@ class GroupPageState extends State<GroupPage> {
         child: Scaffold(
           appBar: AppBarWithSearchSwitch(
             onChanged: (text) {
-              searchText.value = text;
+              _searchText.value = text;
               setState(() {
                 Provider.of<GroupProvider>(context, listen: false)
                     .fetchGroups();
@@ -85,10 +82,10 @@ class GroupPageState extends State<GroupPage> {
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {
-    List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
+    List<BottomNavigationBarItem> bottomItems = _bottomNavBar.getItems();
     if(bottomItems.isNotEmpty) {
       return BottomNavigationBar(
-        items: bottomNavBar.getItems(),
+        items: _bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
         selectedItemColor: greatMarkColor,
         onTap: _onItemTapped,
@@ -102,7 +99,7 @@ class GroupPageState extends State<GroupPage> {
     setState(() {
       _selectedIndex = index;
     });
-    bottomNavBar.changeItem(index);
+    _bottomNavBar.changeItem(index);
   }
 
   FutureBuilder<List<GroupEntity>> buildFutureBuilder(
@@ -117,18 +114,18 @@ class GroupPageState extends State<GroupPage> {
 
   ListView search(AsyncSnapshot<List<GroupEntity>> snapshot) {
     List<GroupEntity> list = [];
-    if (searchText.value == '') {
+    if (_searchText.value == '') {
       snapshot.data?.forEach((e) => list.add(e));
       return buildListView(list);
     }
     if (snapshot.hasData) {
       list = snapshot.data!
           .where((e) =>
-              e.name!.toLowerCase().contains(searchText.value.toLowerCase()) ||
+              e.name!.toLowerCase().contains(_searchText.value.toLowerCase()) ||
               ((e.fullName != null) &&
                   (e.fullName!
                       .toLowerCase()
-                      .contains(searchText.value.toLowerCase()))))
+                      .contains(_searchText.value.toLowerCase()))))
           .toList();
     }
     return buildListView(list);
