@@ -13,7 +13,7 @@ class AuthInterceptor implements InterceptorContract {
   @override
   Future<BaseRequest> interceptRequest({required BaseRequest request}) async {
     var token = await secureStorageLocator.readToken();
-    if (token != null && request.url.toString() != ExceptionName.logout) {
+    if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
     return request;
@@ -25,12 +25,14 @@ class AuthInterceptor implements InterceptorContract {
     if (response.statusCode == 200 || response.statusCode == 204) {
       Log.i('Запрос ${response.request?.url.toString()} выполнен успешно',
           tag: response.reasonPhrase.toString());
+      if (response.request?.url.toString() == ExceptionName.refresh) {
+        await response.request?.send();
+      }
     }
     if (response.statusCode == 401) {
       Log.w('Ошибка авторизации ${response.request?.url.toString()}',
           tag: response.reasonPhrase.toString());
       if (response.request?.url.toString() == ExceptionName.refresh ||
-          response.request?.url.toString() == ExceptionName.logout ||
           response.request?.url.toString() == ExceptionName.authenticate) {
         logout(globalNavigatorKey.currentContext!);
       } else {

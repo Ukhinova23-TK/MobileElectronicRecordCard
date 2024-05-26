@@ -7,6 +7,7 @@ import 'package:mobile_electronic_record_card/model/entity/teacher_subject_contr
 import 'package:mobile_electronic_record_card/model/entity/user_entity.dart';
 import 'package:mobile_electronic_record_card/model/enumeration/mark_name.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
+import 'package:mobile_electronic_record_card/page/student/qr_code_modal_window.dart';
 import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/student/info_modal_window.dart';
 import 'package:mobile_electronic_record_card/provider/user_subject_control_type_provider.dart';
@@ -128,7 +129,8 @@ class _RecordCardPageState extends State<RecordCardPage> {
   AppBar buildAppBar(BuildContext context) {
     List<Widget> buttons = [];
     buttons.add(IconButton(
-        onPressed: () {}, icon: const Icon(Icons.qr_code_2_outlined)));
+        onPressed: () => openQrModalWindow(),
+        icon: const Icon(Icons.qr_code_2_outlined)));
     buttons.add(IconButton(
         onPressed: () =>
             Provider.of<UserSubjectControlTypeProvider>(context, listen: false)
@@ -169,7 +171,7 @@ class _RecordCardPageState extends State<RecordCardPage> {
 
   BottomNavigationBar? buildBottomNavigationBar() {
     List<BottomNavigationBarItem> bottomItems = bottomNavBar.getItems();
-    if(bottomItems.isNotEmpty) {
+    if (bottomItems.isNotEmpty) {
       return BottomNavigationBar(
         items: bottomNavBar.getItems(),
         currentIndex: _selectedIndex,
@@ -197,6 +199,18 @@ class _RecordCardPageState extends State<RecordCardPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [InfoModalWindow(tsctms: list)]);
+      },
+    );
+  }
+
+  Future<void> openQrModalWindow() {
+    return showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [QrCodeModalWindow()]);
       },
     );
   }

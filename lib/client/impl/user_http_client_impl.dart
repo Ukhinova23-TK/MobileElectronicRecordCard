@@ -41,22 +41,19 @@ class UserHttpClientImpl implements UserHttpClient {
   @override
   Future<Map<String, dynamic>> refreshToken(
       Map<String, dynamic> refreshToken) async {
-    final response =
-        await EndPoint.http.post(
-            Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
-                '${EndPoint.userRefreshTokenUrl}'),
-            headers: headers,
-            body: jsonEncode(refreshToken));
+    final response = await EndPoint.http.post(
+        Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
+            '${EndPoint.userRefreshTokenUrl}'),
+        headers: headers,
+        body: jsonEncode(refreshToken));
     return json.decode(utf8.decode(response.bodyBytes));
   }
 
   @override
-  Future<Map<String, dynamic>> logout() async {
-    final response =
-        await EndPoint.http.post(
-            Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
-                '${EndPoint.userLogoutUrl}'),
-            headers: headers);
-    return json.decode(utf8.decode(response.bodyBytes));
+  Future<void> logout() async {
+    await EndPoint.http.post(
+        Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
+            '${EndPoint.userLogoutUrl}'),
+        headers: headers);
   }
 }

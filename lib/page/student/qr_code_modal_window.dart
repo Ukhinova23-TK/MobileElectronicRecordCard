@@ -1,8 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:mobile_electronic_record_card/data/secure_storage/secure_storage_helper.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
-//  TODO подвязать данные
 class QrCodeModalWindow extends StatefulWidget {
-
   const QrCodeModalWindow({super.key});
 
   @override
@@ -10,101 +13,49 @@ class QrCodeModalWindow extends StatefulWidget {
 }
 
 class _QrCodeModalWindowState extends State<QrCodeModalWindow> {
-  String qrData = "https://github.com/ChinmayMunje";
+  String? qrData;
+  final secureLocator = getIt.get<SecureStorageHelper>();
 
   _QrCodeModalWindowState();
 
   @override
   void initState() {
     super.initState();
-    qrData = "https://github.com/ChinmayMunje";
+    Future.microtask(() async => await getToken());
+  }
+
+  Future<void> getToken() async {
+    String? s = await secureLocator.readToken();
+    setState(() {
+      qrData = s;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    /*return Column(
+    return Column(
       children: [
-        _height(),
-        Row(
-          children: [
-            _width(),
-            const Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Процент пятерок, %'),
-                  ],
-                )
-            ),
-
-            const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('100')
-                  ],
-                )
-            ),
-            _width()
-          ],
-        ),
-        Row(
-          children: [
-            _width(),
-            const Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Средний балл'),
-                  ],
-                )
-            ),
-            const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('5.0')
-                  ],
-                )
-            ),
-            _width()
-          ],
-        ),
-        Row(
-          children: [
-            _width(),
-            const Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Красный диплом'),
-                  ],
-                )
-            ),
-            const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Возможен')
-                  ],
-                )
-            ),
-            _width()
-          ],
-        ),
-        _height(),
+        SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            qrData != null
+                ? QrImageView(
+                    data: qrData!,
+                    version: QrVersions.auto,
+                    size: 320.0,
+                    errorStateBuilder: (cxt, err) {
+                      return const Center(
+                        child: Text(
+                          'Произошла ошибка генерации QR-кода',
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
+                  )
+                : const Text('Произошла ошибка генерации QR-кода'),
+          ]),
+        )
       ],
-    );*/
-
-
-    return const Column(
-
-      );
+    );
   }
-
-  Widget _height() => const SizedBox(height: 26);
-  Widget _width() => const SizedBox(width: 26);
 }

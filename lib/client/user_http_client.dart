@@ -8,7 +8,7 @@ abstract class UserHttpClient {
   Future<Map<String, dynamic>> refreshToken(
       Map<String, dynamic> refreshToken);
 
-  Future<Map<String, dynamic>> logout();
+  Future<void> logout();
 
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> cred);
 }
