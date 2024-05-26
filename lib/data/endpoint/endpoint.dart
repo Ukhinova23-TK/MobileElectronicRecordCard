@@ -24,6 +24,7 @@ class EndPoint {
   static const String userAuthenticateUrl = '/authenticate';
   static const String userRefreshTokenUrl = '/refresh';
   static const String userLogoutUrl = '/logout';
+  static const String userChangePassword = '/change-password';
 
   static const String usctUrl = 'api/user-subject-control-types';
   static const String usctAndCriteriaUrl = '/filter';
@@ -33,6 +34,7 @@ class EndPoint {
   static const String studentMarAndCriteriaUrl = '/filter';
 
   static const String deletionUrl = 'api/deletions';
+  static const String deletionAndCriteriaUrl = '/filter';
 
   static final http = InterceptedHttp.build(interceptors: [AuthInterceptor()]);
 }

@@ -56,4 +56,13 @@ class UserHttpClientImpl implements UserHttpClient {
             '${EndPoint.userLogoutUrl}'),
         headers: headers);
   }
+
+  @override
+  Future<void> changePassword(Map<String, dynamic> passwords) async {
+    await EndPoint.http.post(
+        Uri.parse('${EndPoint.resourceUrl}${EndPoint.userUrl}'
+            '${EndPoint.userChangePassword}'),
+        headers: headers,
+        body: jsonEncode(passwords));
+  }
 }

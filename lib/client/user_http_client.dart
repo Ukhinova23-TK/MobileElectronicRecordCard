@@ -11,4 +11,6 @@ abstract class UserHttpClient {
   Future<void> logout();
 
   Future<Map<String, dynamic>> authenticate(Map<String, dynamic> cred);
+
+  Future<void> changePassword(Map<String, dynamic> passwords);
 }

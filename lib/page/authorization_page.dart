@@ -78,11 +78,18 @@ class _FormContent extends StatefulWidget {
 
 class __FormContentState extends State<_FormContent> {
   bool _isPasswordVisible = false;
-  String? login;
-  String? password;
   final sharedLocator = getIt.get<SharedPreferenceHelper>();
+  final loginController = TextEditingController();
+  final passwordController = TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    loginController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +102,7 @@ class __FormContentState extends State<_FormContent> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextFormField(
+              controller: loginController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return emptyLoginAuthPage;
@@ -107,37 +115,35 @@ class __FormContentState extends State<_FormContent> {
                 prefixIcon: Icon(Icons.person),
                 border: OutlineInputBorder(),
               ),
-              onChanged: (value) => login = value,
             ),
             _gap(),
             TextFormField(
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return emptyPasswordAuthPage;
-                }
-                if (value.length < 12) {
-                  return tinyPasswordAuthPage;
-                }
-                return null;
-              },
-              obscureText: !_isPasswordVisible,
-              decoration: InputDecoration(
-                  labelText: labelPasswordAuthPage,
-                  hintText: hintPasswordAuthPage,
-                  prefixIcon: const Icon(Icons.lock_outline_rounded),
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(_isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
-                  )),
-              onChanged: (value) => password = value,
-            ),
+                controller: passwordController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return emptyPasswordAuthPage;
+                  }
+                  if (value.length < 12) {
+                    return tinyPasswordAuthPage;
+                  }
+                  return null;
+                },
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                    labelText: labelPasswordAuthPage,
+                    hintText: hintPasswordAuthPage,
+                    prefixIcon: const Icon(Icons.lock_outline_rounded),
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(_isPasswordVisible
+                          ? Icons.visibility_off
+                          : Icons.visibility),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ))),
             _gap(),
             SizedBox(
               width: double.infinity,
@@ -170,11 +176,13 @@ class __FormContentState extends State<_FormContent> {
   }
 
   Future<void> authenticate() async {
-    UserController().authenticate(login!, password!).then((user) async {
+    UserController()
+        .authenticate(loginController.text, passwordController.text)
+        .then((user) async {
       var synchronizationService = SynchronizationServiceImpl();
       await synchronizationService.clearDb();
       await synchronizationService.fetch();
-      UserController().getByLoginFromServer(login!).then((value) {
+      UserController().getByLoginFromServer(loginController.text).then((value) {
         int? rolesCount = sharedLocator.getRolesCount();
         List<String>? rolesName = sharedLocator.getRolesName();
         if (rolesCount != null && rolesName != null) {

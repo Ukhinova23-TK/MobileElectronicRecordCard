@@ -153,7 +153,7 @@ class SynchronizationServiceImpl implements SynchronizationService {
 
   @override
   Future<void> clearDb() async {
-    await userHttpClient.logout();
+    //await userHttpClient.logout();
     await studentMarkController.deleteAll();
     await userSubjectControlTypeController.deleteAll();
     await userController.deleteAll();

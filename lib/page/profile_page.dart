@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_electronic_record_card/controller/user_controller.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
 import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/user_and_group_entity.dart';
@@ -23,10 +24,18 @@ class _ProfilePageState extends State<ProfilePage> {
   late int _selectedIndex;
   late BottomNavBarChoose bottomNavBar;
   List<String>? rolesName = [];
-  bool _isPasswordVisible = false;
-  String? oldPassword;
-  String? password;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
+  final oldPasswordController = TextEditingController();
+  final newPasswordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    oldPasswordController.dispose();
+    newPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -175,42 +184,42 @@ class _ProfilePageState extends State<ProfilePage> {
                                             children: [
                                               Expanded(
                                                   child: TextFormField(
-                                                validator: (value) {
-                                                  if (value == null ||
-                                                      value.isEmpty) {
-                                                    return emptyPasswordAuthPage;
-                                                  }
-                                                  if (value.length < 12) {
-                                                    return tinyPasswordAuthPage;
-                                                  }
-                                                  return null;
-                                                },
-                                                obscureText:
-                                                    !_isPasswordVisible,
-                                                decoration: InputDecoration(
-                                                    labelText:
-                                                        labelPasswordAuthPage,
-                                                    hintText:
-                                                        hintPasswordAuthPage,
-                                                    border:
-                                                        const OutlineInputBorder(),
-                                                    suffixIcon: IconButton(
-                                                      icon: Icon(
-                                                          _isPasswordVisible
-                                                              ? Icons
-                                                                  .visibility_off
-                                                              : Icons
-                                                                  .visibility),
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          _isPasswordVisible =
-                                                              !_isPasswordVisible;
-                                                        });
+                                                      controller:
+                                                          oldPasswordController,
+                                                      validator: (value) {
+                                                        if (value == null ||
+                                                            value.isEmpty) {
+                                                          return emptyPasswordAuthPage;
+                                                        }
+                                                        if (value.length < 12) {
+                                                          return tinyPasswordAuthPage;
+                                                        }
+                                                        return null;
                                                       },
-                                                    )),
-                                                onChanged: (value) =>
-                                                    oldPassword = value,
-                                              )),
+                                                      obscureText:
+                                                          !_isOldPasswordVisible,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              labelText:
+                                                                  labelPasswordAuthPage,
+                                                              hintText:
+                                                                  hintPasswordAuthPage,
+                                                              border:
+                                                                  const OutlineInputBorder(),
+                                                              suffixIcon:
+                                                                  IconButton(
+                                                                icon: Icon(_isOldPasswordVisible
+                                                                    ? Icons
+                                                                        .visibility_off
+                                                                    : Icons
+                                                                        .visibility),
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    _isOldPasswordVisible =
+                                                                        !_isOldPasswordVisible;
+                                                                  });
+                                                                },
+                                                              )))),
                                             ],
                                           )
                                         ]))
@@ -242,6 +251,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                             children: [
                                               Expanded(
                                                   child: TextFormField(
+                                                controller:
+                                                    newPasswordController,
                                                 validator: (value) {
                                                   if (value == null ||
                                                       value.isEmpty) {
@@ -253,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   return null;
                                                 },
                                                 obscureText:
-                                                    !_isPasswordVisible,
+                                                    !_isNewPasswordVisible,
                                                 decoration: InputDecoration(
                                                     labelText:
                                                         labelPasswordAuthPage,
@@ -265,20 +276,18 @@ class _ProfilePageState extends State<ProfilePage> {
                                                         const OutlineInputBorder(),
                                                     suffixIcon: IconButton(
                                                       icon: Icon(
-                                                          _isPasswordVisible
+                                                          _isNewPasswordVisible
                                                               ? Icons
                                                                   .visibility_off
                                                               : Icons
                                                                   .visibility),
                                                       onPressed: () {
                                                         setState(() {
-                                                          _isPasswordVisible =
-                                                              !_isPasswordVisible;
+                                                          _isNewPasswordVisible =
+                                                              !_isNewPasswordVisible;
                                                         });
                                                       },
                                                     )),
-                                                onChanged: (value) =>
-                                                    password = value,
                                               )),
                                               IconButton(
                                                 icon: const Icon(Icons.save_as),
@@ -286,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   if (_formKey.currentState
                                                           ?.validate() ??
                                                       false) {
-                                                    // TODO добавить функцию смены пароля
+                                                    await changePassword();
                                                   }
                                                 },
                                               )
@@ -339,6 +348,22 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
     );
+  }
+
+  Future<void> changePassword() async {
+    UserController()
+        .changePassword(oldPasswordController.text, newPasswordController.text)
+        .then((_) {
+      newPasswordController.clear();
+      oldPasswordController.clear();
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Пароль успешно сменен')));
+    }).catchError((onError) {
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Ошибка смены пароля')));
+    });
   }
 
   BottomNavigationBar? buildBottomNavigationBar() {

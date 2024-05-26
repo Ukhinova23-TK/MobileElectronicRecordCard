@@ -12,10 +12,13 @@ class DeletionHttpClientImpl implements DeletionHttpClient {
   Future<List<DeletionEntity>> getAll() async {
     final sharedLocator = getIt.get<SharedPreferenceHelper>();
     final version = sharedLocator.getDeletionVersion() ?? 0;
-    final response = await EndPoint.http.get(
+    final Map<String, dynamic> body = {};
+    final response = await EndPoint.http.post(
         Uri.parse('${EndPoint.resourceUrl}${EndPoint.deletionUrl}'
-            '${EndPoint.getByVersionUrl}$version'),
-        headers: headers);
+            '${EndPoint.getByVersionUrl}$version'
+            '${EndPoint.deletionAndCriteriaUrl}'),
+        headers: headers,
+        body: jsonEncode(body));
     return (json.decode(utf8.decode(response.bodyBytes)) as List)
         .map((e) => DeletionEntity.fromJson(e))
         .toList();

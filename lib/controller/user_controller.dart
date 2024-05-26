@@ -96,6 +96,11 @@ class UserController implements DeleteController {
         .then((value) => secureStorageLocator.removeAll());
   }
 
+  Future<void> changePassword(String oldPassword, newPassword) async {
+    await UserHttpClientImpl().changePassword(
+        AuthenticateEntity.toChangePassword(oldPassword, newPassword));
+  }
+
   Future<UserAndGroupEntity> getCurrentUserFromDb(int userId) async {
     return (await UserRepositoryImpl().getUser(userId))
         .map((e) => UserAndGroupEntity.fromJson(e))
