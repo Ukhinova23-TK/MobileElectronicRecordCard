@@ -130,7 +130,7 @@ const SqfEntityTable tableStudentMark = SqfEntityTable(
       SqfEntityFieldRelationship(
           parentTable: tableUserSubjectControlType,
           fieldName: 'user_subject_control_type_id',
-          relationType: RelationType.ONE_TO_MANY)
+          relationType: RelationType.ONE_TO_ONE)
     ]);
 
 @SqfEntityBuilder(electronicRecordCardDbModel)

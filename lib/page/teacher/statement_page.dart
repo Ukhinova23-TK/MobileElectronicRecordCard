@@ -249,13 +249,13 @@ class StatementPageState extends State<StatementPage> {
 
   Color? setColor(String? markName) {
     switch (markName) {
-      case MarkName.excellent || MarkName.failed || MarkName.release:
+      case MarkName.excellent || MarkName.passed || MarkName.release:
         return greatMarkColor;
       case MarkName.good:
         return wellMarkColor;
       case MarkName.satisfactory:
         return satisfactoryMarkColor;
-      case MarkName.unsatisfactory || MarkName.passed:
+      case MarkName.unsatisfactory || MarkName.failed:
         return failMarkColor;
       default:
         return noMarkColor;
