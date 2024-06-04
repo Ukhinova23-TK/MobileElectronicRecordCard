@@ -1,11 +1,13 @@
 import 'package:app_bar_with_search_switch/app_bar_with_search_switch.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_electronic_record_card/data/constants/api_constants.dart';
+import 'package:mobile_electronic_record_card/data/shared_preference/shared_preference_helper.dart';
 import 'package:mobile_electronic_record_card/model/entity/subject_entity.dart';
 import 'package:mobile_electronic_record_card/page/bottom_nav_bar_choose.dart';
 import 'package:mobile_electronic_record_card/page/synchronization_function.dart';
 import 'package:mobile_electronic_record_card/page/teacher/group_page.dart';
 import 'package:mobile_electronic_record_card/provider/subject_provider.dart';
+import 'package:mobile_electronic_record_card/service/locator/locator.dart';
 import 'package:provider/provider.dart';
 
 class SubjectPage extends StatefulWidget {
@@ -20,6 +22,7 @@ class SubjectPage extends StatefulWidget {
 }
 
 class SubjectPageState extends State<SubjectPage> {
+  final _sharedLocator = getIt.get<SharedPreferenceHelper>();
   final _searchText = ValueNotifier<String>('');
   late int _selectedIndex;
   late BottomNavBarChoose _bottomNavBar;
@@ -29,7 +32,8 @@ class SubjectPageState extends State<SubjectPage> {
     super.initState();
     _selectedIndex = widget.selectedItemNavBar ?? 0;
     _bottomNavBar = BottomNavBarChoose(context: context);
-    Provider.of<SubjectProvider>(context, listen: false).initSubjects();
+    Provider.of<SubjectProvider>(context, listen: false)
+        .initSubjects(_sharedLocator.getUserId()!);
   }
 
   @override
@@ -60,7 +64,7 @@ class SubjectPageState extends State<SubjectPage> {
                           synchronization().then((_) => setState(() {
                                 Provider.of<SubjectProvider>(context,
                                         listen: false)
-                                    .initSubjects();
+                                    .initSubjects(_sharedLocator.getUserId()!);
                               }))),
                   IconButton(
                       icon: const Icon(Icons.logout_outlined),
@@ -78,7 +82,7 @@ class SubjectPageState extends State<SubjectPage> {
 
   BottomNavigationBar? buildBottomNavigationBar() {
     List<BottomNavigationBarItem> bottomItems = _bottomNavBar.getItems();
-    if(bottomItems.isNotEmpty) {
+    if (bottomItems.isNotEmpty) {
       return BottomNavigationBar(
         items: _bottomNavBar.getItems(),
         currentIndex: _selectedIndex,

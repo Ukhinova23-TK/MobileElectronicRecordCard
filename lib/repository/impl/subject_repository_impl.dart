@@ -35,4 +35,13 @@ class SubjectRepositoryImpl implements SubjectRepository {
         .toSingle();
     return subject?.version ?? 0;
   }
+
+  @override
+  Future<List<Subject>> getByTeacher(int userId) async {
+    return Subject.fromMapList((await ElectronicRecordCardDbModel()
+        .execDataTable("""select distinct s.*
+        from subject s join user_subject_control_type usct 
+        on usct.subject_id = s.id
+        where usct.teacher_id = $userId""")));
+  }
 }

@@ -7,6 +7,7 @@ import 'package:mobile_electronic_record_card/service/mapper/impl/subject_mapper
 import 'package:mobile_electronic_record_card/service/mapper/mapper.dart';
 
 class SubjectController implements DeleteController {
+
   Future<List<SubjectEntity>> get subjects => getAllFromDb();
 
   Future<List<SubjectEntity>> getAllFromDb() async {
@@ -21,6 +22,13 @@ class SubjectController implements DeleteController {
     for (var e in subjects) {
       subjectRepository.save(SubjectMapper().toModel(e));
     }
+  }
+
+  Future<List<SubjectEntity>> getByTeacher(int userId) async {
+    Mapper<SubjectEntity, Subject> subjectMapper = SubjectMapper();
+    return (await SubjectRepositoryImpl().getByTeacher(userId))
+        .map((subject) => subjectMapper.toEntity(subject))
+        .toList();
   }
 
   @override

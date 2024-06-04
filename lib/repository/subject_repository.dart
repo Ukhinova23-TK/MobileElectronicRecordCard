@@ -12,4 +12,6 @@ abstract class SubjectRepository {
   Future<void> deleteAll();
 
   Future<int>? getMaxVersion();
+
+  Future<List<Subject>> getByTeacher(int userId);
 }
